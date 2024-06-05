@@ -195,8 +195,10 @@ abstract class ListItemRadioButtonWidget<T> @JvmOverloads constructor(
 
     protected fun setSelected(index: Int) {
         radioGroup.setOnCheckedChangeListener(null)
-        val radioButton: RadioButton? = radioGroup.getChildAt(index) as RadioButton
-        radioButton?.isChecked = true
+        radioGroup.getChildAt(index)?.let {
+            val radioButton: RadioButton = it as RadioButton
+            radioButton.isChecked = true
+        }
         radioGroup.setOnCheckedChangeListener(this)
     }
 

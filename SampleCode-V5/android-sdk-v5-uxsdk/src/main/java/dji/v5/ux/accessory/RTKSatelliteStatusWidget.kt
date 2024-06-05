@@ -954,7 +954,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
                         gpsAntenna1TextView.text = count
                     }
                     else -> {
-
+                        //do something
                     }
                 }
             }
@@ -980,7 +980,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
                         gpsAntenna2TextView.text = count
                     }
                     else -> {
-
+                        //do something
                     }
                 }
             }
@@ -1006,7 +1006,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
                         gpsBaseStationTextView.text = count
                     }
                     else -> {
-
+                        //do something
                     }
                 }
             }

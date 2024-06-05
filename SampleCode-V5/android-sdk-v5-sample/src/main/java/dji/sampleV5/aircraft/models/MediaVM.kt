@@ -20,6 +20,7 @@ import dji.v5.manager.datacenter.media.*
 import dji.v5.utils.common.LogUtils
 import dji.sampleV5.aircraft.util.ToastUtils
 import dji.sdk.keyvalue.value.camera.CameraStorageLocation
+import dji.sdk.keyvalue.value.common.EmptyMsg
 import dji.v5.utils.common.ContextUtil
 import dji.v5.utils.common.DiskUtil
 import dji.v5.utils.common.StringUtils
@@ -177,6 +178,19 @@ class MediaVM : DJIViewModel() {
                     (throwable as RxError).djiError
                 )
             }
+    }
+
+    fun formatSDCard(callback: CommonCallbacks.CompletionCallback) {
+        KeyManager.getInstance().performAction(KeyTools.createKey(CameraKey.KeyFormatStorage),CameraStorageLocation.SDCARD  , object :CommonCallbacks.CompletionCallbackWithParam<EmptyMsg>{
+            override fun onSuccess(t: EmptyMsg?) {
+               callback.onSuccess()
+            }
+
+            override fun onFailure(error: IDJIError) {
+                callback.onFailure(error)
+            }
+
+        })
     }
 
     fun  downloadMediaFile(mediaList : ArrayList<MediaFile>){

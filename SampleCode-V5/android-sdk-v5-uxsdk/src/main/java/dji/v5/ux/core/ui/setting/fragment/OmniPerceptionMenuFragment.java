@@ -50,12 +50,7 @@ public class OmniPerceptionMenuFragment extends MenuFragment {
             updatePrecisionWidgetVisible();
         });
 
-        KeyManager.getInstance().listen(KeyTools.createKey(FlightControllerKey.KeyConnection), this, new CommonCallbacks.KeyListener<Boolean>() {
-            @Override
-            public void onValueChange(@Nullable Boolean oldValue, @Nullable Boolean newValue) {
-                updatePrecisionWidgetVisible();
-            }
-        });
+        KeyManager.getInstance().listen(KeyTools.createKey(FlightControllerKey.KeyConnection), this, (oldValue, newValue) -> updatePrecisionWidgetVisible());
 
 
     }

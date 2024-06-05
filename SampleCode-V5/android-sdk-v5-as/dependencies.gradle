@@ -1,8 +1,8 @@
 ext {
     deps = [:]
     //DJI MSDK V5包
-    deps.aircraft = "com.dji:dji-sdk-v5-aircraft-alpha:5.8.0-a6"
-    deps.aircraftProvided = "com.dji:dji-sdk-v5-aircraft-provided-alpha:5.8.0-a6"
+    deps.aircraft = "com.dji:dji-sdk-v5-aircraft-alpha:5.9.1-alpha"
+    deps.aircraftProvided = "com.dji:dji-sdk-v5-aircraft-provided-alpha:5.9.1-alpha"
 
     //三方依赖库
     deps.gson = 'com.google.code.gson:gson:2.9.1'
@@ -75,7 +75,8 @@ ext {
 
 
     //wpmz 航线文件解析
-    deps.wpmzSdk = 'com.dji:wpmzsdk:1.0.1.1'
+    //本地依赖验证时将该aar放到主工程目录sdklib 并将sdk中aircraft 的gradle添加为本地依赖方式 api (name:"djisdkwpmz", ext:'aar')
+    deps.wpmzSdk = 'com.dji:wpmzsdk:1.0.1.5'
     //sample 扩展EditText
     deps.expandedit = "com.github.thomhurst:ExpandableHintText:1.0.7"
 

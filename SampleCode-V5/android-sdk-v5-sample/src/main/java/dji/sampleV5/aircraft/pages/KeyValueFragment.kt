@@ -495,7 +495,9 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
                 currentKeyItemList.addAll(lidarKeyList)
             }
 
-            else -> {}
+            else -> {
+               LogUtils.d(TAG , "nothing to do")
+            }
         }
         for (item in currentKeyItemList) {
             item.isItemSelected = false;
@@ -728,6 +730,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             ComponentIndexType.LEFT_OR_MAIN.name -> ComponentIndexType.LEFT_OR_MAIN.value()
             ComponentIndexType.RIGHT.name -> ComponentIndexType.RIGHT.value()
             ComponentIndexType.UP.name -> ComponentIndexType.UP.value()
+            ComponentIndexType.AGGREGATION.name -> ComponentIndexType.AGGREGATION.value()
             else -> {
                 ComponentIndexType.UNKNOWN.value()
             }

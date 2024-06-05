@@ -178,6 +178,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_disable_playback" />
 
+            <Button
+                android:id="@+id/btn_format"
+                style="@style/main_fragment_btn"
+                android:text="format SDCard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_take_photo" />
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

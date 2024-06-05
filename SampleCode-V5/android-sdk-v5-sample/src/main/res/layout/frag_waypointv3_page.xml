@@ -68,12 +68,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/btn_mission_pause" />
 
             <Button
+                android:id="@+id/btn_mission_query"
+                style="@style/main_fragment_btn"
+                android:text="@string/btn_mission_query"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_mission_resume" />
+
+            <Button
+                android:id="@+id/btn_mission_resume_with_bp"
+                style="@style/main_fragment_btn"
+                android:text="@string/btn_mission_resume_with_bp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/wp_break_progress" />
+
+            <Button
                 android:id="@+id/btn_mission_stop"
                 style="@style/main_fragment_btn"
                 android:text="@string/btn_mission_stop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_mission_resume" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_breakpoint_resume" />
 
             <Button
                 android:id="@+id/btn_wayline_select"
@@ -94,14 +110,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_mission_stop" />
 
+            <dji.v5.ux.accessory.DescSpinnerCell
+                android:id="@+id/resumeType"
+                android:layout_width="100dp"
+                android:background="@color/gray"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                app:uxsdk_entries="@array/resume_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_mission_query" />
+
             <EditText
                 android:id = "@+id/wp_break_index"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:text = "0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/heightmode"
+                app:layout_constraintTop_toBottomOf="@+id/resumeType"
                 android:hint = "point index"/>
 
             <EditText
@@ -120,7 +148,7 @@
                 android:text="@string/btn_mission_breakinfo_resume"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/wp_break_progress" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_mission_resume_with_bp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

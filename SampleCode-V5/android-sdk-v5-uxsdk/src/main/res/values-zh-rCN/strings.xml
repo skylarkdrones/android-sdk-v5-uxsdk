@@ -244,7 +244,7 @@
 
     <string name="uxsdk_land_header">是否降落？</string>
     <string name="uxsdk_land_message">飞机会在它当前的位置降落。请检查降落区域清晰。</string>
-    <string name="uxsdk_land_action">滑动以起飞</string>
+    <string name="uxsdk_land_action">滑动以降落</string>
 
     <string name="uxsdk_land_confirmation_header">是否继续降落？</string>
     <string name="uxsdk_land_confirmation_message">飞机已下降至 %1$s。</string>
@@ -1171,6 +1171,12 @@
     <string name="uxsdk_link_frequency_band_2_dot_4">2.4G</string>
     <string name="uxsdk_link_frequency_band_5_dot_7">5.7G</string>
     <string name="uxsdk_link_frequency_band_1_dot_4">840M&amp;1.4G</string>
+
+    <string name="uxsdk_setting_ui_hd_channel_auto">自动选择</string>
+    <string name="uxsdk_setting_ui_hd_channel_custom">自定义</string>
+    <string name="uxsdk_hdmi_system_setting_mode_same">复制屏幕</string>
+    <string name="uxsdk_hdmi_system_setting_mode_fpv">相机画面</string>
+    <string name="uxsdk_hdmi_system_setting_mode_camera">相机画面</string>
 </resources>
 
 

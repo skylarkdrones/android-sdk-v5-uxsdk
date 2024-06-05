@@ -109,7 +109,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         when (buttonView) {
             tb_set_vision_positioning_enable_switch -> {
-                perceptionVM.setVisionPositioningEnabled(isChecked, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setVisionPositioningEnabled(isChecked, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -125,8 +126,10 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                 })
             }
+
             tb_set_precision_landing_enable_switch -> {
-                perceptionVM.setPrecisionLandingEnabled(isChecked, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setPrecisionLandingEnabled(isChecked, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -144,7 +147,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
             }
             //避障子开关
             tv_obstacle_avoidance_up_switch -> {
-                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -162,7 +166,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
             }
 
             tv_obstacle_avoidance_down_switch -> {
-                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.DOWNWARD, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.DOWNWARD, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -180,7 +185,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
             }
 
             tv_obstacle_avoidance_horizontal_switch -> {
-                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -199,7 +205,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
             //雷达避障子开关
             tv_radar_obstacle_avoidance_up_switch -> {
-                perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -217,7 +224,8 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
             }
 
             tv_radar_obstacle_avoidance_horizontal_switch -> {
-                perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object : CommonCallbacks.CompletionCallback {
+                perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
 
@@ -382,6 +390,12 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
                 ).append("\n")
                 append("ObstacleAvoidanceWarningDistance:").append(" upward:$upwardObstacleAvoidanceWarningDistance,down:$downwardObstacleAvoidanceWarningDistance,horizontal:$horizontalObstacleAvoidanceWarningDistance")
                     .append("\n")
+                append("isUpwardObstacleAvoidanceWorking:$isUpwardObstacleAvoidanceEnabled").append("\n")
+                append("isLeftSideObstacleAvoidanceWorking:$leftSideObstacleAvoidanceWorking").append("\n")
+                append("isRightSideObstacleAvoidanceWorking:$rightSideObstacleAvoidanceWorking").append("\n")
+                append("isBackwardObstacleAvoidanceWorking:$backwardObstacleAvoidanceWorking").append("\n")
+                append("isForwardObstacleAvoidanceWorking:$forwardObstacleAvoidanceWorking").append("\n")
+                append("isDownwardObstacleAvoidanceWorking:$downwardObstacleAvoidanceWorking").append("\n")
             }
         }
 

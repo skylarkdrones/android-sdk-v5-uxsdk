@@ -1190,4 +1190,9 @@
     <string name="uxsdk_link_frequency_band_5_dot_7">5.7G</string>
     <string name="uxsdk_link_frequency_band_1_dot_4">840M&amp;1.4G</string>
 
+    <string name="uxsdk_setting_ui_hd_channel_auto">Auto</string>
+    <string name="uxsdk_setting_ui_hd_channel_custom">Personalizado</string>
+    <string name="uxsdk_hdmi_system_setting_mode_same">Duplicar pantalla</string>
+    <string name="uxsdk_hdmi_system_setting_mode_fpv">Vista de cámara</string>
+    <string name="uxsdk_hdmi_system_setting_mode_camera">Vista de cámara limpia</string>
 </resources>

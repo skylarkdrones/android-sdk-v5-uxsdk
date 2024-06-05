@@ -24,17 +24,16 @@
 package dji.v5.ux.core.module
 
 import dji.sdk.keyvalue.key.CameraKey
-import dji.sdk.keyvalue.value.camera.CameraShootPhotoMode
-import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.key.KeyTools
 import dji.sdk.keyvalue.value.camera.CameraMode
+import dji.sdk.keyvalue.value.camera.CameraShootPhotoMode
+import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.ux.core.base.BaseModule
 import dji.v5.ux.core.base.DJISDKModel
 import dji.v5.ux.core.base.ICameraIndex
 import dji.v5.ux.core.base.WidgetModel
 import dji.v5.ux.core.extension.isPictureMode
-import dji.v5.ux.core.extension.toFlatCameraMode
 import dji.v5.ux.core.extension.toShootPhotoMode
 import dji.v5.ux.core.util.DataProcessor
 import io.reactivex.rxjava3.core.Completable
@@ -88,24 +87,6 @@ class FlatCameraModule : BaseModule(), ICameraIndex {
             KeyTools.createKey(
                 CameraKey.KeyCameraMode, cameraIndex), cameraMode);
     }
-
-    /**
-     * Set photo mode
-     *
-     * @return Completable
-     */
-    fun setPhotoMode(djiSdkModel: DJISDKModel, photoMode: CameraShootPhotoMode): Completable {
-        return if (isFlatCameraModeSupportedDataProcessor.value) {
-            djiSdkModel.setValue(
-                KeyTools.createKey(
-                    CameraKey.KeyCameraFlatMode, cameraIndex), photoMode.toFlatCameraMode())
-        } else {
-            djiSdkModel.setValue(
-                KeyTools.createKey(
-                    CameraKey.KeyShootPhotoMode, cameraIndex), photoMode)
-        }
-    }
-    //endregion
 
     override fun getCameraIndex() = cameraIndex
 

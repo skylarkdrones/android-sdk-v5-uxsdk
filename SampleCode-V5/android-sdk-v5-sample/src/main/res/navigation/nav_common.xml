@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/key_log_info_page"
-        android:name="dji.sampleV5.aircraft.pages.LogInfoFragment"
+        android:name="dji.sampleV5.aircraft.pages.CrashLogInfoFragment"
         android:label="log_info_page"
         tools:layout="@layout/frag_log_info_page"/>
 

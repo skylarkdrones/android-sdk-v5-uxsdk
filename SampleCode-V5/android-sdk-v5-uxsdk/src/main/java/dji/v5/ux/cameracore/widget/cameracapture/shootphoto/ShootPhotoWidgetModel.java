@@ -217,6 +217,7 @@ public class ShootPhotoWidgetModel extends WidgetModel implements ICameraIndex {
     public void updateCameraSource(@NonNull ComponentIndexType cameraIndex, @NonNull CameraLensType lensType) {
         this.cameraIndex = cameraIndex;
         this.lensType = lensType;
+        flatCameraModule.updateCameraSource(cameraIndex,lensType);
         restart();
     }
 

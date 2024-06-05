@@ -162,7 +162,7 @@ class LiveFragment : DJIFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initRGBitRate() {
-        rgBitRate.setOnCheckedChangeListener { group: RadioGroup?, checkedId: Int ->
+        rgBitRate.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             if (checkedId == R.id.rb_bit_rate_auto) {
                 sbBitRate.visibility = View.GONE
                 tvBitRate.visibility = View.GONE
@@ -195,7 +195,7 @@ class LiveFragment : DJIFragment() {
     }
 
     private fun initLiveButton() {
-        btnStart.setOnClickListener { v: View? ->
+        btnStart.setOnClickListener { _ ->
             val protocolCheckId = rgProtocol.checkedRadioButtonId
             if (protocolCheckId == R.id.rb_rtmp) {
                 showSetLiveStreamRtmpConfigDialog()

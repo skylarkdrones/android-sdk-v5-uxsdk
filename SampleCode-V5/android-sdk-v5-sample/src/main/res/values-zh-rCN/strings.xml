@@ -260,8 +260,10 @@
     <string name="btn_mission_start">开始任务</string>
     <string name="btn_mission_pause">暂停任务</string>
     <string name="btn_mission_resume">恢复任务</string>
+    <string name="btn_mission_query">查询断点</string>
+    <string name="btn_mission_resume_with_bp">恢复任务(BPInfo)</string>
     <string name="btn_mission_wayline_select">选择航线ID</string>
-    <string name="btn_mission_breakinfo_resume">断点续飞</string>
+    <string name="btn_mission_breakinfo_resume">从断点开始任务</string>
     <string name="btn_mission_stop">结束任务</string>
 
     <!--登录-->
@@ -392,6 +394,8 @@
     <string name="btn_get_latest_log_info">刷新崩溃日志信息</string>
     <string name="item_log_info_title">崩溃日志信息</string>
     <string name="item_log_info_description">描述如何获取崩溃日志信息</string>
+    <string name="btn_test_java_crash">测试Java崩溃</string>
+    <string name="btn_test_native_crash">测试Native崩溃</string>
 
     <!-- Live Stream -->
     <string name="btn_set_live_stream_config">设置直播配置</string>
@@ -469,4 +473,9 @@
     <string name="title_select_yuv_format">选择图片格式</string>
     <string name="title_select_yuv_format_ok">确定</string>
     <string name="title_select_yuv_format_cancel">取消</string>
+
+    <!-- Look at preview -->
+    <string name="item_look_at_title">Look At</string>
+    <string name="item_look_at_description">演示如何使用Look At相关功能</string>
+
 </resources>

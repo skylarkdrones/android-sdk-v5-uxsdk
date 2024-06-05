@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import dji.sampleV5.aircraft.data.FragmentPageItemList
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.ldm.LDMExemptModule
+import dji.v5.manager.SDKManager
 import dji.v5.manager.ldm.LDMManager
 
 /**
@@ -29,5 +30,9 @@ class MSDKCommonOperateVm : DJIViewModel() {
 
     fun disableLDM(callback: CommonCallbacks.CompletionCallback) {
         LDMManager.getInstance().disableLDM(callback);
+    }
+
+    fun registerApp() {
+        SDKManager.getInstance().registerApp()
     }
 }

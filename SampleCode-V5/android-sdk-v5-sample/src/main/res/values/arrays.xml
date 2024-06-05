@@ -20,6 +20,7 @@
         <item>LEFT_OR_MAIN</item>
         <item>RIGHT</item>
         <item>UP</item>
+        <item>AGGREGATION</item>
         <item>UNKNOWN</item>
     </string-array>
 
@@ -110,6 +111,12 @@
         <item>WGS84</item>
         <item>EGM96</item>
         <item>RELATIVE</item>
+    </string-array>
+
+    <string-array name="resume_type">
+        <item>RECORD</item>
+        <item>NEXT</item>
+        <item>NEXTNEXT</item>
     </string-array>
 
     <string-array name="ce_import_mode">

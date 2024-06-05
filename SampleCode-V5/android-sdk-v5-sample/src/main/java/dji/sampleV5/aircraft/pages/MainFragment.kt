@@ -21,6 +21,7 @@ import dji.v5.utils.common.LogUtils
 import dji.v5.utils.common.StringUtils
 import kotlinx.android.synthetic.main.frag_main_page.*
 import dji.sampleV5.aircraft.util.ToastUtils
+import dji.v5.manager.SDKManager
 
 /**
  * Class Description
@@ -100,6 +101,9 @@ class MainFragment : DJIFragment() {
                     ToastUtils.showToast("LDM disabled failed:$error");
                 }
             })
+        }
+        registerApp_btn.setOnClickListener {
+            msdkCommonOperateVm.registerApp()
         }
     }
 

@@ -43,6 +43,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/enableLDM_btn" />
 
+            <TextView
+                android:id="@+id/registerApp_btn"
+                style="@style/main_fragment_text"
+                android:text="@string/btn_register_app"
+                android:elevation="10dp"
+                android:foreground="?selectableItemBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/disableLDM_btn" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

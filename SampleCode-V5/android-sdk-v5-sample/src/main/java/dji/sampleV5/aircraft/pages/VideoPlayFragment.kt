@@ -176,7 +176,7 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
         // old function，depends on VideoDecoder
         MediaDataCenter.getInstance().mediaManager.playVideo(mediaFile , object :CommonCallbacks.CompletionCallbackWithParam<IVideoFrame>{
             override fun onSuccess(data: IVideoFrame?) {
-
+                // do nothing
             }
 
             override fun onFailure(error: IDJIError) {

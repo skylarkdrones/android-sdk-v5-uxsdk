@@ -12,12 +12,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.RecyclerView;
-
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +22,11 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 import dji.sampleV5.aircraft.R;
 import dji.v5.common.error.DJIPipeLineError;
 import dji.v5.manager.mop.DataResult;
@@ -194,7 +193,7 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
             downloadThread.start();
             uploadHandler = new Handler(uploadThread.getLooper());
             downloadHandler = new Handler(downloadThread.getLooper());
-            View.OnClickListener listener = v -> {
+            View.OnClickListener localListener = v -> {
                 int id = v.getId();
                 if (id == R.id.tv_upload) {
                     showDialog(itemView.getContext(), pipeline);
@@ -212,9 +211,9 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
             String title = String.format("Id=%d, MOPType = %s, trans_type=%s", pipeline.getId(), pipeline.getPipelineDeviceType(),
                     pipeline.getTransmissionControlType());
             nameTv.setText(title);
-            downloadTv.setOnClickListener(listener);
-            uploadTv.setOnClickListener(listener);
-            disconnectTv.setOnClickListener(listener);
+            downloadTv.setOnClickListener(localListener);
+            uploadTv.setOnClickListener(localListener);
+            disconnectTv.setOnClickListener(localListener);
         }
 
         public void setListener(OnDisconnectListener listener) {
@@ -288,14 +287,20 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
                 MOPCmdHelper.sendUploadFileReq(data, uploadFileName, outputStream.toByteArray(), time, MOPCmdHelper.getMD5(tmp), listener);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LogUtils.e(tag,e.getMessage());
             } finally {
                 try {
-                    inputStream.close();
-                    out.close();
-                    outputStream.close();
+                    if (inputStream != null){
+                        inputStream.close();
+                    }
+                    if (out != null){
+                        out.close();
+                    }
+                    if (outputStream != null){
+                        outputStream.close();
+                    }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LogUtils.e(tag,e.getMessage());
                 }
             }
 
@@ -336,7 +341,7 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
                 file.createNewFile();
                 stream = new RandomAccessFile(file, "rw");
             } catch (IOException e) {
-                e.printStackTrace();
+                LogUtils.e(tag,e.getMessage());
             }
 
             while (true) {
@@ -381,9 +386,11 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
                                 updateDownloadUI();
                             });
                             try {
-                                stream.write(dataBuff, 0, len);
+                                if (stream != null){
+                                    stream.write(dataBuff, 0, len);
+                                }
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                LogUtils.e(tag,e.getMessage());
                             }
                         } else if (dataResult.getError() != null && dataResult.getError().errorCode().equals(DJIPipeLineError.CLOSING)) {
                             LogUtils.e(tag, "Pipeline is closing,finish down");
@@ -398,15 +405,19 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
                     // 确认是否能接着传
                     if (MOPCmdHelper.parseCommonAck(pipeline)) {
                         try {
-                            stream.seek(position);
+                            if (stream != null){
+                                stream.seek(position);
+                            }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LogUtils.e(tag,e.getMessage());
                         }
                     } else {
                         try {
-                            stream.close();
+                            if(stream != null){
+                                stream.close();
+                            }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            LogUtils.e(tag,e.getMessage());
                         }
                         downloadLogTv.post(() -> downloadLogTv.setText("transfer failure"));
                         downloading = false;
@@ -422,9 +433,11 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
                 }
             }
             try {
-                stream.close();
+                if (stream != null){
+                    stream.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                LogUtils.e(tag,e.getMessage());
             }
             downloading = false;
 
@@ -491,22 +504,17 @@ public class PipelineAdapter extends RecyclerView.Adapter<PipelineAdapter.ViewHo
         }
 
         private void updateUploadUI() {
-            StringBuffer sb = new StringBuffer("Upload:" + "\n")
+            StringBuilder sb = new StringBuilder("Upload:" + "\n")
                     .append(uploadFileInfoLog == null ? "" : uploadFileInfoLog).append("\n")
                     .append(uploadProgress == null ? "" : uploadProgress).append("\n")
                     .append(uploadResult == null ? "" : uploadResult).append("\n")
                     .append("成功/次数：" + uploadSuccessCount + "/" + uploadCount);
 
-            uploadLogTv.post(new Runnable() {
-                @Override
-                public void run() {
-                    uploadLogTv.setText(sb.toString());
-                }
-            });
+            uploadLogTv.post(() -> uploadLogTv.setText(sb.toString()));
         }
 
         private void updateDownloadUI() {
-            StringBuffer sb = new StringBuffer("Download:" + "\n")
+            StringBuilder sb = new StringBuilder("Download:" + "\n")
                     .append(downloadFileInfoLog == null ? "" : downloadFileInfoLog).append("\n")
                     .append(downloadProgress == null ? "" : downloadProgress).append("\n")
                     .append(downloadResult == null ? "" : downloadResult).append("\n")

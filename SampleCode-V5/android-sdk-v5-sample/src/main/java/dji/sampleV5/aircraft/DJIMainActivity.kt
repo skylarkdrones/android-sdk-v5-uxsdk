@@ -71,11 +71,11 @@ abstract class DJIMainActivity : AppCompatActivity() {
 
         // 有一些手机从系统桌面进入的时候可能会重启main类型的activity
         // 需要校验这种情况，业界标准做法，基本所有app都需要这个
-        if (!isTaskRoot) {
-            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN == intent.action) {
+        if (!isTaskRoot && intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN == intent.action) {
+
                 finish()
                 return
-            }
+
         }
 
         window.decorView.apply {

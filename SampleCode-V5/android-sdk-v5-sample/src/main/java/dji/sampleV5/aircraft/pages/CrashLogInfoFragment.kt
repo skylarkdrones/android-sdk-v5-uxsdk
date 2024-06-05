@@ -1,13 +1,12 @@
 package dji.sampleV5.aircraft.pages
 
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
-import dji.sampleV5.aircraft.models.MSDKLogVM
+import dji.sampleV5.aircraft.models.MSDKCrashLogVM
 import dji.sampleV5.aircraft.util.ToastUtils
 import kotlinx.android.synthetic.main.frag_log_info_page.*
 
@@ -18,8 +17,8 @@ import kotlinx.android.synthetic.main.frag_log_info_page.*
  * CreateDate : 2022/5/7 2:33 下午
  * Copyright : ©2022 DJI All Rights Reserved.
  */
-class LogInfoFragment: DJIFragment() {
-    private val logVm: MSDKLogVM by activityViewModels()
+class CrashLogInfoFragment : DJIFragment() {
+    private val logVm: MSDKCrashLogVM by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,23 +30,21 @@ class LogInfoFragment: DJIFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tv_log_info.movementMethod=ScrollingMovementMethod.getInstance()
+        logVm.updateLogInfo()
         logVm.logInfo.observe(viewLifecycleOwner) {
-            updateLogInfo()
+            tv_log_info.text = logVm.logInfo.value
         }
-        initBtn()
-    }
-
-    private fun initBtn() {
-        btn_get_log_info.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                logVm.updateLogInfo()
-                ToastUtils.showToast("Get Log Count: " + logVm.logCount.value)
-            }
-        })
-    }
-
-    private fun updateLogInfo() {
-        tv_log_info.text = logVm.logInfo.value
+        logVm.logMsg.observe(viewLifecycleOwner) {
+            ToastUtils.showToast("Msg:$it")
+        }
+        btn_get_log_info.setOnClickListener {
+            logVm.updateLogInfo()
+        }
+        btn_test_java_crash.setOnClickListener {
+            logVm.testJavaCrash(false)
+        }
+        btn_test_native_crash.setOnClickListener {
+            logVm.testNativeCrash(true)
+        }
     }
 }

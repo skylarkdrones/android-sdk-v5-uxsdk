@@ -187,7 +187,7 @@ open class TravelModeListItemWidget @JvmOverloads constructor(
                             exitTravelMode()
                         }
                         else -> {
-
+                            //do something
                         }
                     }
                 }, { }))

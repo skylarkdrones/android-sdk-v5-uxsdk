@@ -100,7 +100,7 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
         }
 
     private val decoderStateChangeListener =
-        DecoderStateChangeListener { oldState, newState ->
+        DecoderStateChangeListener { _, newState ->
             mainHandler.post {
                 channelVM.videoChannelInfo.value?.decoderState = newState
                 channelVM.refreshVideoChannelInfo()
@@ -324,7 +324,7 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
      * @param holder The SurfaceHolder whose surface is being created.
      */
     override fun surfaceCreated(holder: SurfaceHolder) {
-
+        // do nothing
     }
 
     /**

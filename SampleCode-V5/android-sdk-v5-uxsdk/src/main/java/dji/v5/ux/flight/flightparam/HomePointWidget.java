@@ -11,12 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D;
 import dji.sdk.keyvalue.value.remotecontroller.RCMode;
 import dji.sdk.keyvalue.value.remotecontroller.RcGPSInfo;
 import dji.v5.common.utils.GpsUtils;
 import dji.v5.utils.common.LocationUtil;
+import dji.v5.utils.common.LogUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.SchedulerProvider;
@@ -31,6 +31,7 @@ public class HomePointWidget extends ConstraintLayoutWidget<Object> {
     private HomeSetWidgetModel widgetModel = new HomeSetWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
     private ImageView rcAHomePointIv;
     private ImageView rcBHomePointIv;
+
     public HomePointWidget(@NonNull Context context) {
         super(context);
     }
@@ -66,7 +67,6 @@ public class HomePointWidget extends ConstraintLayoutWidget<Object> {
     }
 
 
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -84,9 +84,9 @@ public class HomePointWidget extends ConstraintLayoutWidget<Object> {
     }
 
 
-
     /**
      * 设置返航点
+     *
      * @param index 0:飞机位置 1:A控位置 2:B控位置
      */
     public void prepareToSetHomePoint(final int index) {
@@ -121,51 +121,44 @@ public class HomePointWidget extends ConstraintLayoutWidget<Object> {
 
             @Override
             public void onComplete() {
-                ViewUtil.showToast(getContext() , R.string.uxsdk_fpv_toast_homepoint_setting_drone , Toast.LENGTH_SHORT);
+                ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_setting_drone, Toast.LENGTH_SHORT);
             }
 
             @Override
             public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                ViewUtil.showToast(getContext() , R.string.uxsdk_fpv_toast_homepoint_setting_failed , Toast.LENGTH_SHORT);
+                ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_setting_failed, Toast.LENGTH_SHORT);
             }
         });
     }
-
 
     private void prepareToSetCurRcHomePoint() {
         Location location = LocationUtil.getLastLocation();
         if (location == null) {
             RcGPSInfo gpsInfo = widgetModel.getRcGPSInfo();
             if (gpsInfo == null || !gpsInfo.getIsValid()) {
-                ViewUtil.showToast(getContext() , R.string.uxsdk_fpv_toast_homepoint_gps_weak , Toast.LENGTH_SHORT);
+                ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_gps_weak, Toast.LENGTH_SHORT);
                 return;
             }
             location = GpsUtils.convertToLocation(gpsInfo);
         }
+
         final Location newLocation = location;
-
-
-        addReaction(widgetModel.checkRcGpsValid(location.getLatitude(), location.getLongitude(), location.getAccuracy()).subscribe(distance -> {
-            if (distance == -1) {
-                ViewUtil.showToast(getContext() , R.string.uxsdk_fpv_toast_homepoint_gps_weak , Toast.LENGTH_SHORT);
-            } else {
-                //showSetHomePointDlg(true, distance, newLocation);
-                setRcHome(newLocation , true);
-            }
-        }, throwable -> ViewUtil.showToast(getContext() , R.string.uxsdk_fpv_toast_homepoint_gps_weak , Toast.LENGTH_SHORT)) );
-
-
+        int distance = widgetModel.checkRcGpsValid(location.getLatitude(), location.getLongitude(), location.getAccuracy());
+        if (distance == -1) {
+            ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_gps_weak, Toast.LENGTH_SHORT);
+        } else {
+            setRcHome(newLocation, true);
+        }
     }
-
-
 
     private void setRcHome(Location location, boolean isCurrentRc) {
         if (location == null) {
             return;
         }
+        LogUtils.i("RcHome", "isCurrentRc keep " + isCurrentRc);
         LocationCoordinate2D location2D = new LocationCoordinate2D(location.getLatitude(), location.getLongitude());
-        if (!GpsUtils.isValid(location2D.getLatitude() , location2D.getLongitude())) {
-            ViewUtil.showToast(getContext(),R.string.uxsdk_fpv_toast_homepoint_setting_failed , Toast.LENGTH_SHORT);
+        if (!GpsUtils.isValid(location2D.getLatitude(), location2D.getLongitude())) {
+            ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_setting_failed, Toast.LENGTH_SHORT);
             return;
         }
         widgetModel.setHomeLocation(location2D).subscribe(new CompletableObserver() {
@@ -182,11 +175,9 @@ public class HomePointWidget extends ConstraintLayoutWidget<Object> {
 
             @Override
             public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                ViewUtil.showToast(getContext(),R.string.uxsdk_fpv_toast_homepoint_setting_failed , Toast.LENGTH_SHORT);
+                ViewUtil.showToast(getContext(), R.string.uxsdk_fpv_toast_homepoint_setting_failed, Toast.LENGTH_SHORT);
             }
         });
-
-
     }
 
     private void selectHomePointView(ImageView view, @DrawableRes int iconRes) {

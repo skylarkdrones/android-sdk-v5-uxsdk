@@ -203,4 +203,10 @@
         android:name="dji.sampleV5.aircraft.pages.MopDownFragment"
         android:label="mop_down_page"
         tools:layout="@layout/frag_mop_down_page" />
+
+    <fragment
+        android:id="@+id/look_at_page"
+        android:name="dji.sampleV5.aircraft.pages.LookAtFragment"
+        android:label="look_at_page"
+        tools:layout="@layout/frag_look_at_page"/>
 </navigation>

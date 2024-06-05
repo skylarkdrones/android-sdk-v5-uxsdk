@@ -107,7 +107,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     protected FocusExposureSwitchWidget focusExposureSwitchWidget;
     protected CameraControlsWidget cameraControlsWidget;
     protected HorizontalSituationIndicatorWidget horizontalSituationIndicatorWidget;
-    protected ExposureSettingsPanel exposureSettingsPanel;
     protected PrimaryFlightDisplayWidget pfvFlightDisplayWidget;
     protected CameraNDVIPanelWidget ndviCameraPanel;
     protected CameraVisiblePanelWidget visualCameraPanel;
@@ -119,6 +118,8 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private TextView gimbalAdjustDone;
     private GimbalFineTuneWidget gimbalFineTuneWidget;
+    private PhysicalDevicePosition lastDevicePosition = PhysicalDevicePosition.UNKNOWN;
+    private CameraLensType lastLensType = CameraLensType.UNKNOWN;
 
 
     private CompositeDisposable compositeDisposable;
@@ -155,7 +156,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         autoExposureLockWidget = findViewById(R.id.widget_auto_exposure_lock);
         focusModeWidget = findViewById(R.id.widget_focus_mode);
         focusExposureSwitchWidget = findViewById(R.id.widget_focus_exposure_switch);
-        exposureSettingsPanel = findViewById(R.id.panel_camera_controls_exposure_settings);
         pfvFlightDisplayWidget = findViewById(R.id.widget_fpv_flight_display_widget);
         focalZoomWidget = findViewById(R.id.widget_focal_zoom);
         cameraControlsWidget = findViewById(R.id.widget_camera_controls);
@@ -163,7 +163,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         gimbalAdjustDone = findViewById(R.id.fpv_gimbal_ok_btn);
         gimbalFineTuneWidget = findViewById(R.id.setting_menu_gimbal_fine_tune);
         mapWidget = findViewById(R.id.widget_map);
-        cameraControlsWidget.getExposureSettingsIndicatorWidget().setStateChangeResourceId(R.id.panel_camera_controls_exposure_settings);
 
         initClickListener();
         MediaDataCenter.getInstance().getVideoStreamManager().addStreamSourcesListener(sources -> runOnUiThread(() -> updateFPVWidgetSource(sources)));
@@ -361,6 +360,11 @@ public class DefaultLayoutActivity extends AppCompatActivity {
 
     private void onCameraSourceUpdated(PhysicalDevicePosition devicePosition, CameraLensType lensType) {
         LogUtils.i(TAG, devicePosition, lensType);
+        if (devicePosition == lastDevicePosition && lensType == lastLensType){
+            return;
+        }
+        lastDevicePosition = devicePosition;
+        lastLensType = lensType;
         ComponentIndexType cameraIndex = CameraUtil.getCameraIndex(devicePosition);
         updateViewVisibility(devicePosition, lensType);
         updateInteractionEnabled();
@@ -390,9 +394,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         if (cameraControlsWidget.getVisibility() == View.VISIBLE) {
             cameraControlsWidget.updateCameraSource(cameraIndex, lensType);
         }
-        if (exposureSettingsPanel.getVisibility() == View.VISIBLE) {
-            exposureSettingsPanel.updateCameraSource(cameraIndex, lensType);
-        }
         if (focalZoomWidget.getVisibility() == View.VISIBLE) {
             focalZoomWidget.updateCameraSource(cameraIndex, lensType);
         }
@@ -415,11 +416,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         cameraControlsWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
         focalZoomWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
         horizontalSituationIndicatorWidget.setSimpleModeEnable(devicePosition != PhysicalDevicePosition.NOSE);
-
-        //有其他的显示逻辑，这里确保fpv下不显示
-        if (devicePosition == PhysicalDevicePosition.NOSE) {
-            exposureSettingsPanel.setVisibility(View.INVISIBLE);
-        }
 
         //只在部分len下显示
         ndviCameraPanel.setVisibility(CameraUtil.isSupportForNDVI(lensType) ? View.VISIBLE : View.INVISIBLE);

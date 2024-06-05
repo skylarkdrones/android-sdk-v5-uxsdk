@@ -218,9 +218,9 @@ public class HSIPerceptionLayer implements HSIContract.HSILayer {
 
         mDisposable.add(widgetModel.getProductTypeDataProcessor().toFlowable()
                 .subscribe(productType -> {
-                    boolean isM3Serirs = productType == ProductType.DJI_MAVIC_3_ENTERPRISE_SERIES;
-                    isHidePerceptionBg = isM3Serirs;
-                    mSupportTof = !isM3Serirs;
+                    boolean isSupportTof = productType == ProductType.DJI_MAVIC_3_ENTERPRISE_SERIES || productType == ProductType.DJI_MINI_3 || productType == ProductType.DJI_MINI_3_PRO;
+                    isHidePerceptionBg = isSupportTof;
+                    mSupportTof = !isSupportTof;
                 }));
 
         mDisposable.add(widgetModel.getPerceptionInformationDataProcessor().toFlowable().subscribe(new Consumer<PerceptionInfo>() {

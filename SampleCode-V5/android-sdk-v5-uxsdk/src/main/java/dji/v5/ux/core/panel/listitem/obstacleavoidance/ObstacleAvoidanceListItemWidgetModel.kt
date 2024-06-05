@@ -23,18 +23,14 @@
 
 package dji.v5.ux.core.panel.listitem.obstacleavoidance
 
-import dji.sdk.keyvalue.key.FlightAssistantKey
+import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.sdk.keyvalue.value.flightcontroller.ObstacleActionType
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.et.create
-import dji.v5.et.set
-
 import dji.v5.manager.aircraft.perception.PerceptionManager
 import dji.v5.manager.aircraft.perception.data.ObstacleAvoidanceType
-
 import dji.v5.ux.core.base.DJISDKModel
-
 import dji.v5.ux.core.base.WidgetModel
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.util.DataProcessor
@@ -53,40 +49,35 @@ class ObstacleAvoidanceListItemWidgetModel(
 
     val obstacleActionTypeProcessor = DataProcessor.create(ObstacleActionType.UNKNOWN)
 
-    private val horizontalObstacleAvoidanceEnabledProcessor = DataProcessor.create(false)
+    private val flyControlConnectionProcessor = DataProcessor.create(false)
 
 
     fun setObstacleActionType(type: ObstacleActionType): Completable {
         return Completable.create {
+            PerceptionManager.getInstance().setObstacleAvoidanceType(getObstacleAvoidanceType(type), object :
+                CommonCallbacks.CompletionCallback {
+                override fun onSuccess() {
+                    it.onComplete()
+                }
 
-            FlightAssistantKey.KeyOmniHorizontalObstacleAvoidanceEnabled.create().set(true, {
-
-                PerceptionManager.getInstance().setObstacleAvoidanceType(getObstacleAvoidanceType(type) , object :
-                    CommonCallbacks.CompletionCallback{
-                    override fun onSuccess() {
-                        it.onComplete()
-                    }
-
-                    override fun onFailure(error: IDJIError) {
-                      it.onError(Throwable("setObstacleAvoidanceType failed!"))
-                    }
-
-                })
+                override fun onFailure(error: IDJIError) {
+                    it.onError(Throwable("setObstacleAvoidanceType failed!"))
+                }
             })
         }
     }
 
     override fun inSetup() {
-        bindDataProcessor(FlightAssistantKey.KeyOmniHorizontalObstacleAvoidanceEnabled.create(), horizontalObstacleAvoidanceEnabledProcessor)
-
+        bindDataProcessor(FlightControllerKey.KeyConnection.create(), flyControlConnectionProcessor)
     }
 
     private fun updateObstacleActionType() {
-        if (!horizontalObstacleAvoidanceEnabledProcessor.value) {
+        if (!flyControlConnectionProcessor.value) {
             obstacleActionTypeProcessor.onNext(ObstacleActionType.UNKNOWN)
             return
         }
-        PerceptionManager.getInstance().getObstacleAvoidanceType(object :CommonCallbacks.CompletionCallbackWithParam<ObstacleAvoidanceType>{
+        PerceptionManager.getInstance().getObstacleAvoidanceType(object :
+            CommonCallbacks.CompletionCallbackWithParam<ObstacleAvoidanceType> {
             override fun onSuccess(t: ObstacleAvoidanceType?) {
                 if (t != null) {
                     obstacleActionTypeProcessor.onNext(getObstacleActionType(t))
@@ -94,9 +85,8 @@ class ObstacleAvoidanceListItemWidgetModel(
             }
 
             override fun onFailure(error: IDJIError) {
-               //do nothing
+                //do nothing
             }
-
         })
 
     }
@@ -118,13 +108,11 @@ class ObstacleAvoidanceListItemWidgetModel(
         return obstacleActionType
     }
 
-    fun getObstacleAvoidanceType(obstacleActionType: ObstacleActionType?): ObstacleAvoidanceType? {
+    private fun getObstacleAvoidanceType(obstacleActionType: ObstacleActionType?): ObstacleAvoidanceType? {
         if (obstacleActionType == null) {
             return null
         }
-        val obstacleAvoidanceType: ObstacleAvoidanceType
-        obstacleAvoidanceType =
-            when (obstacleActionType) {
+        val obstacleAvoidanceType: ObstacleAvoidanceType = when (obstacleActionType) {
                 ObstacleActionType.STOP -> ObstacleAvoidanceType.BRAKE
                 ObstacleActionType.APAS -> ObstacleAvoidanceType.BYPASS
                 else -> ObstacleAvoidanceType.CLOSE

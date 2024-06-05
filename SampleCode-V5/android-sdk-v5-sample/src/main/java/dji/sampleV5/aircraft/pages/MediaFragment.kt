@@ -159,9 +159,7 @@ class MediaFragment : DJIFragment() {
 
         sp_choose_component.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, index: Int, p3: Long) {
-                if (mediaVM.isPlayBack.value == true) {
-                    mediaVM.disable()
-                }
+
                 mediaVM.setComponentIndex(ComponentIndexType.find(index))
             }
 
@@ -198,6 +196,19 @@ class MediaFragment : DJIFragment() {
                     ToastUtils.showToast("take photo failed")
                 }
             })
+        }
+        btn_format.setOnClickListener {
+            mediaVM.formatSDCard(object :CommonCallbacks.CompletionCallback{
+                override fun onSuccess() {
+                    ToastUtils.showToast("format SDCard success")
+                }
+
+                override fun onFailure(error: IDJIError) {
+                    ToastUtils.showToast("format SDCard failed ${error.errorCode()}" )
+                }
+
+            })
+
         }
     }
 

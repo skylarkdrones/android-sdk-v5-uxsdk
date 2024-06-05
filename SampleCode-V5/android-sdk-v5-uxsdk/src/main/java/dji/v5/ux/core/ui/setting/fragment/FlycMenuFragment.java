@@ -35,12 +35,9 @@ public class FlycMenuFragment extends MenuFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextCell textCell = view.findViewById(R.id.setting_flyc_sensors_state);
-        textCell.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SensorsMenuFragment fragment = new SensorsMenuFragment();
-                addFragment(getFragmentManager(), fragment, true);
-            }
+        textCell.setOnClickListener(view1 -> {
+            SensorsMenuFragment fragment = new SensorsMenuFragment();
+            addFragment(getFragmentManager(), fragment, true);
         });
 
     }

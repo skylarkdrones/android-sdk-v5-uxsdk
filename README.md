@@ -1,4 +1,4 @@
-# DJI Mobile SDK for Android V5 Latest Alpha Version 5.8.0-a6
+# DJI Mobile SDK for Android V5 Latest Alpha Version 5.9.1-alpha
 
 [中文版](README_CN.md)
 
@@ -10,56 +10,10 @@
 4. All changes in the alpha version will be merged into the official version and will be strictly tested before the release.
 5. It is not suggested that developers directly merge the MSDK alpha version and released it as an official version.
 
-## 5.8.0-a6 Release Notes（2023.12.21）
+## 5.9.1-alpha Release Notes（2024.06.05）
 
-- Some Bug fixes
-
-## 5.8.0-a5 Release Notes（2023.12.19）
-
-- Optimize quality of the video stream transmission
-
-- Some Bug fixes
-
-## 5.8.0-a4 Release Notes（2023.12.11）
-
-- Delete the API interface: ICameraStreamManager setPriorityEnsureFrameRate (bool).
-> Priority The frame rate priority is easy to cause screen problems, so do not open the interface.
-
-- Improve compatibility with decoding and encoding capabilities.
-
-- Optimize the stability and video stream quality of the video stream transmission
-
-- No need to manually add this dependency: `runtimeOnly "com.dji: dji-SDK-V5-NetworkIMP-alpha :{sdkVersion}"`
-
-- Upgrade the APG version of the Sample project to support JAVA 17
-
-- You no longer need to manually add `ProGuard rules` to the sdk，`ProGuard rules` is built into the sdk
-
-- Add features to meet local regulatory requirements
-
-- Some Bug fixes
-
-## 5.8.0-a3 Release Notes（2023.11.15）
-
-- New API: ICameraStreamManager.setKeepAliveDecoding(bool).
-> If this API is set to false and there is no any Surface, ReceiveStreamListener and CameraFrameListener, the decoder pauses to reduce the background performance and battery consumption. However, it increases the latency of the first camera data transmission. If this API is set to true, the decoder continues working, increasing the background performance and power consumption, and reduces the latency of the first camera data transmission.. The default value is false.
-
-- New API: ICameraStreamManager.setPriorityEnsureFrameRate(bool).
-> If this API is set to true, frame rate is prioritized. When the stream signal is weak or the interference is strong, the frame rate of video stream transmission is prioritized over the quality. The advantage is the frame rate is relatively stable, but screen flicker might occur. If this API is set to false, the quality is prioritized, and frame in bad quality will be discarded. The default value is false.
-
-- Optimized decoding performance under multiple payloads.
-
-- Optimized the loading speed of video stream transmission.
-
-- No need to manually add dependencies: 'com.iqiyi.xcrash:xcrash-android-lib:3.1.0'
-
-## 5.8.0-a2 Release Notes（2023.11.03）
-
-- Support camera stream management class: ICameraStreamManager.
-> **Note:**
-> IVideoStreamManager will be deprecated starting from MSDK 5.8.0. Please use ICameraStreamManager to implement video stream management related functions.
-> The ProGuard rules for MSDK v5.8.0 alpha have been changed. Please make sure you have synchronized your project with sample.pro file.
-> This Alpha version requires manual addition of dependencies:com.iqiyi.xcrash:xcrash-android-lib:3.1.0
+- Fixed the issue of live streaming freezing.
+- Fixed the issue of Mini 3 and Mini 3 Pro not being able to take off in the United States.
 
 ## Offline Documentation
 
@@ -67,12 +21,11 @@
 
 ## AAR Explanation
 
-> **Notice:** sdkVersion = 5.8.0-a6
+> **Notice:** sdkVersion = 5.9.1-alpha
 
 | SDK package  <div style="width: 150pt">  | Explanation  <div style="width: 200pt">   | How to use <div style="width: 300pt">|
 | :---------------: | :-----------------:  | :---------------: |
-|     dji-sdk-v5-aircraft-alpha      | Aircraft main package, which provides support for MSDK to control the aircraft. | implementation 'com.dji:dji-sdk-v5-aircraft-alpha:{sdkVersion}' |
-| dji-sdk-v5-aircraft-provided-alpha | Aircraft compilation package, which provides interfaces related to the aircraft package. | compileOnly 'com.dji:dji-sdk-v5-aircraft-provided-alpha:{sdkVersion}' |
+|     dji-sdk-v5-aircraft-alpha      | Aircraft main package, which provides support for MSDK to control the aircraft. | impßge. | compileOnly 'com.dji:dji-sdk-v5-aircraft-provided-alpha:{sdkVersion}' |
 | dji-sdk-v5-networkImp-alpha | Network library package, which provides network connection ability for MSDK. Without this dependency, all network functions of MSDK will not work, but the interfaces of hardware control can be used normally. | runtimeOnly 'com.dji:dji-sdk-v5-networkImp-alpha:{sdkVersion}' |
 
 - If only the aircraft product is in need to support, please use:
