@@ -1194,5 +1194,4 @@
     <string name="uxsdk_hdmi_system_setting_mode_same">Duplicar pantalla</string>
     <string name="uxsdk_hdmi_system_setting_mode_fpv">Vista de cámara</string>
     <string name="uxsdk_hdmi_system_setting_mode_camera">Vista de cámara limpia</string>
-    <string name="uxsdk_mapbox_access_token">sk.eyJ1IjoiZmVlbGZlbmciLCJhIjoiY2x3MG9kaHMyMDNibjJqcXM1ajh2b3RodiJ9.PnmnC5UnX742R1JD7TphrQ</string>
 </resources>

@@ -375,7 +375,7 @@ public class MapWidget extends ConstraintLayoutWidget<Object> implements View.On
                 // removed
                 break;
             case MAPLIBRE:
-                initMapLibreMap(accessToken, null);
+                initMapLibreMap(getContext(), null);
                 break;
             case GOOGLE:
                 initGoogleMap(null);
@@ -866,10 +866,10 @@ public class MapWidget extends ConstraintLayoutWidget<Object> implements View.On
      *
      * @param listener          The OnMapReadyListener which will invoke the onMapReady method when the map has finished
      *                          initializing.
-     * @param mapboxAccessToken The API access token from Mapbox.
+     * @param context The API access context from Mapbox.
      */
-    public void initMapLibreMap(@NonNull String mapboxAccessToken, @Nullable final OnMapReadyListener listener) {
-        Mapkit.mapboxAccessToken(mapboxAccessToken);
+    public void initMapLibreMap(@NonNull Context context, @Nullable final OnMapReadyListener listener) {
+        Mapkit.init(context);
         mapView = new MaplibreProvider().dispatchMapViewRequest(getContext(), null);
         addView((ViewGroup) mapView, 0);
         mapView.getDJIMapAsync(map -> {

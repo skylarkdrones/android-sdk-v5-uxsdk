@@ -14,6 +14,7 @@ android {
         versionName "1.0"
         manifestPlaceholders["API_KEY"] = project.AIRCRAFT_API_KEY
         manifestPlaceholders["GMAP_API_KEY"] = project.GMAP_API_KEY
+        manifestPlaceholders["MAPLIBRE_TOKEN"] = project.MAPLIBRE_TOKEN
         ndk {
             abiFilters 'arm64-v8a'
         }
@@ -34,12 +35,10 @@ android {
             minifyEnabled true
             shrinkResources false
             signingConfig signingConfigs.release
-            buildConfigField "String", "MAPLIBRE_TOKEN", MAPLIBRE_TOKEN
         }
         debug {
             minifyEnabled false
             shrinkResources false
-            buildConfigField "String", "MAPLIBRE_TOKEN", MAPLIBRE_TOKEN
         }
     }
 

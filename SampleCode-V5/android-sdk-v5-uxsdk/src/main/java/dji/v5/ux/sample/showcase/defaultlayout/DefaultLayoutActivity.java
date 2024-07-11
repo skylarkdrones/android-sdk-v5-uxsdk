@@ -168,7 +168,7 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         secondaryFPVWidget.setSurfaceViewZOrderMediaOverlay(true);
 
 
-        mapWidget.initMapLibreMap(getString(R.string.uxsdk_mapbox_access_token), map -> {
+        mapWidget.initMapLibreMap(getApplicationContext(), map -> {
             DJIUiSettings uiSetting = map.getUiSettings();
             if (uiSetting != null) {
                 uiSetting.setZoomControlsEnabled(false);//hide zoom widget

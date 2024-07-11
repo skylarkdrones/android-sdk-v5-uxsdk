@@ -683,7 +683,7 @@ class WayPointV3Fragment : DJIFragment() {
     }
 
     private fun createMapView(savedInstanceState: Bundle?) {
-        map_widget.initMapLibreMap(BuildConfig.MAPLIBRE_TOKEN){
+        map_widget.initMapLibreMap(requireContext()){
             it.setMapType(DJIMap.MapType.NORMAL)
         }
         map_widget.onCreate(savedInstanceState) //需要再init后调用否则Amap无法显示
