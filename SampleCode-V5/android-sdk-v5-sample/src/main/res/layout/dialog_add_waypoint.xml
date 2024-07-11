@@ -32,7 +32,7 @@
             <EditText android:id="@+id/et_height"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text= "100"
+                android:text= "50"
                 android:inputType="number"
                 android:textSize="18sp" />
 

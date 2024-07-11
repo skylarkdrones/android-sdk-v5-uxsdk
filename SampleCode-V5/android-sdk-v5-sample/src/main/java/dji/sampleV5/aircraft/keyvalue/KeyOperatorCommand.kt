@@ -16,7 +16,7 @@ import dji.v5.utils.common.LogUtils
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.CompletableEmitter
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.lang.StringBuilder
+import java.io.File
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -202,14 +202,12 @@ abstract class KeyOperatorCommand(
         }
     }
 
-    fun saveResult(content: String , saveType : Boolean, append : Boolean) {
-        var filePath : String
+    fun saveResult(content: String, saveType: Boolean, append: Boolean) {
+        var filePath: String
         if (saveType) {
-            filePath  = DiskUtil.getExternalCacheDirPath(ContextUtil.getContext(),
-                    "keycheck/${getTAG()}Success.txt")
+            filePath = LogUtils.getLogPath() + "keycheck/${getTAG()}Success.txt"
         } else {
-            filePath  = DiskUtil.getExternalCacheDirPath(ContextUtil.getContext(),
-                "keycheck/${getTAG()}Failed.txt")
+            filePath = LogUtils.getLogPath() + "keycheck/${getTAG()}Failed.txt"
         }
         FileUtils.writeFile(filePath, content, append)
     }

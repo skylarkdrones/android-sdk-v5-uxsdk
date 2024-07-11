@@ -20,17 +20,4 @@ class FlightRecordVM : DJIViewModel() {
     fun getFlyClogPath(): String {
         return FlightLogManager.getInstance().flyClogPath
     }
-
-    fun openFileChooser( path:String , context : Context?) {
-
-        val uri = Uri.parse("content://com.android.externalstorage.documents/document/primary:$path")
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "*/*"
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI,uri)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-        context?.startActivity(
-            Intent.createChooser(intent, "Log Path"))
-    }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.models.FlightRecordVM
+import dji.sampleV5.aircraft.util.Helper
 import dji.v5.utils.common.DiskUtil
 import kotlinx.android.synthetic.main.frag_flight_record_page.*
 
@@ -46,7 +47,7 @@ class FlightRecordFragment : DJIFragment() {
                 return@setOnClickListener
             }
             var  uriPath = flightRecordPath.substring(DiskUtil.SDCARD_ROOT.length + 1 , flightRecordPath.length - 1).replace("/" , "%2f")
-            flightRecordVM.openFileChooser(uriPath , activity)
+            Helper.openFileChooser(uriPath , activity)
 
         }
 
@@ -58,7 +59,7 @@ class FlightRecordFragment : DJIFragment() {
             var uriPath =
                 flyclogPath.substring(DiskUtil.SDCARD_ROOT.length + 1, flyclogPath.length - 1)
                     .replace("/", "%2f")
-            flightRecordVM.openFileChooser(uriPath, activity)
+            Helper.openFileChooser(uriPath, activity)
         }
     }
 }

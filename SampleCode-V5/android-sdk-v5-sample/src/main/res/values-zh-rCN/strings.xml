@@ -62,7 +62,7 @@
     <string name="item_fly_safe_title">限飞</string>
     <string name="item_fly_safe_description">演示如何使用限飞相关功能</string>
 
-    <string name="item_data_protection_title">隐私保护</string>
+    <string name="item_data_protection_title">数据保护</string>
     <string name="item_data_protection_description">演示如何使用隐私保护相关功能</string>
 
     <string name="item_simulator_title">模拟器</string>
@@ -70,7 +70,7 @@
     <string name="btn_enable_simulator">打开飞行模拟器</string>
     <string name="btn_disable_simulator">关闭飞行模拟器</string>
     <string name="btn_update_areacode">更新国家码</string>
-
+    <string name="btn_quick_simulator_area">快速选择模拟地区</string>
 
     <string name="btn_init_msdk">Init MSDK</string>
     <string name="btn_unInit_msdk">UnInit MSDK</string>
@@ -142,8 +142,10 @@
 
     <!-- Data Protection -->
     <string name="switch_product_improvement">用户体验改进计划</string>
+    <string name="switch_msdk_log">MSDK日志开关</string>
     <string name="switch_product_improvement_on">同意</string>
     <string name="switch_product_improvement_off">不同意</string>
+    <string name="clear_msdk_log">清除MSDK日志</string>
 
     <!--Megaphone-->
     <string name="btn_start_audio_mode">TTS</string>
@@ -478,4 +480,9 @@
     <string name="item_look_at_title">Look At</string>
     <string name="item_look_at_description">演示如何使用Look At相关功能</string>
 
+    <!-- app silently upgrade preview -->
+    <string name="item_app_silently_upgrade_title">APP静默升级</string>
+    <string name="item_app_silently_upgrade_description">演示如何使用APP静默升级相关功能</string>
+    <string name="btn_silently_upgrade_package">设置静默升级的APP包名</string>
+    <string name="btn_install_test_app">安装测试APP</string>
 </resources>

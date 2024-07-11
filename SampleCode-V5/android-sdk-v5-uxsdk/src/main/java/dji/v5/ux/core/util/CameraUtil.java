@@ -340,26 +340,6 @@ public final class CameraUtil {
         }
     }
 
-
-    public static ComponentIndexType getCameraIndex(@Nullable PhysicalDevicePosition devicePosition) {
-        if (devicePosition == null) {
-            return ComponentIndexType.UNKNOWN;
-        }
-        switch (devicePosition) {
-            case PORTSIDE:
-                return ComponentIndexType.LEFT_OR_MAIN;
-            case STARBOARD:
-                return ComponentIndexType.RIGHT;
-            case UPSIDE:
-                return ComponentIndexType.UP;
-            case NOSE:
-                return ComponentIndexType.FPV;
-            case UNKNOWN:
-            default:
-                return ComponentIndexType.UNKNOWN;
-        }
-    }
-
     public static boolean isPictureMode(CameraFlatMode flatCameraMode) {
         return flatCameraMode == CameraFlatMode.VIDEO_TIMELAPSE
                 || flatCameraMode == CameraFlatMode.PHOTO_AEB

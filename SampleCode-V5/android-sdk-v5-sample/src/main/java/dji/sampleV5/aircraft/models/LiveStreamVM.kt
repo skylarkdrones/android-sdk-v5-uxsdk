@@ -112,6 +112,10 @@ class LiveStreamVM : DJIViewModel() {
         streamManager.liveStreamQuality = liveStreamQuality
     }
 
+    fun setLiveStreamScaleType(scaleType: ICameraStreamManager.ScaleType) {
+        streamManager.liveStreamScaleType = scaleType
+    }
+
     fun setLiveVideoBitRateMode(bitRateMode: LiveVideoBitrateMode) {
         streamManager.liveVideoBitrateMode = bitRateMode
     }

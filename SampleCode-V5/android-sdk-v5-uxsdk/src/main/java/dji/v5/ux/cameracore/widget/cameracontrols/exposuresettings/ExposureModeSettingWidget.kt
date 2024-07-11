@@ -6,15 +6,13 @@ import android.view.View
 import dji.sdk.keyvalue.value.camera.CameraExposureMode
 import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
-import dji.v5.utils.common.LogUtils
 import dji.v5.ux.R
 import dji.v5.ux.core.base.DJISDKModel
 import dji.v5.ux.core.base.ICameraIndex
 import dji.v5.ux.core.base.SchedulerProvider
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
-import dji.v5.ux.core.util.RxUtil
-import dji.v5.ux.core.util.SettingDefinitions
+import dji.v5.ux.core.util.UxErrorHandle
 import io.reactivex.rxjava3.functions.Action
 import kotlinx.android.synthetic.main.uxsdk_widget_exposure_mode_setting.view.*
 
@@ -103,7 +101,7 @@ open class ExposureModeSettingWidget @JvmOverloads constructor(
         addDisposable(
             widgetModel.setExposureMode(exposureMode)
                 .observeOn(SchedulerProvider.ui())
-                .subscribe(Action { }, RxUtil.errorConsumer({
+                .subscribe(Action { }, UxErrorHandle.errorConsumer({
                     restoreToCurrentExposureMode()
                 }, this.toString(), "setExposureMode: "))
         )

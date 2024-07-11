@@ -41,7 +41,6 @@ class MSDKManagerVM : ViewModel() {
 
             override fun onInitProcess(event: DJISDKInitEvent, totalProcess: Int) {
                 lvInitProcess.postValue(Pair(event, totalProcess))
-
                 // Don't forget to call the registerApp()
                 if (event == DJISDKInitEvent.INITIALIZE_COMPLETE) {
                     SDKManager.getInstance().registerApp()

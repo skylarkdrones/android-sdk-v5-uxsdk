@@ -328,11 +328,6 @@
     </declare-styleable>
 
     <declare-styleable name="FPVWidget">
-        <attr name="uxsdk_videoChannelType" format="enum">
-            <enum name="primaryStreamChannel" value="0" />
-            <enum name="secondaryStreamChannel" value="1" />
-            <enum name="extendedStreamChannel" value="2" />
-        </attr>
         <attr name="uxsdk_sourceCameraNameVisibility" format="boolean" />
         <attr name="uxsdk_sourceCameraSideVisibility" format="boolean" />
         <attr name="uxsdk_cameraNameTextAppearance" format="reference" />

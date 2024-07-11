@@ -55,8 +55,6 @@ dependencies {
     api deps.maplibreAnotation
     api deps.maplibreTurf
     api deps.maplibreSdk
-    api deps.amap3DMap
-    api deps.amapSearch
 
     api deps.playservicesplaces
     api deps.playservicesmaps

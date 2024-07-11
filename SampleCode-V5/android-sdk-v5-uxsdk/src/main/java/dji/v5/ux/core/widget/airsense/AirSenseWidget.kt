@@ -68,7 +68,7 @@ import dji.v5.ux.core.widget.airsense.AirSenseWidget.ModelState
 import dji.v5.ux.core.widget.airsense.AirSenseWidget.ModelState.*
 import dji.v5.ux.core.widget.airsense.AirSenseWidget.UIState.*
 import dji.v5.ux.core.widget.airsense.AirSenseWidgetModel.AirSenseState
-import dji.v5.ux.core.util.RxUtil
+import dji.v5.ux.core.util.UxErrorHandle
 
 /**
  * Widget that displays an icon representing whether there are any aircraft nearby and how likely
@@ -386,7 +386,7 @@ open class AirSenseWidget @JvmOverloads constructor(
         if (!isInEditMode) {
             addDisposable(widgetModel.airSenseState.firstOrError()
                     .observeOn(SchedulerProvider.ui())
-                    .subscribe(Consumer { this.updateIcon(it) }, RxUtil.logErrorConsumer(TAG, "Update Icon ")))
+                    .subscribe(Consumer { this.updateIcon(it) }, UxErrorHandle.logErrorConsumer(TAG, "Update Icon ")))
         }
     }
     //endregion

@@ -18,7 +18,7 @@ import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.ui.HorizontalSeekBar
 import dji.v5.ux.core.util.AudioUtil
 import dji.v5.ux.core.util.CameraUtil
-import dji.v5.ux.core.util.RxUtil
+import dji.v5.ux.core.util.UxErrorHandle
 import io.reactivex.rxjava3.functions.Action
 import kotlinx.android.synthetic.main.uxsdk_widget_iso_ei_setting.view.*
 
@@ -332,7 +332,7 @@ open class ISOAndEISettingWidget @JvmOverloads constructor(
 
     private fun updateISOToCamera(iso: CameraISO) {
         addDisposable(
-            widgetModel.setISO(iso).observeOn(SchedulerProvider.ui()).subscribe(Action { }, RxUtil.errorConsumer({
+            widgetModel.setISO(iso).observeOn(SchedulerProvider.ui()).subscribe(Action { }, UxErrorHandle.errorConsumer({
                 seekbar_iso.restorePreviousProgress()
             }, this.toString(), "updateISOToCamera: "))
         )
@@ -340,7 +340,7 @@ open class ISOAndEISettingWidget @JvmOverloads constructor(
 
     private fun updateEIToCamera(ei: Int) {
         addDisposable(
-            widgetModel.setEI(EIType.find(ei)).observeOn(SchedulerProvider.ui()).subscribe(Action { }, RxUtil.errorConsumer({
+            widgetModel.setEI(EIType.find(ei)).observeOn(SchedulerProvider.ui()).subscribe(Action { }, UxErrorHandle.errorConsumer({
                 seekbar_iso.restorePreviousProgress()
             }, this.toString(), "updateEIToCamera: "))
         )

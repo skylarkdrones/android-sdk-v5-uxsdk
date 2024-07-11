@@ -57,7 +57,7 @@ class FlySafeFragment : DJIFragment() {
     var lancher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         result?.apply {
             var uri = data?.data
-            var path = DocumentUtil.getPath(requireContext() , uri);
+            var path = DocumentUtil.getPath(requireContext(), uri);
             flySafeVm.pushFlySafeDynamicDatabaseToAircraftAndApp(path)
             ToastUtils.showToast("User Database :" + path)
         }
@@ -84,7 +84,7 @@ class FlySafeFragment : DJIFragment() {
                 builder.append(COUNT_DOWN).append(it.countdown).append("\n")
                 builder.append(DESCRIPTION).append(it.description).append("\n")
                 builder.append(CE_INFO).append(":\n")
-                it.flyZoneInformation.forEach{
+                it.flyZoneInformation.forEach {
                     builder.append(it.lowerLimit).append("\n")
                     builder.append(it.upperLimit).append("\n")
                 }
@@ -126,7 +126,7 @@ class FlySafeFragment : DJIFragment() {
             sysn_and_import_info.text = "Progress:${it.importAndSyncProgress} : ${it.error?.description()}"
         }
 
-        flySafeVm.dataBaseInfo.observe(viewLifecycleOwner){
+        flySafeVm.dataBaseInfo.observe(viewLifecycleOwner) {
             if (it.component == FlySafeDatabaseComponent.MSDK) {
                 database_info_sdk.text = "MSDK:Mode:${it.upgradeMode} ${it.dataBaseName} time:${it.dataBaseTime} size:${it.dataBaseSize} "
             } else {
@@ -135,7 +135,7 @@ class FlySafeFragment : DJIFragment() {
 
         }
 
-        flySafeVm.dataUpgradeState.observe(viewLifecycleOwner){
+        flySafeVm.dataUpgradeState.observe(viewLifecycleOwner) {
             update_state.text = "Upgrade State:${it.name}"
         }
 
@@ -150,9 +150,7 @@ class FlySafeFragment : DJIFragment() {
             map.setMapType(DJIMap.MapType.NORMAL)
         }
 
-
-            map_widget.initAMap(onMapReadyListener)
-
+        map_widget.initMapLibreMap(BuildConfig.MAPLIBRE_TOKEN , onMapReadyListener)
         map_widget.onCreate(savedInstanceState) //需要再init后调用否则Amap无法显示
     }
 
@@ -246,17 +244,27 @@ class FlySafeFragment : DJIFragment() {
             flySafeVm.unlockAllEnhancedWarningFlyZone()
         }
 
-        btn_import.setOnClickListener{
+        btn_import.setOnClickListener {
             openFileFolder()
         }
-        btn_sync.setOnClickListener{
+
+        btn_test_import_available.setOnClickListener {
+            flySafeVm.pushAvailableTestFlySafeDynamicDatabaseToApp()
+        }
+
+        btn_test_import_unavailable.setOnClickListener {
+            flySafeVm.pushUnAvailableTestFlySafeDynamicDatabaseToApp()
+        }
+
+        btn_sync.setOnClickListener {
             flySafeVm.syncFlySafeMSDKDatabaseToAircraft()
         }
 
-        importMode.addOnItemSelectedListener(object: DescSpinnerCell.OnItemSelectedListener {
+        importMode.addOnItemSelectedListener(object : DescSpinnerCell.OnItemSelectedListener {
             override fun onItemSelected(position: Int) {
                 flySafeVm.setFlySafeDynamicDatabaseUpgradeMode(FlySafeDatabaseUpgradeMode.find(position))
-            }})
+            }
+        })
     }
 
     private fun showFlySafeNotification(infoExtend: (builder: StringBuilder) -> Unit) {
@@ -292,6 +300,7 @@ class FlySafeFragment : DJIFragment() {
                     sb.append("flyZoneIDs: " + JsonUtil.toJson(info.flyZoneIDs))
                     sb.append("\n")
                 }
+
                 FlySafeLicenseType.CIRCLE_UNLOCK_AREA -> {
                     sb.append("cylinderLatitude: " + info.cylinderLatitude)
                     sb.append("\n")
@@ -302,22 +311,27 @@ class FlySafeFragment : DJIFragment() {
                     sb.append("cylinderHeight: " + info.cylinderHeight)
                     sb.append("\n")
                 }
+
                 FlySafeLicenseType.COUNTRY_UNLOCK -> {
                     sb.append("countryId: " + info.countryId)
                     sb.append("\n")
                 }
+
                 FlySafeLicenseType.PARAMETER_CONFIGURATION -> {
                     sb.append("limitedHeight: " + info.limitedHeight)
                     sb.append("\n")
                 }
+
                 FlySafeLicenseType.PENTAGON_UNLOCK_AREA -> {
                     sb.append("polygonPoints: " + JsonUtil.toJson(info.polygonPoints))
                     sb.append("\n")
                 }
+
                 FlySafeLicenseType.RID_UNLOCK -> {
                     sb.append("ridUnlockType: " + info.ridUnlockType)
                     sb.append("\n")
                 }
+
                 else -> {
                     // do nothing
                 }
@@ -331,7 +345,8 @@ class FlySafeFragment : DJIFragment() {
         return sb
     }
 
-    private fun showFlyZoneInformation(flyZoneInformation: List<FlyZoneInformation>) {
+    private fun showFlyZoneInformation(flyZoneInformation: MutableList<FlyZoneInformation>) {
+        flySafeVm.sortFlyZonesByDistanceFromAircraft(flyZoneInformation)
         val sb = StringBuffer()
         sb.append("\n")
         sb.append("-- Fly Zone Information --\n")
@@ -351,7 +366,7 @@ class FlySafeFragment : DJIFragment() {
         fly_zone_info.text = sb
     }
 
-    private fun openFileFolder(){
+    private fun openFileFolder() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
         intent.addCategory(Intent.CATEGORY_OPENABLE)

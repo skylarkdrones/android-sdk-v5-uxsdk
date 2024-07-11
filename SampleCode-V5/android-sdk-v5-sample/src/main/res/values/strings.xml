@@ -135,8 +135,10 @@ More refer to the release notes." </string>
 
     <!-- Data Protection -->
     <string name="switch_product_improvement">Product Improvement Project</string>
+    <string name="switch_msdk_log">MSDK Log Enable</string>
     <string name="switch_product_improvement_on">Agree</string>
     <string name="switch_product_improvement_off">Disagree</string>
+    <string name="clear_msdk_log">Clear MSDK Log</string>
 
     <!--Megaphone-->
     <string name="btn_start_audio_mode">Audio Record</string>
@@ -161,7 +163,8 @@ More refer to the release notes." </string>
     <string name="item_simulator_description">Demonstrate how to use the Simulator function</string>
     <string name="btn_enable_simulator">Enable Simulator</string>
     <string name="btn_disable_simulator">Disable Simulator</string>
-    <string name="btn_update_areacode">UpdateAreaCode</string>
+    <string name="btn_update_areacode">Update AreaCode</string>
+    <string name="btn_quick_simulator_area">Quick Simulator Area</string>
 
     <string name="item_upgrade_title">Upgrade</string>
     <string name="item_upgrade_description">Demonstrate how to use the Upgrade function</string>
@@ -386,7 +389,7 @@ More refer to the release notes." </string>
 
     <!-- Log Info -->
     <string name="btn_get_latest_log_info">Update Crash Log Info</string>
-    <string name="item_log_info_title">Crash Log Info </string>
+    <string name="item_log_info_title">Crash Log Info</string>
     <string name="item_log_info_description">Demonstrate Crash Log Info functions</string>
     <string name="btn_test_java_crash">Test Java Crash</string>
     <string name="btn_test_native_crash">Test Native Crash</string>
@@ -476,4 +479,9 @@ More refer to the release notes." </string>
     <string name="item_look_at_title">Look At</string>
     <string name="item_look_at_description">Demonstrate how to use look at</string>
 
+    <!-- app silently upgrade preview -->
+    <string name="item_app_silently_upgrade_title">APP Silently Upgrade</string>
+    <string name="item_app_silently_upgrade_description">Demonstrate APP Silently Upgrade functions</string>
+    <string name="btn_silently_upgrade_package">Set Silently Upgrade Package</string>
+    <string name="btn_install_test_app">Install Test App</string>
 </resources>

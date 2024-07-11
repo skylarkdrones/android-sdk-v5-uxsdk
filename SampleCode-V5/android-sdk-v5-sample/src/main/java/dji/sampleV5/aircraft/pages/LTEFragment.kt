@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.data.QuickTestConfig
 import dji.sampleV5.aircraft.models.LTEVM
 import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
 import dji.sampleV5.aircraft.util.Helper
@@ -60,9 +61,10 @@ class LTEFragment : DJIFragment() {
             lteVm.updateLTEAuthenticationInfo()
         }
         btn_get_lte_authentication_verification_code.setOnClickListener {
+            val cacheInfo = QuickTestConfig.getCacheLTEAuthenticationInfo()
             KeyValueDialogUtil.showInputDialog(
-                activity, "(PhoneAreacode,PhoneNumber)",
-                "86,12345678900", "", false
+                activity, "(PhoneAreaCode,PhoneNumber)",
+                "${cacheInfo?.phoneAreaCode},${cacheInfo?.phoneNumber}", "", false
             ) {
                 it?.split(",")?.apply {
                     if (this.size < 2) {
@@ -70,13 +72,15 @@ class LTEFragment : DJIFragment() {
                         return@showInputDialog
                     }
                     lteVm.getLTEAuthenticationVerificationCode(this[0], this[1])
+                    QuickTestConfig.updateCacheLTEAuthenticationInfo(QuickTestConfig.LTEAuthCacheInfo(this[0], this[1]))
                 }
             }
         }
         btn_start_lte_authentication.setOnClickListener {
+            val cacheInfo = QuickTestConfig.getCacheLTEAuthenticationInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "(PhoneAreacode,PhoneNumber,VerificationCode)",
-                "86,12345678900,123456", "", false
+                "${cacheInfo?.phoneAreaCode},${cacheInfo?.phoneNumber},${cacheInfo?.verificationCode}", "", false
             ) {
                 it?.split(",")?.apply {
                     if (this.size < 3) {
@@ -84,6 +88,7 @@ class LTEFragment : DJIFragment() {
                         return@showInputDialog
                     }
                     lteVm.startLTEAuthentication(this[0], this[1], this[2])
+                    QuickTestConfig.updateCacheLTEAuthenticationInfo(QuickTestConfig.LTEAuthCacheInfo(this[0], this[1], this[2]))
                 }
             }
         }
@@ -97,9 +102,10 @@ class LTEFragment : DJIFragment() {
             lteVm.getLTEEnhancedTransmissionType()
         }
         btn_set_lte_ac_privatization_server_info.setOnClickListener {
+            val cacheInfo = QuickTestConfig.getCacheACLTEPrivatizationServerInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "AC Privatization Server Info",
-                JsonUtil.toJson(lteVm.lteLinkInfo.value?.aircraftPrivatizationServerInfo), "", false
+                JsonUtil.toJson(cacheInfo), "", false
             ) {
                 it?.let {
                     val info = JsonUtil.toBean(it, LTEPrivatizationServerInfo::class.java)
@@ -108,13 +114,15 @@ class LTEFragment : DJIFragment() {
                         return@showInputDialog
                     }
                     lteVm.setLTEAcPrivatizationServerMsg(info)
+                    QuickTestConfig.updateCacheACLTEPrivatizationServerInfo(info)
                 }
             }
         }
         btn_set_lte_rc_privatization_server_info.setOnClickListener {
+            val cacheInfo = QuickTestConfig.getCacheRCLTEPrivatizationServerInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "RC Privatization Server Info",
-                JsonUtil.toJson(lteVm.lteLinkInfo.value?.remoteControllerPrivatizationServerInfo), "", false
+                JsonUtil.toJson(cacheInfo), "", false
             ) {
                 it?.let {
                     val info = JsonUtil.toBean(it, LTEPrivatizationServerInfo::class.java)
@@ -123,6 +131,7 @@ class LTEFragment : DJIFragment() {
                         return@showInputDialog
                     }
                     lteVm.setLTERcPrivatizationServerMsg(info)
+                    QuickTestConfig.updateCacheRCLTEPrivatizationServerInfo(info)
                 }
             }
         }

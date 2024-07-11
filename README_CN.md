@@ -1,4 +1,4 @@
-# DJI Mobile SDK for Android V5 最新Alpha版本 5.9.1-alpha
+# DJI Mobile SDK for Android V5 最新Alpha版本 5.10.0-a2
 
 [English Version](README.md)
 
@@ -10,10 +10,31 @@
 4. Alpha版本的所有改动都会同步到正式版本，进行严格的发布测试后对外发布。
 5. 不建议开发者直接集成MSDK Alpha版本作为正式版本进行发布。
 
-## 5.9.1-alpha发布记录（2024.06.05）
+## 发布日期
+2024.07.11
 
-- 修复直播卡顿的问题。
-- 修复Mini 3和Mini 3 Pro机型在美国无法起飞的问题。
+## 发布记录
+- 支持 MSDK 日志功能：`enableMSDKLog`
+
+### Bug 修复
+- 直播功能调用 `LiveStreamStatus` 获取的分辨率一直为-1: 已修复
+- 在 Mini 3 和 Mini 3 Pro飞行器上，在欧盟地区偶现 MSDK 启动崩溃: 已修复
+- 在 Mavic 3M 和  Mavic 3T 飞行器上，调用 `deleteMediaFiles` 删除照片会失败: 已修复
+- 在 Mavic 3M 飞行器上，`BatterySettingWidget` 没有更新数据: 已修复
+- 在 Mavic 3T 飞行器上，分屏模式中红外画面在录像模式会变小: 已修复
+- 在 Mavic 3T 喊话器上，DJI Pilot 生成的 opus 音频文件无法在MSDK中播放: 已修复
+- 在 Mavic 3T 飞行器上，`MediaFile.getResolution` 无法获取分辨率: 已修复
+- 在 Mavic 3E 飞行器上，在默认演示页面按遥控器物理按键拍照没有生效: 已修复
+- 在 Matrice 30T 飞行器上，`KeyPhotoSize` 无法通过设置镜头类型获取照片尺寸: 已修复
+- 在 Matrice 30T 飞行器上，在默认演示页面 `LensControlWidget` 控件没有正常显示: 已修复
+- 在 Matrice 30T 飞行器上，在默认演示页面 `CameraVisiblePanelWidget` 控件没有正常显示: 已修复
+- 在 Matrice 30T 飞行器上，在默认演示页面 `CameraControlsWidget` 控件没有正常显示: 已修复
+- 在 Matrice 30T 飞行器上，在默认演示页面 `HorizontalSituationIndicatorWidget` 控件没有正常显示: 已修复
+- 在 Matrice 350 RTK 飞行器上，关闭避障开关后无法获取水平避障数据: 已修复
+- 在 Matrice 350 RTK 飞行器上，`CameraControlsWidget` 控件快速连续点击拍照按键会失败: 已修复
+- 在 Matrice 300 RTK 飞行器上，多次调用暂停接口暂停航线任务后，航线状态变为 `READY`: 已修复
+- 在 Matrice 300 RTK 飞行器上，`CameraKey.KeyVideoResolutionFrameRate`获取分辨率错误: 已修复
+- 在 DJI RC Plus 遥控器上，切换遥控器固件后会提示 `REMOTE_DISCONNECTION`: 已修复
 
 ## 离线文档
 
@@ -21,7 +42,7 @@
 
 ## AAR说明
 
-> **注意：** sdkVersion = 5.9.1-alpha
+> **注意：** sdkVersion = 5.10.0-a2
 
 | SDK包  <div style="width: 150pt">  | 说明  <div style="width: 200pt">   | 使用方式 <div style="width: 300pt">|
 | :---------------: | :-----------------:  | :---------------: |

@@ -94,6 +94,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_unlock_authorization_fly_zone" />
+
             <dji.v5.ux.accessory.DescSpinnerCell
                 android:id="@+id/importMode"
                 android:layout_width="100dp"
@@ -113,12 +114,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/importMode" />
 
             <Button
+                android:id="@+id/btn_test_import_available"
+                style="@style/main_fragment_btn"
+                android:text="测试:导入可用的本地限飞数据"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_import" />
+
+            <Button
+                android:id="@+id/btn_test_import_unavailable"
+                style="@style/main_fragment_btn"
+                android:text="测试:导入不可用的本地限飞数据"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_test_import_available" />
+
+            <Button
                 android:id="@+id/btn_sync"
                 style="@style/main_fragment_btn"
                 android:text="同步数据到飞机"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_import" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_test_import_unavailable" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

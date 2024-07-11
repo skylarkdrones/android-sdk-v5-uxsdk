@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,16 +38,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
-import dji.v5.common.video.channel.VideoChannelState;
-import dji.v5.common.video.channel.VideoChannelType;
-import dji.v5.common.video.interfaces.IVideoChannel;
-import dji.v5.common.video.interfaces.VideoChannelStateChangeListener;
-import dji.v5.common.video.stream.PhysicalDevicePosition;
-import dji.v5.common.video.stream.StreamSource;
 import dji.v5.manager.datacenter.MediaDataCenter;
+import dji.v5.manager.interfaces.ICameraStreamManager;
 import dji.v5.network.DJINetworkManager;
 import dji.v5.network.IDJINetworkStatusListener;
 import dji.v5.utils.common.JsonUtil;
@@ -55,7 +50,6 @@ import dji.v5.ux.R;
 import dji.v5.ux.accessory.RTKStartServiceHelper;
 import dji.v5.ux.cameracore.widget.autoexposurelock.AutoExposureLockWidget;
 import dji.v5.ux.cameracore.widget.cameracontrols.CameraControlsWidget;
-import dji.v5.ux.cameracore.widget.cameracontrols.exposuresettings.ExposureSettingsPanel;
 import dji.v5.ux.cameracore.widget.cameracontrols.lenscontrol.LensControlWidget;
 import dji.v5.ux.cameracore.widget.focusexposureswitch.FocusExposureSwitchWidget;
 import dji.v5.ux.cameracore.widget.focusmode.FocusModeWidget;
@@ -118,20 +112,21 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private TextView gimbalAdjustDone;
     private GimbalFineTuneWidget gimbalFineTuneWidget;
-    private PhysicalDevicePosition lastDevicePosition = PhysicalDevicePosition.UNKNOWN;
+    private ComponentIndexType lastDevicePosition = ComponentIndexType.UNKNOWN;
     private CameraLensType lastLensType = CameraLensType.UNKNOWN;
 
 
     private CompositeDisposable compositeDisposable;
-    private final DataProcessor<CameraSource> cameraSourceProcessor = DataProcessor.create(new CameraSource(PhysicalDevicePosition.UNKNOWN,
+    private final DataProcessor<CameraSource> cameraSourceProcessor = DataProcessor.create(new CameraSource(ComponentIndexType.UNKNOWN,
             CameraLensType.UNKNOWN));
-    private VideoChannelStateChangeListener primaryChannelStateListener = null;
-    private VideoChannelStateChangeListener secondaryChannelStateListener = null;
     private final IDJINetworkStatusListener networkStatusListener = isNetworkAvailable -> {
         if (isNetworkAvailable) {
             LogUtils.d(TAG, "isNetworkAvailable=" + true);
             RTKStartServiceHelper.INSTANCE.startRtkService(false);
         }
+    };
+    private final ICameraStreamManager.AvailableCameraUpdatedListener availableCameraUpdatedListener = availableCameraList -> {
+        runOnUiThread(() -> updateFPVWidgetSource(availableCameraList));
     };
 
     //endregion
@@ -165,17 +160,15 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         mapWidget = findViewById(R.id.widget_map);
 
         initClickListener();
-        MediaDataCenter.getInstance().getVideoStreamManager().addStreamSourcesListener(sources -> runOnUiThread(() -> updateFPVWidgetSource(sources)));
-        primaryFpvWidget.setOnFPVStreamSourceListener((devicePosition, lensType) -> {
-            cameraSourceProcessor.onNext(new CameraSource(devicePosition, lensType));
-        });
+        MediaDataCenter.getInstance().getCameraStreamManager().addAvailableCameraUpdatedListener(availableCameraUpdatedListener);
+        primaryFpvWidget.setOnFPVStreamSourceListener((devicePosition, lensType) -> cameraSourceProcessor.onNext(new CameraSource(devicePosition, lensType)));
 
         //小surfaceView放置在顶部，避免被大的遮挡
         secondaryFPVWidget.setSurfaceViewZOrderOnTop(true);
         secondaryFPVWidget.setSurfaceViewZOrderMediaOverlay(true);
 
-        mapWidget.initAMap(map -> {
-            // map.setOnMapClickListener(latLng -> onViewClick(mapWidget));
+
+        mapWidget.initMapLibreMap(getString(R.string.uxsdk_mapbox_access_token), map -> {
             DJIUiSettings uiSetting = map.getUiSettings();
             if (uiSetting != null) {
                 uiSetting.setZoomControlsEnabled(false);//hide zoom widget
@@ -201,7 +194,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
 
     private void initClickListener() {
         secondaryFPVWidget.setOnClickListener(v -> swapVideoSource());
-        initChannelStateListener();
 
         if (settingWidget != null) {
             settingWidget.setOnClickListener(v -> toggleRightDrawer());
@@ -235,8 +227,7 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mapWidget.onDestroy();
-        MediaDataCenter.getInstance().getVideoStreamManager().clearAllStreamSourcesListeners();
-        removeChannelStateListener();
+        MediaDataCenter.getInstance().getCameraStreamManager().removeAvailableCameraUpdatedListener(availableCameraUpdatedListener);
         DJINetworkManager.getInstance().removeNetworkStatusListener(networkStatusListener);
 
     }
@@ -299,123 +290,106 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         }
     }
 
-    private void updateFPVWidgetSource(List<StreamSource> streamSources) {
-        LogUtils.i(TAG, JsonUtil.toJson(streamSources));
-        if (streamSources == null) {
+    private void updateFPVWidgetSource(List<ComponentIndexType> availableCameraList) {
+        LogUtils.i(TAG, JsonUtil.toJson(availableCameraList));
+        if (availableCameraList == null) {
             return;
         }
 
+        ArrayList<ComponentIndexType> cameraList = new ArrayList<>(availableCameraList);
+
         //没有数据
-        if (streamSources.isEmpty()) {
+        if (cameraList.isEmpty()) {
             secondaryFPVWidget.setVisibility(View.GONE);
             return;
         }
 
         //仅一路数据
-        if (streamSources.size() == 1) {
-            //这里仅仅做Widget的显示与否，source和channel的获取放到widget中
+        if (cameraList.size() == 1) {
+            primaryFpvWidget.updateVideoSource(availableCameraList.get(0));
             secondaryFPVWidget.setVisibility(View.GONE);
             return;
         }
+
+        //大于两路数据
+        ComponentIndexType primarySource = getSuitableSource(cameraList, ComponentIndexType.LEFT_OR_MAIN);
+        primaryFpvWidget.updateVideoSource(primarySource);
+        cameraList.remove(primarySource);
+
+        ComponentIndexType secondarySource = getSuitableSource(cameraList, ComponentIndexType.FPV);
+        secondaryFPVWidget.updateVideoSource(secondarySource);
+
         secondaryFPVWidget.setVisibility(View.VISIBLE);
     }
 
-    private void initChannelStateListener() {
-        IVideoChannel primaryChannel =
-                MediaDataCenter.getInstance().getVideoStreamManager().getAvailableVideoChannel(VideoChannelType.PRIMARY_STREAM_CHANNEL);
-        IVideoChannel secondaryChannel =
-                MediaDataCenter.getInstance().getVideoStreamManager().getAvailableVideoChannel(VideoChannelType.SECONDARY_STREAM_CHANNEL);
-        if (primaryChannel != null) {
-            primaryChannelStateListener = (from, to) -> {
-                StreamSource primaryStreamSource = primaryChannel.getStreamSource();
-                if (VideoChannelState.ON == to && primaryStreamSource != null) {
-                    runOnUiThread(() -> primaryFpvWidget.updateVideoSource(primaryStreamSource, VideoChannelType.PRIMARY_STREAM_CHANNEL));
-                }
-            };
-            primaryChannel.addVideoChannelStateChangeListener(primaryChannelStateListener);
+    private ComponentIndexType getSuitableSource(List<ComponentIndexType> cameraList, ComponentIndexType defaultSource) {
+        if (cameraList.contains(ComponentIndexType.LEFT_OR_MAIN)) {
+            return ComponentIndexType.LEFT_OR_MAIN;
+        } else if (cameraList.contains(ComponentIndexType.RIGHT)) {
+            return ComponentIndexType.RIGHT;
+        } else if (cameraList.contains(ComponentIndexType.UP)) {
+            return ComponentIndexType.UP;
         }
-        if (secondaryChannel != null) {
-            secondaryChannelStateListener = (from, to) -> {
-                StreamSource secondaryStreamSource = secondaryChannel.getStreamSource();
-                if (VideoChannelState.ON == to && secondaryStreamSource != null) {
-                    runOnUiThread(() -> secondaryFPVWidget.updateVideoSource(secondaryStreamSource, VideoChannelType.SECONDARY_STREAM_CHANNEL));
-                }
-            };
-            secondaryChannel.addVideoChannelStateChangeListener(secondaryChannelStateListener);
-        }
+        return defaultSource;
     }
 
-    private void removeChannelStateListener() {
-        IVideoChannel primaryChannel =
-                MediaDataCenter.getInstance().getVideoStreamManager().getAvailableVideoChannel(VideoChannelType.PRIMARY_STREAM_CHANNEL);
-        IVideoChannel secondaryChannel =
-                MediaDataCenter.getInstance().getVideoStreamManager().getAvailableVideoChannel(VideoChannelType.SECONDARY_STREAM_CHANNEL);
-        if (primaryChannel != null) {
-            primaryChannel.removeVideoChannelStateChangeListener(primaryChannelStateListener);
-        }
-        if (secondaryChannel != null) {
-            secondaryChannel.removeVideoChannelStateChangeListener(secondaryChannelStateListener);
-        }
-    }
-
-    private void onCameraSourceUpdated(PhysicalDevicePosition devicePosition, CameraLensType lensType) {
+    private void onCameraSourceUpdated(ComponentIndexType devicePosition, CameraLensType lensType) {
         LogUtils.i(TAG, devicePosition, lensType);
-        if (devicePosition == lastDevicePosition && lensType == lastLensType){
+        if (devicePosition == lastDevicePosition && lensType == lastLensType) {
             return;
         }
         lastDevicePosition = devicePosition;
         lastLensType = lensType;
-        ComponentIndexType cameraIndex = CameraUtil.getCameraIndex(devicePosition);
         updateViewVisibility(devicePosition, lensType);
         updateInteractionEnabled();
         //如果无需使能或者显示的，也就没有必要切换了。
         if (fpvInteractionWidget.isInteractionEnabled()) {
-            fpvInteractionWidget.updateCameraSource(cameraIndex, lensType);
+            fpvInteractionWidget.updateCameraSource(devicePosition, lensType);
             fpvInteractionWidget.updateGimbalIndex(CommonUtils.getGimbalIndex(devicePosition));
         }
         if (lensControlWidget.getVisibility() == View.VISIBLE) {
-            lensControlWidget.updateCameraSource(cameraIndex, lensType);
+            lensControlWidget.updateCameraSource(devicePosition, lensType);
         }
         if (ndviCameraPanel.getVisibility() == View.VISIBLE) {
-            ndviCameraPanel.updateCameraSource(cameraIndex, lensType);
+            ndviCameraPanel.updateCameraSource(devicePosition, lensType);
         }
         if (visualCameraPanel.getVisibility() == View.VISIBLE) {
-            visualCameraPanel.updateCameraSource(cameraIndex, lensType);
+            visualCameraPanel.updateCameraSource(devicePosition, lensType);
         }
         if (autoExposureLockWidget.getVisibility() == View.VISIBLE) {
-            autoExposureLockWidget.updateCameraSource(cameraIndex, lensType);
+            autoExposureLockWidget.updateCameraSource(devicePosition, lensType);
         }
         if (focusModeWidget.getVisibility() == View.VISIBLE) {
-            focusModeWidget.updateCameraSource(cameraIndex, lensType);
+            focusModeWidget.updateCameraSource(devicePosition, lensType);
         }
         if (focusExposureSwitchWidget.getVisibility() == View.VISIBLE) {
-            focusExposureSwitchWidget.updateCameraSource(cameraIndex, lensType);
+            focusExposureSwitchWidget.updateCameraSource(devicePosition, lensType);
         }
         if (cameraControlsWidget.getVisibility() == View.VISIBLE) {
-            cameraControlsWidget.updateCameraSource(cameraIndex, lensType);
+            cameraControlsWidget.updateCameraSource(devicePosition, lensType);
         }
         if (focalZoomWidget.getVisibility() == View.VISIBLE) {
-            focalZoomWidget.updateCameraSource(cameraIndex, lensType);
+            focalZoomWidget.updateCameraSource(devicePosition, lensType);
         }
         if (horizontalSituationIndicatorWidget.getVisibility() == View.VISIBLE) {
-            horizontalSituationIndicatorWidget.updateCameraSource(cameraIndex, lensType);
+            horizontalSituationIndicatorWidget.updateCameraSource(devicePosition, lensType);
         }
     }
 
-    private void updateViewVisibility(PhysicalDevicePosition devicePosition, CameraLensType lensType) {
+    private void updateViewVisibility(ComponentIndexType devicePosition, CameraLensType lensType) {
         //只在fpv下显示
-        pfvFlightDisplayWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.VISIBLE : View.INVISIBLE);
+        pfvFlightDisplayWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.VISIBLE : View.INVISIBLE);
 
         //fpv下不显示
-        lensControlWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        ndviCameraPanel.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        visualCameraPanel.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        autoExposureLockWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        focusModeWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        focusExposureSwitchWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        cameraControlsWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        focalZoomWidget.setVisibility(devicePosition == PhysicalDevicePosition.NOSE ? View.INVISIBLE : View.VISIBLE);
-        horizontalSituationIndicatorWidget.setSimpleModeEnable(devicePosition != PhysicalDevicePosition.NOSE);
+        lensControlWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        ndviCameraPanel.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        visualCameraPanel.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        autoExposureLockWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        focusModeWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        focusExposureSwitchWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        cameraControlsWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        focalZoomWidget.setVisibility(devicePosition == ComponentIndexType.FPV ? View.INVISIBLE : View.VISIBLE);
+        horizontalSituationIndicatorWidget.setSimpleModeEnable(devicePosition != ComponentIndexType.FPV);
 
         //只在部分len下显示
         ndviCameraPanel.setVisibility(CameraUtil.isSupportForNDVI(lensType) ? View.VISIBLE : View.INVISIBLE);
@@ -425,30 +399,24 @@ public class DefaultLayoutActivity extends AppCompatActivity {
      * Swap the video sources of the FPV and secondary FPV widgets.
      */
     private void swapVideoSource() {
-        VideoChannelType primaryVideoChannel = primaryFpvWidget.getVideoChannelType();
-        StreamSource primaryStreamSource = primaryFpvWidget.getStreamSource();
-        VideoChannelType secondaryVideoChannel = secondaryFPVWidget.getVideoChannelType();
-        StreamSource secondaryStreamSource = secondaryFPVWidget.getStreamSource();
+        ComponentIndexType primarySource = primaryFpvWidget.getWidgetModel().getCameraIndex();
+        ComponentIndexType secondarySource = secondaryFPVWidget.getWidgetModel().getCameraIndex();
         //两个source都存在的情况下才进行切换
-        if (secondaryStreamSource != null && primaryStreamSource != null) {
-            primaryFpvWidget.updateVideoSource(secondaryStreamSource, secondaryVideoChannel);
-            secondaryFPVWidget.updateVideoSource(primaryStreamSource, primaryVideoChannel);
+        if (primarySource != ComponentIndexType.UNKNOWN && secondarySource != ComponentIndexType.UNKNOWN) {
+            primaryFpvWidget.updateVideoSource(secondarySource);
+            secondaryFPVWidget.updateVideoSource(primarySource);
         }
     }
 
     private void updateInteractionEnabled() {
-        StreamSource newPrimaryStreamSource = primaryFpvWidget.getStreamSource();
-        fpvInteractionWidget.setInteractionEnabled(false);
-        if (newPrimaryStreamSource != null) {
-            fpvInteractionWidget.setInteractionEnabled(newPrimaryStreamSource.getPhysicalDevicePosition() != PhysicalDevicePosition.NOSE);
-        }
+        fpvInteractionWidget.setInteractionEnabled(primaryFpvWidget.getWidgetModel().getCameraIndex() != ComponentIndexType.FPV);
     }
 
     private static class CameraSource {
-        PhysicalDevicePosition devicePosition;
+        ComponentIndexType devicePosition;
         CameraLensType lensType;
 
-        public CameraSource(PhysicalDevicePosition devicePosition, CameraLensType lensType) {
+        public CameraSource(ComponentIndexType devicePosition, CameraLensType lensType) {
             this.devicePosition = devicePosition;
             this.lensType = lensType;
         }

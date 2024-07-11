@@ -1,8 +1,8 @@
 ext {
     deps = [:]
     //DJI MSDK V5包
-    deps.aircraft = "com.dji:dji-sdk-v5-aircraft-alpha:5.9.1-alpha"
-    deps.aircraftProvided = "com.dji:dji-sdk-v5-aircraft-provided-alpha:5.9.1-alpha"
+    deps.aircraft = "com.dji:dji-sdk-v5-aircraft-alpha:5.10.0-a2"
+    deps.aircraftProvided = "com.dji:dji-sdk-v5-aircraft-provided-alpha:5.10.0-a2"
 
     //三方依赖库
     deps.gson = 'com.google.code.gson:gson:2.9.1'
@@ -11,8 +11,7 @@ ext {
     deps.rx3Kt = 'io.reactivex.rxjava3:rxkotlin:3.0.0'
     deps.sqlcipher = 'net.zetetic:android-database-sqlcipher:4.5.0'
     deps.wire = 'com.squareup.wire:wire-runtime:2.2.0'
-    deps.amap3DMap = 'com.amap.api:3dmap:7.3.0'
-    deps.amapSearch = 'com.amap.api:search:7.3.0'
+
     deps.okhttp3 = 'com.squareup.okhttp3:okhttp:3.14.9'
     deps.leakcanary = 'com.squareup.leakcanary:leakcanary-android:2.11'
     deps.xcrash = 'com.iqiyi.xcrash:xcrash-android-lib:3.1.0'
@@ -23,6 +22,7 @@ ext {
     deps.lottie = 'com.airbnb.android:lottie:3.3.1'//RTK扫描页中使用，用于实现动画效果
     deps.cardview = 'androidx.cardview:cardview:1.0.0'//PopoverView中使用
     deps.material = 'com.google.android.material:material:1.0.0'//AvoidanceShortcutWidget使用
+    deps.lynx = 'com.github.pedrovgs:lynx:1.1.0'// app显示logcat
 
     /*RTK设置页面使用-start*/
     deps.mikepenzCommunityMaterial = "com.mikepenz:community-material-typeface:3.5.95.1-kotlin@aar"

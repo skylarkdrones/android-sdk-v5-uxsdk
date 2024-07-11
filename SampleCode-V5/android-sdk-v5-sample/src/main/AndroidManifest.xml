@@ -12,15 +12,15 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- 自安装使用 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <!-- Google Maps -->
     <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="${GMAP_API_KEY}" />
 
-    <!-- AMaps -->
-    <meta-data
-        android:name="com.amap.api.v2.apikey"
-        android:value="${AMAP_API_KEY}" />
+
 
 
     <uses-feature
@@ -42,6 +42,16 @@
         <meta-data
             android:name="com.dji.sdk.API_KEY"
             android:value="${API_KEY}"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
 
         <activity
             android:name="dji.sampleV5.aircraft.DJIAircraftMainActivity"

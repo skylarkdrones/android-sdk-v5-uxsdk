@@ -74,6 +74,7 @@ import kotlinx.android.synthetic.main.view_mission_setting_home.*
 
 import android.widget.EditText
 import com.dji.wpmzsdk.common.data.HeightMode
+import dji.sampleV5.aircraft.BuildConfig
 import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.sdk.keyvalue.key.KeyTools
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
@@ -681,29 +682,10 @@ class WayPointV3Fragment : DJIFragment() {
         }
     }
 
-
-
-    @IntDef(
-        MapProvider.MAP_AUTO,
-        MapProvider.AMAP_PROVIDER,
-        MapProvider.MAPLIBRE_PROVIDER,
-        MapProvider.GOOGLE_PROVIDER
-    )
-    annotation class MapProvider {
-        companion object {
-            const val MAP_AUTO = 0
-            const val AMAP_PROVIDER = 1
-            const val MAPLIBRE_PROVIDER = 2
-            const val GOOGLE_PROVIDER = 3
-        }
-    }
-
     private fun createMapView(savedInstanceState: Bundle?) {
-        val onMapReadyListener = MapWidget.OnMapReadyListener { map ->
-            map.setMapType(DJIMap.MapType.NORMAL)
+        map_widget.initMapLibreMap(BuildConfig.MAPLIBRE_TOKEN){
+            it.setMapType(DJIMap.MapType.NORMAL)
         }
-        map_widget.initAMap(onMapReadyListener)
-
         map_widget.onCreate(savedInstanceState) //需要再init后调用否则Amap无法显示
     }
 

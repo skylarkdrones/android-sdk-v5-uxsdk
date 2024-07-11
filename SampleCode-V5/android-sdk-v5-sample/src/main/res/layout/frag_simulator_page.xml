@@ -49,6 +49,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_disable_simulator" />
 
+            <Button
+                android:id="@+id/btn_quick_simulator_area"
+                style="@style/main_fragment_btn"
+                android:text="@string/btn_quick_simulator_area"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_set_areacode" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

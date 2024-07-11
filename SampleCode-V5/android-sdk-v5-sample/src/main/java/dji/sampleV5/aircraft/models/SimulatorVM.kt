@@ -1,6 +1,7 @@
 package dji.sampleV5.aircraft.models
 
 import androidx.lifecycle.MutableLiveData
+import dji.sampleV5.aircraft.data.QuickTestConfig
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.manager.aircraft.simulator.InitializationSettings
 import dji.v5.manager.aircraft.simulator.SimulatorManager
@@ -14,6 +15,7 @@ import dji.v5.manager.aircraft.simulator.SimulatorStatusListener
 class SimulatorVM : DJIViewModel() {
 
     val simulatorStateSb = MutableLiveData(StringBuffer())
+    val quickInfo = QuickTestConfig.simulatorAreaList
 
     private val simulatorStateListener = SimulatorStatusListener { state ->
         simulatorStateSb.value?.apply {
@@ -51,15 +53,15 @@ class SimulatorVM : DJIViewModel() {
     }
 
     fun enableSimulator(initializationSettings: InitializationSettings, callback: CommonCallbacks.CompletionCallback) {
-        SimulatorManager.getInstance().enableSimulator(initializationSettings, callback);
+        SimulatorManager.getInstance().enableSimulator(initializationSettings, callback)
     }
 
     fun disableSimulator(callback: CommonCallbacks.CompletionCallback) {
-        SimulatorManager.getInstance().disableSimulator(callback);
+        SimulatorManager.getInstance().disableSimulator(callback)
     }
 
     private fun addSimulatorListener() {
-        SimulatorManager.getInstance().addSimulatorStateListener(simulatorStateListener);
+        SimulatorManager.getInstance().addSimulatorStateListener(simulatorStateListener)
     }
 
     private fun removeSimulatorListener() {
@@ -71,6 +73,6 @@ class SimulatorVM : DJIViewModel() {
     }
 
     fun isSimulatorOn(): Boolean {
-        return SimulatorManager.getInstance().isSimulatorEnabled;
+        return SimulatorManager.getInstance().isSimulatorEnabled
     }
 }

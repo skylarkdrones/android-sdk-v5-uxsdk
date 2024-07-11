@@ -21,8 +21,6 @@ import java.util.*
  * Copyright (c) 2022, DJI All Rights Reserved.
  */
 class UASChinaFragment : DJIFragment() {
-    private val TAG = "UASChinaFragment"
-
     private val uasChinaVM: UASChinaVM by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,6 +30,7 @@ class UASChinaFragment : DJIFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         uasChinaVM.addRealNameRegistrationStatusListener()
+        uasChinaVM.addUASRemoteIDStatusListener()
 
         uasChinaVM.uasRemoteIDStatus.observe(viewLifecycleOwner) {
             updateInfo()
@@ -43,17 +42,18 @@ class UASChinaFragment : DJIFragment() {
         bt_update_real_name_state.setOnClickListener {
             uasChinaVM.updateRealNameRegistrationStateFromUOM()
         }
-
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
         uasChinaVM.removeRealNameRegistrationStatusListener()
+        uasChinaVM.clearRemoteIdStatusListener()
     }
 
     private fun updateInfo() {
         val builder = StringBuilder()
+        builder.append("Uas Remote ID Status:").append(JsonUtil.toJson(uasChinaVM.uasRemoteIDStatus.value))
+        builder.append("\n")
         builder.append("Uas Uom Real Name Status:")
             .append(uasChinaVM.uomRealNameFCStatus.value?.name +getRealNameStatusTip(uasChinaVM.uomRealNameFCStatus.value))
         builder.append("\n")
@@ -83,7 +83,7 @@ class UASChinaFragment : DJIFragment() {
 
     }
 
-    fun isZh(): Boolean {
+    private fun isZh(): Boolean {
         val locale: Locale? = context?.resources?.configuration?.locale
         val language: String? = locale?.language
         return language?.endsWith("zh") ?: false

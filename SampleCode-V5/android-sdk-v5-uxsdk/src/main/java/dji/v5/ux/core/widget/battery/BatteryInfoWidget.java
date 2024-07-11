@@ -235,7 +235,7 @@ public class BatteryInfoWidget extends ConstraintLayoutWidget<Object> {
             batteryHighVoltageSave.setText(R.string.uxsdk_not_a_num);
             batteryHighVoltageSave.setTextColor(ContextCompat.getColor(getContext(), R.color.uxsdk_white));
         }
-        widgetModel.restart();
+
     }
 
     private void updateSerialNumber(String serial) {

@@ -1,12 +1,23 @@
 package dji.sampleV5.aircraft.models
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.content.FileProvider
 import androidx.lifecycle.MutableLiveData
+import dji.sampleV5.aircraft.data.DJIToastResult
 import dji.sampleV5.aircraft.data.FragmentPageItemList
+import dji.sdk.keyvalue.key.RemoteControllerKey
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.ldm.LDMExemptModule
+import dji.v5.et.action
+import dji.v5.et.create
 import dji.v5.manager.SDKManager
 import dji.v5.manager.ldm.LDMManager
+import dji.v5.utils.common.ContextUtil
+import dji.v5.utils.common.DeviceInfoUtil.getPackageName
+import dji.v5.utils.common.FileUtils
+import java.io.File
+
 
 /**
  * Class Description

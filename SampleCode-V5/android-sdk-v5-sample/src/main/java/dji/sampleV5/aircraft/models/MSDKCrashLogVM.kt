@@ -6,6 +6,7 @@ import dji.v5.utils.common.ContextUtil
 import dji.v5.utils.common.DJIExecutor
 import dji.v5.utils.common.DiskUtil
 import dji.v5.utils.common.FileUtils
+import dji.v5.utils.common.LogUtils
 import java.io.File
 
 /**
@@ -34,7 +35,7 @@ class MSDKCrashLogVM : DJIViewModel() {
     private fun loadLatestLog() {
         DJIExecutor.getExecutorFor(DJIExecutor.Purpose.URGENT).execute {
             var log = "N/A"
-            val logDir = DiskUtil.getExternalCacheDirPath(ContextUtil.getContext(), "/CRASH/")
+            val logDir = LogUtils.getCrashLogPath()
             val file = File(logDir)
             val list = FileUtils.getAllFile(file)
             logMsg.postValue("get ${list.size} crash log,show recent one.pls wait, reading!")

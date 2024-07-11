@@ -98,6 +98,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
     private val rtkOrientationPositioningSeparator: View = findViewById(R.id.rtk_orientation_positioning_separator)
     private val rtkLocationSeparator: View = findViewById(R.id.rtk_location_separator)
     private val rtkSatelliteCountSeparator: View = findViewById(R.id.rtk_satellite_count_separator)
+    private var positioningSolution :RTKPositioningSolution ?= null
     private val connectionStateTextColorMap: MutableMap<RTKSatelliteStatusWidgetModel.RTKBaseStationState, Int> =
         mutableMapOf(
             RTKSatelliteStatusWidgetModel.RTKBaseStationState.CONNECTED_IN_USE to getColor(R.color.uxsdk_rtk_status_connected_in_use),
@@ -552,6 +553,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
     override fun reactToModelChanges() {
         addReaction(widgetModel.productConnection.observeOn(SchedulerProvider.ui()).subscribe { updateUIForIsRTKConnected(it) })
         addReaction(widgetModel.rtkLocationInfo.observeOn(SchedulerProvider.ui()).subscribe(this::updateRTKLocationInfo))
+
         addReaction(widgetModel.rtkSystemState.observeOn(SchedulerProvider.ui()).subscribe(this::updateRTKSystemState))
         addReaction(widgetModel.standardDeviation.observeOn(SchedulerProvider.ui()).subscribe { updateStandardDeviation(it) })
         addReaction(widgetModel.rtkBaseStationState.observeOn(SchedulerProvider.ui()).subscribe { updateBaseStationStatus(it) })
@@ -789,6 +791,7 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
                     getRTKConnectionStatusLabelTextColor(RTKSatelliteStatusWidgetModel.RTKBaseStationState.DISCONNECTED)
             }
         }
+
     }
 
     private fun updateNetworkServiceStatus(networkServiceState: RTKSatelliteStatusWidgetModel.RTKNetworkServiceState) {
@@ -907,12 +910,18 @@ open class RTKSatelliteStatusWidget @JvmOverloads constructor(
         }
 
         //更新定位信息
-        val positioningSolution = rtkLocationInfo?.rtkLocation?.positioningSolution
+         positioningSolution = rtkLocationInfo?.rtkLocation?.positioningSolution
         if (positioningSolution == RTKPositioningSolution.NONE || positioningSolution == RTKPositioningSolution.UNKNOWN) {
             positioningTextView.setText(R.string.uxsdk_string_default_value)
         } else {
             positioningTextView.text = RTKUtil.getRTKStatusName(this, positioningSolution)
         }
+
+        if (positioningSolution == RTKPositioningSolution.FIXED_POINT ) {
+            rtkStatusTextView.setText(R.string.uxsdk_rtk_state_connect)
+            rtkStatusTextView.setTextColor(getRTKConnectionStatusLabelTextColor(RTKSatelliteStatusWidgetModel.RTKBaseStationState.CONNECTED_IN_USE))
+        }
+
     }
 
     //更新标准差

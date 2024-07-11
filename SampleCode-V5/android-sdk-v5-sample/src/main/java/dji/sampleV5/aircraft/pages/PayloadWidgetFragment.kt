@@ -32,7 +32,7 @@ class PayloadWidgetFragment : DJIFragment() {
 
     private val payloadOtherWidgetInfo: StringBuilder = StringBuilder()
     private val payloadBasicInfo: StringBuilder = StringBuilder()
-
+    private val payLoadAdapter = PayloadWidgetIconAdapter()
     private val payloadVM: PayloadWidgetVM by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,13 +55,11 @@ class PayloadWidgetFragment : DJIFragment() {
         initButtonListener()
     }
 
-
     private fun initWidgetList() {
-        val adapter = PayloadWidgetIconAdapter()
-        payload_main_widget_list.adapter = adapter
+        payload_main_widget_list.adapter = payLoadAdapter
         payload_main_widget_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         payloadVM.payloadWidgetInfo.observe(viewLifecycleOwner) {
-            showMainInterfaceWidgetInfo(it, adapter)
+            showMainInterfaceWidgetInfo(it, payLoadAdapter)
             showPayloadOtherWidgetInfo(it)
         }
 
@@ -102,6 +100,9 @@ class PayloadWidgetFragment : DJIFragment() {
 
     private fun showMainInterfaceWidgetInfo(payloadWidgetInfo: PayloadWidgetInfo?, adapter: PayloadWidgetIconAdapter) {
         payloadWidgetInfo?.run {
+            if (mainInterfaceWidgetList == null) {
+                resetView()
+            }
             mainInterfaceWidgetList?.let {
                 LogUtils.d(TAG, "initWidgetList mainInterfaceWidgetList=$it")
                 val data = arrayListOf<PayloadWidgetItem>()
@@ -192,5 +193,11 @@ class PayloadWidgetFragment : DJIFragment() {
                 }
             }
         }
+    }
+
+    private fun resetView(){
+        tv_payload_basic_info.text = ""
+        tv_payload_other_widget_info.text = ""
+        payLoadAdapter.submitList(arrayListOf<PayloadWidgetItem>())
     }
 }

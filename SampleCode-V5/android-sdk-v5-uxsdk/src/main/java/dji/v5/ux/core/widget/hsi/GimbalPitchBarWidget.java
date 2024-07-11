@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -539,6 +540,7 @@ public class GimbalPitchBarWidget extends FrameLayoutWidget<Boolean> implements 
     public void updateCameraSource(@NonNull ComponentIndexType cameraIndex, @NonNull CameraLensType lensType) {
         widgetModel.updateCameraSource(cameraIndex, lensType);
 
+        Log.e("testMM" ,"updateCameraSource" + componentIndexType + "---" + cameraIndex);
         if (componentIndexType != cameraIndex) {
             componentIndexType = cameraIndex;
             onStop();
@@ -552,6 +554,7 @@ public class GimbalPitchBarWidget extends FrameLayoutWidget<Boolean> implements 
         if (getCameraIndex().value() >= 3 || widgetModel.getGimbalAttitudeInDegreesProcessorList().size() <= 0) {
             return;
         }
+
         compositeDisposable.add(widgetModel.getGimbalAttitudeInDegreesProcessorList().get(getCameraIndex().value()).toFlowable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(attitude -> (int) Math.round(attitude.getPitch()))
@@ -582,6 +585,7 @@ public class GimbalPitchBarWidget extends FrameLayoutWidget<Boolean> implements 
         super.onAttachedToWindow();
         if (!isInEditMode()) {
             widgetModel.setup();
+            startListener();
         }
     }
 

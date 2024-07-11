@@ -28,7 +28,9 @@ class PayloadWidgetVM : DJIViewModel() {
     val payloadWidgetInfo = MutableLiveData<PayloadWidgetInfo>()
 
     private val payloadBasicInfoListener: PayloadBasicInfoListener = PayloadBasicInfoListener { info -> payloadBasicInfo.postValue(info) }
-    private val payloadWidgetInfoListener: PayloadWidgetInfoListener = PayloadWidgetInfoListener { info -> payloadWidgetInfo.postValue(info) }
+    private val payloadWidgetInfoListener: PayloadWidgetInfoListener = PayloadWidgetInfoListener {
+            info -> payloadWidgetInfo.postValue(info)
+    }
 
     fun setWidgetValue(value: WidgetValue) {
         for ((key, payloadManager) in payloadManagerMap) {

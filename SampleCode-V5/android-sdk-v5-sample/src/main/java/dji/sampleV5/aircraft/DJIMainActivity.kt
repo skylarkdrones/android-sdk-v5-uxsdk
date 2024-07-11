@@ -51,7 +51,6 @@ abstract class DJIMainActivity : AppCompatActivity() {
                 add(Manifest.permission.READ_EXTERNAL_STORAGE)
                 add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
-
         }
     }
 
@@ -212,7 +211,7 @@ abstract class DJIMainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
         result?.entries?.forEach {
-            if (it.value == false) {
+            if (!it.value) {
                 requestPermission()
                 return@forEach
             }

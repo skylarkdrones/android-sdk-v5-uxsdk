@@ -42,7 +42,7 @@ import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.communication.UXKey;
 import dji.v5.ux.core.communication.UXKeys;
 import dji.v5.ux.core.util.DataProcessor;
-import dji.v5.ux.core.util.RxUtil;
+import dji.v5.ux.core.util.UxErrorHandle;
 import dji.v5.ux.core.util.SettingDefinitions.ControlMode;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
@@ -188,7 +188,7 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
                 addDisposable(uxKeyManager.setValue(controlModeKey, ControlMode.SPOT_METER)
                         .subscribe(() -> {
                             //do nothing
-                        }, RxUtil.logErrorConsumer(tag, "setMeteringMode: ")));
+                        }, UxErrorHandle.logErrorConsumer(tag, "setMeteringMode: ")));
             });
         }
         return djiSdkModel.setValue(KeyTools.createCameraKey(CameraKey.KeyCameraMeteringMode, cameraIndex, lensType), CameraMeteringMode.REGION)
@@ -198,7 +198,7 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
                             addDisposable(uxKeyManager.setValue(controlModeKey, ControlMode.SPOT_METER)
                                     .subscribe(() -> {
                                         //do nothing
-                                    }, RxUtil.logErrorConsumer(tag, "setMeteringMode: ")));
+                                    }, UxErrorHandle.logErrorConsumer(tag, "setMeteringMode: ")));
                         }).doOnError(
                         error -> {
                             // 对焦模式为MF时 + 测光模式为REGION时，继续设置测光模式为REGION会返回失败（已反馈固件）

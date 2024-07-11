@@ -211,8 +211,6 @@ public class KeyValueDialogUtil {
         });
     }
 
-
-
     /**
      * 显示通用弹窗
      *
@@ -271,7 +269,7 @@ public class KeyValueDialogUtil {
 
     }
 
-    public static void showNormalDialog(Activity context   , String title ) {
+    public static void showNormalDialog(Activity context, String title) {
         View dialogView = context.getLayoutInflater().inflate(R.layout.dialog_tips, null);
         final AlertDialog dialog = new AlertDialog.Builder(context).setView(dialogView).create();
         dialog.setCanceledOnTouchOutside(false);
@@ -280,15 +278,10 @@ public class KeyValueDialogUtil {
         TextView tvTitle = dialogView.findViewById(R.id.title);
         tvTitle.setText(title);
 
-
         dialogView.findViewById(R.id.confirm).setOnClickListener(v -> {
-
-            if (dialog != null) {
-                dialog.dismiss();
-            }
+            dialog.dismiss();
         });
 
         dialog.show();
     }
-
 }

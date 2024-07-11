@@ -51,7 +51,7 @@ import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.GlobalPreferencesManager
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.extension.*
-import dji.v5.ux.core.util.RxUtil
+import dji.v5.ux.core.util.UxErrorHandle
 import dji.v5.ux.core.util.UnitConversionUtil
 import dji.v5.ux.core.widget.systemstatus.SystemStatusWidget.ModelState
 import dji.v5.ux.core.widget.systemstatus.SystemStatusWidget.ModelState.ProductConnected
@@ -226,7 +226,7 @@ open class SystemStatusWidget @JvmOverloads constructor(
             .observeOn(SchedulerProvider.ui())
             .subscribe(
                 Consumer { values: Pair<DJIDeviceStatus, Boolean> -> updateVoiceNotification(values.first, values.second) },
-                RxUtil.logErrorConsumer(TAG, "react to Compass Error: ")
+                UxErrorHandle.logErrorConsumer(TAG, "react to Compass Error: ")
             )
     }
 
@@ -240,7 +240,7 @@ open class SystemStatusWidget @JvmOverloads constructor(
         if (!isInEditMode) {
             addDisposable(widgetModel.systemStatus.firstOrError()
                 .observeOn(SchedulerProvider.ui())
-                .subscribe(Consumer { this.updateUI(it) }, RxUtil.logErrorConsumer(TAG, "Update UI "))
+                .subscribe(Consumer { this.updateUI(it) }, UxErrorHandle.logErrorConsumer(TAG, "Update UI "))
             )
         }
     }

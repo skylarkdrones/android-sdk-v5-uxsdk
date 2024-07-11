@@ -5,8 +5,10 @@ import dji.sampleV5.aircraft.data.DJIToastResult
 import dji.sampleV5.aircraft.util.Util
 import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
+import dji.sdk.keyvalue.value.common.LocationCoordinate3D
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
+import dji.v5.common.utils.GpsUtils
 import dji.v5.et.create
 import dji.v5.et.get
 import dji.v5.manager.KeyManager
@@ -23,8 +25,12 @@ import dji.v5.manager.aircraft.flysafe.info.FlySafeTipInformation
 import dji.v5.manager.aircraft.flysafe.info.FlySafeWarningInformation
 import dji.v5.manager.aircraft.flysafe.info.FlyZoneInformation
 import dji.v5.manager.aircraft.flysafe.info.FlyZoneLicenseInfo
+import dji.v5.utils.common.ContextUtil
+import dji.v5.utils.common.FileUtils
 import dji.v5.utils.common.LogUtils
+import java.io.File
 import java.text.SimpleDateFormat
+import kotlin.math.roundToInt
 
 /**
  * Class Description
@@ -47,6 +53,9 @@ class FlySafeVM : DJIViewModel() {
     val importAndSyncState = MutableLiveData<ImportAndSyncState>()
     val dataBaseInfo = MutableLiveData<DataBaseInfo>()
     val dataUpgradeState = MutableLiveData<FlySafeDatabaseState>()
+
+    private val availableTestFlySafeDynamicDatabaseName = "de.geojson"
+    private val unAvailableTestFlySafeDynamicDatabaseName = "France.json"
 
     private val flySafeNotificationListener = object : FlySafeNotificationListener {
 
@@ -83,7 +92,7 @@ class FlySafeVM : DJIViewModel() {
         removeFlySafeDatabaseListener()
     }
 
-    fun getAircraftLocation() = FlightControllerKey.KeyAircraftLocation.create().get(LocationCoordinate2D(0.0, 0.0))
+    fun getAircraftLocation(): LocationCoordinate2D = FlightControllerKey.KeyAircraftLocation.create().get(LocationCoordinate2D(0.0, 0.0))
 
     fun getFlyZonesInSurroundingArea(location: LocationCoordinate2D) {
         FlyZoneManager.getInstance().getFlyZonesInSurroundingArea(location, object :
@@ -135,6 +144,7 @@ class FlySafeVM : DJIViewModel() {
 
             override fun onSuccess(infos: MutableList<FlyZoneLicenseInfo>?) {
                 toastResult?.postValue(DJIToastResult.success())
+
                 aircraftFlyZoneLicenseInfo.postValue(infos ?: arrayListOf())
             }
 
@@ -197,8 +207,27 @@ class FlySafeVM : DJIViewModel() {
         })
     }
 
-    fun pushFlySafeDynamicDatabaseToAircraftAndApp(fileName:String ){
-        FlyZoneManager.getInstance().importFlySafeDynamicDatabaseToMSDK(fileName ,object :CommonCallbacks.CompletionCallbackWithProgress<Double>{
+    fun pushFlySafeDynamicDatabaseToAircraftAndApp(fileName: String) {
+        FlyZoneManager.getInstance().importFlySafeDynamicDatabaseToMSDK(fileName, object :
+            CommonCallbacks.CompletionCallbackWithProgress<Double> {
+            override fun onProgressUpdate(progress: Double?) {
+                importAndSyncState.postValue(ImportAndSyncState(progress!!.toFloat().roundToInt()))
+            }
+
+            override fun onSuccess() {
+                importAndSyncState.postValue(ImportAndSyncState(100))
+            }
+
+            override fun onFailure(error: IDJIError) {
+                importAndSyncState.postValue(ImportAndSyncState(-1, error))
+            }
+
+        })
+    }
+
+    fun syncFlySafeMSDKDatabaseToAircraft() {
+        FlyZoneManager.getInstance().pushFlySafeDynamicDatabaseToAircraft(object :
+            CommonCallbacks.CompletionCallbackWithProgress<Double> {
             override fun onProgressUpdate(progress: Double?) {
                 importAndSyncState.postValue(ImportAndSyncState(Math.round(progress!!.toFloat())))
             }
@@ -208,50 +237,38 @@ class FlySafeVM : DJIViewModel() {
             }
 
             override fun onFailure(error: IDJIError) {
-                importAndSyncState.postValue(ImportAndSyncState(-1 , error))
+                importAndSyncState.postValue(ImportAndSyncState(-1, error))
             }
 
         })
     }
 
-    fun syncFlySafeMSDKDatabaseToAircraft(){
-        FlyZoneManager.getInstance().pushFlySafeDynamicDatabaseToAircraft(object : CommonCallbacks.CompletionCallbackWithProgress<Double>{
-            override fun onProgressUpdate(progress: Double?) {
-                importAndSyncState.postValue(ImportAndSyncState(Math.round(progress!!.toFloat())))
-            }
-
+    fun setFlySafeDynamicDatabaseUpgradeMode(flySafeDynamicDatabaseUpgradeMode: FlySafeDatabaseUpgradeMode) {
+        FlyZoneManager.getInstance().setFlySafeDynamicDatabaseUpgradeMode(flySafeDynamicDatabaseUpgradeMode, object :
+            CommonCallbacks.CompletionCallback {
             override fun onSuccess() {
                 importAndSyncState.postValue(ImportAndSyncState(100))
             }
 
             override fun onFailure(error: IDJIError) {
-                importAndSyncState.postValue(ImportAndSyncState(-1 , error))
+                importAndSyncState.postValue(ImportAndSyncState(-1, error))
             }
 
         })
     }
 
-    fun setFlySafeDynamicDatabaseUpgradeMode( flySafeDynamicDatabaseUpgradeMode : FlySafeDatabaseUpgradeMode){
-        FlyZoneManager.getInstance().setFlySafeDynamicDatabaseUpgradeMode(flySafeDynamicDatabaseUpgradeMode , object :CommonCallbacks.CompletionCallback{
-            override fun onSuccess() {
-                importAndSyncState.postValue(ImportAndSyncState(100))
-            }
-
-            override fun onFailure(error: IDJIError) {
-                importAndSyncState.postValue(ImportAndSyncState(-1 , error))
-            }
-
-        })
-    }
-
-    fun addFlySafeDatabaseListener(){
-        FlyZoneManager.getInstance().addFlySafeDatabaseListener(object : FlySafeDatabaseListener{
+    fun addFlySafeDatabaseListener() {
+        FlyZoneManager.getInstance().addFlySafeDatabaseListener(object : FlySafeDatabaseListener {
             override fun onFlySafeDatabaseInfoUpdate(flySafeDatabaseInfo: FlySafeDatabaseInfo) {
-                LogUtils.i("testFly" , "dataName :" + flySafeDatabaseInfo.databaseName  + " compnent :" + flySafeDatabaseInfo.component)
-               dataBaseInfo.postValue(DataBaseInfo(flySafeDatabaseInfo.databaseName ,
-                   formatCEDBTime(flySafeDatabaseInfo.databaseTimeStamp * 1000),
-                    Util.byte2AdaptiveUnitStrDefault(flySafeDatabaseInfo.databaseSize),
-                   flySafeDatabaseInfo.component ,flySafeDatabaseInfo.flySafeDatabaseUpgradeMode))
+                LogUtils.i("testFly", "dataName :" + flySafeDatabaseInfo.databaseName + " compnent :" + flySafeDatabaseInfo.component)
+                dataBaseInfo.postValue(
+                    DataBaseInfo(
+                        flySafeDatabaseInfo.databaseName,
+                        formatCEDBTime(flySafeDatabaseInfo.databaseTimeStamp * 1000),
+                        Util.byte2AdaptiveUnitStrDefault(flySafeDatabaseInfo.databaseSize),
+                        flySafeDatabaseInfo.component, flySafeDatabaseInfo.flySafeDatabaseUpgradeMode
+                    )
+                )
             }
 
             override fun onFlySafeDatabaseStateUpdate(flySafeDatabaseState: FlySafeDatabaseState) {
@@ -261,22 +278,49 @@ class FlySafeVM : DJIViewModel() {
         })
     }
 
+    fun pushAvailableTestFlySafeDynamicDatabaseToApp() {
+        val file = File(ContextUtil.getContext().getExternalFilesDir("/"), availableTestFlySafeDynamicDatabaseName)
+        FileUtils.copyAssetsFileIfNeed(ContextUtil.getContext(), "flysafe/$availableTestFlySafeDynamicDatabaseName", file)
+        pushFlySafeDynamicDatabaseToAircraftAndApp(file.path)
+    }
+
+    fun pushUnAvailableTestFlySafeDynamicDatabaseToApp() {
+        val file = File(ContextUtil.getContext().getExternalFilesDir("/"), unAvailableTestFlySafeDynamicDatabaseName)
+        FileUtils.copyAssetsFileIfNeed(ContextUtil.getContext(), "flysafe/$unAvailableTestFlySafeDynamicDatabaseName", file)
+        pushFlySafeDynamicDatabaseToAircraftAndApp(file.path)
+    }
+
     private fun formatCEDBTime(timestamp: Long): String {
         val format = SimpleDateFormat("yyyy/MM/dd")
         return format.format(timestamp)
     }
 
-    fun removeFlySafeDatabaseListener(){
+    private fun removeFlySafeDatabaseListener() {
         FlyZoneManager.getInstance().clearAllFlySafeDatabaseListener()
     }
 
+    fun sortFlyZonesByDistanceFromAircraft(flyZones: MutableList<FlyZoneInformation>) {
+        val aircraftLocation = getAircraftLocation()
+        val c = java.util.Comparator<FlyZoneInformation> { o1, o2 ->
+            val distanceO1: Double = GpsUtils.distanceBetween(
+                aircraftLocation.latitude, aircraftLocation.longitude,
+                o1.circleCenter.latitude, o1.circleCenter.longitude
+            ) - o1.circleRadius
+            val distanceO2: Double = GpsUtils.distanceBetween(
+                aircraftLocation.latitude, aircraftLocation.longitude,
+                o2.circleCenter.latitude, o2.circleCenter.longitude
+            ) - o2.circleRadius
+            distanceO1.compareTo(distanceO2)
+        }
+        flyZones.sortWith(c)
+    }
 
     data class DataBaseInfo(
         var dataBaseName: String,
         var dataBaseTime: String,
         var dataBaseSize: String,
         var component: FlySafeDatabaseComponent,
-        var upgradeMode :FlySafeDatabaseUpgradeMode
+        var upgradeMode: FlySafeDatabaseUpgradeMode
     )
 
     data class ImportAndSyncState(

@@ -354,7 +354,6 @@
     <!--Map Widget Activity-->
     <string name="uxsdk_provider_google_maps">Google 地图</string>
     <string name="uxsdk_provider_here_maps">Here 地图</string>
-    <string name="uxsdk_provider_amaps">高德地图</string>
     <string name="uxsdk_provider_mapbox">Mapbox</string>
     <string name="uxsdk_error_map_not_initialized">地图还未初始化</string>
     <string name="uxsdk_home_direction">返航方向</string>
