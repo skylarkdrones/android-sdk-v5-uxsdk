@@ -197,6 +197,12 @@ class WayPointV3Fragment : DJIFragment() {
 
 
         btn_mission_start.setOnClickListener {
+            val waypointFile = File(curMissionPath)
+            if (!waypointFile.exists()) {
+                ToastUtils.showToast("Please select file")
+                return@setOnClickListener
+            }
+
             wayPointV3VM.startMission(
                 FileUtils.getFileName(curMissionPath, WAYPOINT_FILE_TAG),
                 selectWaylines,

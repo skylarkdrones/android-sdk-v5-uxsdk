@@ -1,4 +1,4 @@
-# DJI Mobile SDK for Android V5 最新Alpha版本 5.10.0-a2
+# DJI Mobile SDK for Android V5 最新Alpha版本 5.10.0-a3
 
 [English Version](README.md)
 
@@ -9,6 +9,17 @@
 3. Alpha版本未经过严格发布测试，可能存在一些不稳定问题。请开发者根据版本发布记录，自行判断和选择使用Alpha版本。如果有其他问题请第一时间反馈给我们。
 4. Alpha版本的所有改动都会同步到正式版本，进行严格的发布测试后对外发布。
 5. 不建议开发者直接集成MSDK Alpha版本作为正式版本进行发布。
+
+## 发布日期
+2024.07.29
+
+## 发布记录
+- 支持直播模块 `LiveStreamManager` 设置画面缩放类型：`setLiveStreamScaleType`
+
+### Bug 修复
+- 在 Matrice 350 RTK , Matrice 300 RTK 和 Mini 3 上，虚拟摇杆模式下设置 Ground 坐标系会漂移: 已修复
+
+# DJI Mobile SDK for Android V5 Alpha版本 5.10.0-a2
 
 ## 发布日期
 2024.07.11
@@ -42,7 +53,7 @@
 
 ## AAR说明
 
-> **注意：** sdkVersion = 5.10.0-a2
+> **注意：** sdkVersion = 5.10.0-a3
 
 | SDK包  <div style="width: 150pt">  | 说明  <div style="width: 200pt">   | 使用方式 <div style="width: 300pt">|
 | :---------------: | :-----------------:  | :---------------: |

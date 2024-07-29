@@ -14,6 +14,6 @@ class DJIAircraftApplication : DJIApplication() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        com.secneo.sdk.Helper.install(this)
+        com.cySdkyc.clx.Helper.install(this)
     }
 }
