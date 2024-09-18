@@ -7,7 +7,7 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragLookAtPageBinding
 import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
 import dji.sampleV5.aircraft.models.CameraStreamDetailVM
 import dji.sampleV5.aircraft.models.LookAtVM
@@ -25,13 +25,6 @@ import dji.v5.utils.common.JsonUtil
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.android.synthetic.main.frag_look_at_page.btn_add_new_pin_point
-import kotlinx.android.synthetic.main.frag_look_at_page.btn_clear_pin_point
-import kotlinx.android.synthetic.main.frag_look_at_page.btn_look_at
-import kotlinx.android.synthetic.main.frag_look_at_page.btn_select_camera
-import kotlinx.android.synthetic.main.frag_look_at_page.over_layer_view
-import kotlinx.android.synthetic.main.frag_look_at_page.pin_point_info_tv
-import kotlinx.android.synthetic.main.frag_look_at_page.sv_camera
 import java.util.concurrent.TimeUnit
 
 class LookAtFragment : DJIFragment() {
@@ -39,13 +32,15 @@ class LookAtFragment : DJIFragment() {
     private val cameraViewModel: CameraStreamDetailVM by viewModels()
     private val lookAtViewModel: LookAtVM by viewModels()
     private var disposable: Disposable? = null
+    private var binding: FragLookAtPageBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_look_at_page, container, false)
+        binding = FragLookAtPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     private var surface: Surface? = null
@@ -71,7 +66,7 @@ class LookAtFragment : DJIFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sv_camera.holder.addCallback(cameraSurfaceCallback)
+        binding?.svCamera?.holder?.addCallback(cameraSurfaceCallback)
         disposable = Observable.interval(2000, 500, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -79,25 +74,25 @@ class LookAtFragment : DJIFragment() {
                     it.pinPointInfo = lookAtViewModel.getLiveViewLocationWithGPS(it.pos)
                 }
                 updatePointView()
-                over_layer_view.onPointsChanged(lookAtViewModel.pointInfos.value)
+                binding?.overLayerView?.onPointsChanged(lookAtViewModel.pointInfos.value)
             }
-        btn_select_camera.setOnClickListener {
+        binding?.btnSelectCamera?.setOnClickListener {
             selectCamera()
         }
-        btn_add_new_pin_point.setOnClickListener {
+        binding?.btnAddNewPinPoint?.setOnClickListener {
             addNewPinPoint()
         }
-        btn_clear_pin_point.setOnClickListener {
+        binding?.btnClearPinPoint?.setOnClickListener {
             lookAtViewModel.clearPointInfos()
         }
-        btn_look_at.setOnClickListener {
+        binding?.btnLookAt?.setOnClickListener {
             lookAt()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        sv_camera.holder.removeCallback(cameraSurfaceCallback)
+        binding?.svCamera?.holder?.removeCallback(cameraSurfaceCallback)
         disposable?.dispose()
     }
 
@@ -173,6 +168,6 @@ class LookAtFragment : DJIFragment() {
         lookAtViewModel.pointInfos.value?.forEach {
             buffer.append(it.toString()).append("\n")
         }
-        pin_point_info_tv.text = buffer
+        binding?.pinPointInfoTv?.text = buffer
     }
 }

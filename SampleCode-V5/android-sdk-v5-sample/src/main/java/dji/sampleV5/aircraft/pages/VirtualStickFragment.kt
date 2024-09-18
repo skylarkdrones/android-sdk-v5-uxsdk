@@ -5,22 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.util.Helper
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragVirtualStickPageBinding
+import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
 import dji.sampleV5.aircraft.models.BasicAircraftControlVM
 import dji.sampleV5.aircraft.models.SimulatorVM
 import dji.sampleV5.aircraft.models.VirtualStickVM
+import dji.sampleV5.aircraft.util.Helper
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.sampleV5.aircraft.virtualstick.OnScreenJoystick
 import dji.sampleV5.aircraft.virtualstick.OnScreenJoystickListener
-import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
 import dji.sdk.keyvalue.value.common.EmptyMsg
 import dji.sdk.keyvalue.value.flightcontroller.VirtualStickFlightControlParam
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.manager.aircraft.virtualstick.Stick
 import dji.v5.utils.common.JsonUtil
-import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_virtual_stick_page.*
 import kotlin.math.abs
 
 /**
@@ -36,6 +35,7 @@ class VirtualStickFragment : DJIFragment() {
     private val basicAircraftControlVM: BasicAircraftControlVM by activityViewModels()
     private val virtualStickVM: VirtualStickVM by activityViewModels()
     private val simulatorVM: SimulatorVM by activityViewModels()
+    private var binding: FragVirtualStickPageBinding? = null
     private val deviation: Double = 0.02
 
     override fun onCreateView(
@@ -43,12 +43,13 @@ class VirtualStickFragment : DJIFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_virtual_stick_page, container, false)
+        binding = FragVirtualStickPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        widget_horizontal_situation_indicator.setSimpleModeEnable(false)
+        binding?.widgetHorizontalSituationIndicator?.setSimpleModeEnable(false)
         initBtnClickListener()
         initStickListener()
         virtualStickVM.listenRCStick()
@@ -68,12 +69,12 @@ class VirtualStickFragment : DJIFragment() {
             updateVirtualStickInfo()
         }
         simulatorVM.simulatorStateSb.observe(viewLifecycleOwner) {
-            simulator_state_info_tv.text = it
+            binding?.simulatorStateInfoTv?.text = it
         }
     }
 
     private fun initBtnClickListener() {
-        btn_enable_virtual_stick.setOnClickListener {
+        binding?.btnEnableVirtualStick?.setOnClickListener {
             virtualStickVM.enableVirtualStick(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("enableVirtualStick success.")
@@ -84,7 +85,7 @@ class VirtualStickFragment : DJIFragment() {
                 }
             })
         }
-        btn_disable_virtual_stick.setOnClickListener {
+        binding?.btnDisableVirtualStick?.setOnClickListener {
             virtualStickVM.disableVirtualStick(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("disableVirtualStick success.")
@@ -95,14 +96,14 @@ class VirtualStickFragment : DJIFragment() {
                 }
             })
         }
-        btn_set_virtual_stick_speed_level.setOnClickListener {
+        binding?.btnSetVirtualStickSpeedLevel?.setOnClickListener {
             val speedLevels = doubleArrayOf(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
             initPopupNumberPicker(Helper.makeList(speedLevels)) {
                 virtualStickVM.setSpeedLevel(speedLevels[indexChosen[0]])
                 resetIndex()
             }
         }
-        btn_take_off.setOnClickListener {
+        binding?.btnTakeOff?.setOnClickListener {
             basicAircraftControlVM.startTakeOff(object :
                 CommonCallbacks.CompletionCallbackWithParam<EmptyMsg> {
                 override fun onSuccess(t: EmptyMsg?) {
@@ -114,7 +115,7 @@ class VirtualStickFragment : DJIFragment() {
                 }
             })
         }
-        btn_landing.setOnClickListener {
+        binding?.btnLanding?.setOnClickListener {
             basicAircraftControlVM.startLanding(object :
                 CommonCallbacks.CompletionCallbackWithParam<EmptyMsg> {
                 override fun onSuccess(t: EmptyMsg?) {
@@ -126,7 +127,7 @@ class VirtualStickFragment : DJIFragment() {
                 }
             })
         }
-        btn_use_rc_stick.setOnClickListener {
+        binding?.btnUseRcStick?.setOnClickListener {
             virtualStickVM.useRcStick.value = virtualStickVM.useRcStick.value != true
             if (virtualStickVM.useRcStick.value == true) {
                 ToastUtils.showToast(
@@ -135,7 +136,7 @@ class VirtualStickFragment : DJIFragment() {
                 )
             }
         }
-        btn_set_virtual_stick_advanced_param.setOnClickListener {
+        binding?.btnSetVirtualStickAdvancedParam?.setOnClickListener {
             KeyValueDialogUtil.showInputDialog(
                 activity, "Set Virtual Stick Advanced Param",
                 JsonUtil.toJson(virtualStickVM.virtualStickAdvancedParam.value), "", false
@@ -150,21 +151,21 @@ class VirtualStickFragment : DJIFragment() {
                 }
             }
         }
-        btn_send_virtual_stick_advanced_param.setOnClickListener {
+        binding?.btnSendVirtualStickAdvancedParam?.setOnClickListener {
             virtualStickVM.virtualStickAdvancedParam.value?.let {
                 virtualStickVM.sendVirtualStickAdvancedParam(it)
             }
         }
-        btn_enable_virtual_stick_advanced_mode.setOnClickListener {
+        binding?.btnEnableVirtualStickAdvancedMode?.setOnClickListener {
             virtualStickVM.enableVirtualStickAdvancedMode()
         }
-        btn_disable_virtual_stick_advanced_mode.setOnClickListener {
+        binding?.btnDisableVirtualStickAdvancedMode?.setOnClickListener {
             virtualStickVM.disableVirtualStickAdvancedMode()
         }
     }
 
     private fun initStickListener() {
-        left_stick_view.setJoystickListener(object : OnScreenJoystickListener {
+        binding?.leftStickView?.setJoystickListener(object : OnScreenJoystickListener {
             override fun onTouch(joystick: OnScreenJoystick?, pX: Float, pY: Float) {
                 var leftPx = 0F
                 var leftPy = 0F
@@ -183,7 +184,7 @@ class VirtualStickFragment : DJIFragment() {
                 )
             }
         })
-        right_stick_view.setJoystickListener(object : OnScreenJoystickListener {
+        binding?.rightStickView?.setJoystickListener(object : OnScreenJoystickListener {
             override fun onTouch(joystick: OnScreenJoystick?, pX: Float, pY: Float) {
                 var rightPx = 0F
                 var rightPy = 0F
@@ -223,7 +224,7 @@ class VirtualStickFragment : DJIFragment() {
         builder.append("Virtual stick advanced mode param:").append(virtualStickVM.virtualStickAdvancedParam.value?.toJson())
         builder.append("\n")
         mainHandler.post {
-            virtual_stick_info_tv.text = builder.toString()
+            binding?.virtualStickInfoTv?.text = builder.toString()
         }
     }
 }

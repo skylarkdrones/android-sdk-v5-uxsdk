@@ -153,7 +153,7 @@ class AvoidanceShortcutWidget @JvmOverloads constructor(
     private fun setObstacleAction(type: ObstacleAvoidanceType) {
         widgetModel.setObstacleActionType(type).observeOn(SchedulerProvider.ui())
             .subscribe(object : CompletableObserver {
-                override fun onSubscribe(d: Disposable?) {
+                override fun onSubscribe(d: Disposable) {
                     //do nothing
                 }
 
@@ -161,7 +161,7 @@ class AvoidanceShortcutWidget @JvmOverloads constructor(
                     //do nothing
                 }
 
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     //do nothing
                     LogUtils.e(TAG, "setObstacleAction onError:$e")
                     revertObstacleAction()

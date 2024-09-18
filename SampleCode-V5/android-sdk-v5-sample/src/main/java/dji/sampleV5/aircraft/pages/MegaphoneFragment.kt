@@ -10,6 +10,8 @@ import android.widget.SeekBar
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragMegaphonePageBinding
 import dji.sampleV5.aircraft.models.MegaphoneVM
 
 import dji.v5.common.callback.CommonCallbacks
@@ -18,7 +20,6 @@ import dji.v5.manager.KeyManager
 import dji.v5.manager.aircraft.megaphone.*
 import dji.v5.utils.common.LogUtils
 import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_megaphone_page.*
 
 /**
  * Description : Megaphone fragment
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.frag_megaphone_page.*
  */
 class MegaphoneFragment : DJIFragment() {
     private val megaphoneVM: MegaphoneVM by activityViewModels()
-
+    private var binding: FragMegaphonePageBinding? = null
 
     private var curPlayMode: PlayMode = PlayMode.UNKNOWN
     private lateinit var curWorkMode: WorkMode
@@ -41,7 +42,8 @@ class MegaphoneFragment : DJIFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_megaphone_page, container, false)
+        binding = FragMegaphonePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,9 +88,9 @@ class MegaphoneFragment : DJIFragment() {
             override fun onSuccess(t: PlayMode?) {
                 curPlayMode = t!!
                 if (curPlayMode == PlayMode.SINGLE) {
-                    btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat_1)
+                    binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat_1)
                 } else {
-                    btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat)
+                    binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat)
                 }
             }
 
@@ -100,7 +102,7 @@ class MegaphoneFragment : DJIFragment() {
         megaphoneVM.getStatus(object :
             CommonCallbacks.CompletionCallbackWithParam<MegaphoneStatus> {
             override fun onSuccess(t: MegaphoneStatus?) {
-                tv_megaphone_state.text = t!!.name
+                binding?.tvMegaphoneState?.text = t!!.name
             }
 
             override fun onFailure(error: IDJIError) {
@@ -110,7 +112,7 @@ class MegaphoneFragment : DJIFragment() {
 
         megaphoneVM.getVolume(object : CommonCallbacks.CompletionCallbackWithParam<Int> {
             override fun onSuccess(t: Int?) {
-                sb_volume_control.progress = t!!
+                binding?.sbVolumeControl?.progress = t!!
             }
 
             override fun onFailure(error: IDJIError) {
@@ -118,9 +120,10 @@ class MegaphoneFragment : DJIFragment() {
             }
         })
 
-        megaphoneVM.getMegaphoneIndex(object : CommonCallbacks.CompletionCallbackWithParam<MegaphoneIndex> {
+        megaphoneVM.getMegaphoneIndex(object :
+            CommonCallbacks.CompletionCallbackWithParam<MegaphoneIndex> {
             override fun onSuccess(t: MegaphoneIndex?) {
-                tv_cur_megaphone_index.text = t?.let { t.name } ?: let { "N/A" }
+                binding?.tvCurMegaphoneIndex?.text = t?.let { t.name } ?: let { "N/A" }
             }
 
             override fun onFailure(error: IDJIError) {
@@ -135,15 +138,15 @@ class MegaphoneFragment : DJIFragment() {
     }
 
     private fun initBtnListener() {
-        btn_play_mode.setOnClickListener {
+        binding?.btnPlayMode?.setOnClickListener {
             setPlayMode()
         }
 
-        btn_play_control.setOnClickListener {
+        binding?.btnPlayControl?.setOnClickListener {
             setPlayControl()
         }
 
-        sb_volume_control.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding?.sbVolumeControl?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 LogUtils.e(TAG, "volume change")
             }
@@ -165,7 +168,7 @@ class MegaphoneFragment : DJIFragment() {
                     })
             }
         })
-        sp_megaphone_switch.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding?.spMegaphoneSwitch?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
@@ -176,13 +179,15 @@ class MegaphoneFragment : DJIFragment() {
                     isFirstSwitch = false
                     return
                 }
-                megaphoneVM.setMegaphoneIndex(MegaphoneIndex.find(position), object : CommonCallbacks.CompletionCallback {
+                megaphoneVM.setMegaphoneIndex(MegaphoneIndex.find(position), object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         ToastUtils.showToast("set megaphone index success")
 
-                        megaphoneVM.getMegaphoneIndex(object : CommonCallbacks.CompletionCallbackWithParam<MegaphoneIndex> {
+                        megaphoneVM.getMegaphoneIndex(object :
+                            CommonCallbacks.CompletionCallbackWithParam<MegaphoneIndex> {
                             override fun onSuccess(t: MegaphoneIndex?) {
-                                tv_cur_megaphone_index.text = t?.let { t.name } ?: let { "N/A" }
+                                binding?.tvCurMegaphoneIndex?.text = t?.let { t.name } ?: let { "N/A" }
                             }
 
                             override fun onFailure(error: IDJIError) {
@@ -215,9 +220,9 @@ class MegaphoneFragment : DJIFragment() {
             override fun onSuccess() {
                 curPlayMode = tempPlayMode
                 if (curPlayMode == PlayMode.SINGLE) {
-                    btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat_1)
+                    binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat_1)
                 } else {
-                    btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat)
+                    binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat)
                 }
                 ToastUtils.showToast("set playmode to $curPlayMode success")
             }
@@ -234,7 +239,7 @@ class MegaphoneFragment : DJIFragment() {
             megaphoneVM.startPlay(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     isPlaying = true
-                    btn_play_control.setImageResource(R.drawable.ic_media_stop)
+                    binding?.btnPlayControl?.setImageResource(R.drawable.ic_media_stop)
                     ToastUtils.showToast("start play success")
                 }
 
@@ -246,7 +251,7 @@ class MegaphoneFragment : DJIFragment() {
             megaphoneVM.stopPlay(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     isPlaying = false
-                    btn_play_control.setImageResource(R.drawable.ic_media_play)
+                    binding?.btnPlayControl?.setImageResource(R.drawable.ic_media_play)
                     ToastUtils.showToast("stop play success")
                 }
 
@@ -259,7 +264,7 @@ class MegaphoneFragment : DJIFragment() {
 
     private fun changeFragment() {
         //fragment之间的切换
-        tts_frg_btn.setOnClickListener {
+        binding?.ttsFrgBtn?.setOnClickListener {
             megaphoneVM.setWorkMode(WorkMode.TTS, object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("set work mode to ${WorkMode.TTS} success")
@@ -279,7 +284,7 @@ class MegaphoneFragment : DJIFragment() {
             megaphoneVM.removeRealTimeListener()
         }
 
-        record_frg_btn.setOnClickListener {
+        binding?.recordFrgBtn?.setOnClickListener {
             megaphoneVM.setWorkMode(WorkMode.VOICE, object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("set work mode to ${WorkMode.VOICE} success")
@@ -299,7 +304,7 @@ class MegaphoneFragment : DJIFragment() {
             megaphoneVM.addListener()
         }
 
-        file_list_frg_btn.setOnClickListener {
+        binding?.fileListFrgBtn?.setOnClickListener {
             megaphoneVM.setWorkMode(WorkMode.VOICE, object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("set work mode to ${WorkMode.VOICE} success")
@@ -329,7 +334,7 @@ class MegaphoneFragment : DJIFragment() {
         builder.append("Cur state: ").append(megaphoneVM.curRealTimeUploadedState.value)
         builder.append("\n")
         mainHandler.post {
-            et_upload_status.text = builder.toString()
+            binding?.etUploadStatus?.text = builder.toString()
         }
     }
 
@@ -383,7 +388,7 @@ class MegaphoneFragment : DJIFragment() {
                 val textSource = "<font color=\'#00ff00\'><small>osdk</small></font>"
                 connectionBuilder.append("  " + textSource)
             }
-            tv_megaphone_connect_status.text = Html.fromHtml(connectionBuilder.toString())
+            binding?.tvMegaphoneConnectStatus?.text = Html.fromHtml(connectionBuilder.toString())
         }
     }
 
@@ -392,22 +397,22 @@ class MegaphoneFragment : DJIFragment() {
             curPlayMode = megaphoneVM.megaphonePlayState.value?.let { it.playMode }
                 ?: let { PlayMode.UNKNOWN }
             if (curPlayMode == PlayMode.SINGLE) {
-                btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat_1)
+                binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat_1)
             } else {
-                btn_play_mode.setImageResource(R.drawable.ic_action_playback_repeat)
+                binding?.btnPlayMode?.setImageResource(R.drawable.ic_action_playback_repeat)
             }
-            tv_megaphone_state.text = megaphoneVM.megaphonePlayState.value?.let { it.status.toString() }?:let { "N/A" }
-            sb_volume_control.progress = megaphoneVM.megaphonePlayState.value?.let { it.volume }?:let { 0 }
+            binding?.tvMegaphoneState?.text = megaphoneVM.megaphonePlayState.value?.let { it.status.toString() } ?: let { "N/A" }
+            binding?.sbVolumeControl?.progress = megaphoneVM.megaphonePlayState.value?.let { it.volume } ?: let { 0 }
             val textSource =
-                getString(R.string.cur_volume_value) + "${megaphoneVM.megaphonePlayState.value?.let { it.volume }?:let { 0 }}"
-            tv_cur_volume_value.text = textSource
+                getString(R.string.cur_volume_value) + "${megaphoneVM.megaphonePlayState.value?.let { it.volume } ?: let { 0 }}"
+            binding?.tvCurVolumeValue?.text = textSource
 
-            val megaphoneStatus = megaphoneVM.megaphonePlayState.value?.let { it.status }?:let { MegaphoneStatus.UNKNOWN }
+            val megaphoneStatus = megaphoneVM.megaphonePlayState.value?.let { it.status } ?: let { MegaphoneStatus.UNKNOWN }
             if (megaphoneStatus == MegaphoneStatus.PLAYING) {
-                btn_play_control.setImageResource(R.drawable.ic_media_stop)
+                binding?.btnPlayControl?.setImageResource(R.drawable.ic_media_stop)
                 isPlaying = true
             } else {
-                btn_play_control.setImageResource(R.drawable.ic_media_play)
+                binding?.btnPlayControl?.setImageResource(R.drawable.ic_media_play)
                 isPlaying = false
             }
         }

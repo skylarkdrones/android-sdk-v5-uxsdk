@@ -224,8 +224,8 @@ public class AttitudeDashBoard extends ScrollableAttributeDashBoard {
             mUserSetDownBarrierWarnDistance = (float) info.getDownwardObstacleAvoidanceWarningDistance() / 10f;
 
             //上下避障工作状态
-            mVisionPerceptionWorkingState[0] = info.getUpwardObstacleAvoidanceWorking();
-            mVisionPerceptionWorkingState[1] = info.getDownwardObstacleAvoidanceWorking();
+            mVisionPerceptionWorkingState[0] = info.getUpwardObstacleAvoidanceWorking() == Boolean.TRUE;
+            mVisionPerceptionWorkingState[1] = info.getDownwardObstacleAvoidanceWorking() == Boolean.TRUE;
 
             updateWidget();
         }));

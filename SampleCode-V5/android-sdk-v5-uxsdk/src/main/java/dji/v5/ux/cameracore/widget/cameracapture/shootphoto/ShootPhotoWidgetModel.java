@@ -336,7 +336,7 @@ public class ShootPhotoWidgetModel extends WidgetModel implements ICameraIndex {
 
     private boolean isSupportShootPhoto(){
         CameraType cameraType = KeyManager.getInstance().getValue(KeyTools.createKey(CameraKey.KeyCameraType ,cameraIndex) ,CameraType.NOT_SUPPORTED);
-        return cameraType == CameraType.M3T || cameraType == CameraType.M3E || cameraType == CameraType.M3M;
+        return cameraType == CameraType.M3T || cameraType == CameraType.M3E || cameraType == CameraType.M3M || cameraType == CameraType.ZENMUSE_H20T;
     }
 
     //region Helpers

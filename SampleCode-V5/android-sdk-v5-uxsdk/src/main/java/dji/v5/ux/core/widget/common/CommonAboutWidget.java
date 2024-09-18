@@ -7,18 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import dji.sdk.keyvalue.utils.ProductUtil;
 import dji.sdk.keyvalue.value.camera.CameraType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.utils.common.BytesUtil;
+import dji.v5.utils.common.LogPath;
+import dji.v5.utils.common.LogUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.TextCell;
@@ -94,7 +95,7 @@ public class CommonAboutWidget extends FrameLayoutWidget<Object> {
 
         textCellHeight = getResources().getDimensionPixelSize(R.dimen.uxsdk_58_dp);
 
-      //  setBackgroundResource(R.drawable.uxsdk_background_black_rectangle);
+        //  setBackgroundResource(R.drawable.uxsdk_background_black_rectangle);
     }
 
     @Override
@@ -117,8 +118,8 @@ public class CommonAboutWidget extends FrameLayoutWidget<Object> {
 
         addDisposable(widgetModel.fcConnectionProcessor.toFlowableOnUI().subscribe(value -> {
             if (Boolean.TRUE.equals(value)) {
-                addDisposable(widgetModel.getFCSerialNumber().subscribe(this::updateFlycSerialNumber));
-                addDisposable(widgetModel.getProductVersion().subscribe(this::updateProductVersion));
+                addDisposable(widgetModel.getFCSerialNumber().subscribe(this::updateFlycSerialNumber, throwable -> LogUtils.e(LogPath.COMMON, throwable.getMessage())));
+                addDisposable(widgetModel.getProductVersion().subscribe(this::updateProductVersion, throwable -> LogUtils.e(LogPath.COMMON, throwable.getMessage())));
             } else {
                 updateFlycSerialNumber(NO_VALUE);
                 updateProductVersion(NO_VALUE);

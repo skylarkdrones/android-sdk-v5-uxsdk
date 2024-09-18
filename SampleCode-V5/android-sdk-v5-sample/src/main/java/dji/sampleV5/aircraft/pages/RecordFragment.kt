@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragRecordBinding
 import dji.sampleV5.aircraft.models.MegaphoneVM
 import dji.v5.utils.common.ContextUtil
-import kotlinx.android.synthetic.main.frag_record.*
 
 /**
  * Description : 录音Fragment
@@ -20,15 +20,18 @@ import kotlinx.android.synthetic.main.frag_record.*
  * CreateDate : 2022/1/17 2:41 下午
  * Copyright : ©2021 DJI All Rights Reserved.
  */
-class RecordFragment: DJIFragment() {
+class RecordFragment : DJIFragment() {
     private val megaphoneVM: MegaphoneVM by activityViewModels()
-    private var recordStarted:Boolean = false
+    private var binding: FragRecordBinding? = null
+    private var recordStarted: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_record, container, false)
+        binding = FragRecordBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,33 +40,28 @@ class RecordFragment: DJIFragment() {
     }
 
     private fun initBtnListener() {
-
         //点击触发录音
-        btn_record.setOnClickListener {
+        binding?.btnRecord?.setOnClickListener {
             if (!recordStarted) {
                 megaphoneVM.startRecord()
-                chronometer.base = SystemClock.elapsedRealtime()
-                chronometer.start()
-                var colorStateList: ColorStateList? =
-                    ContextCompat.getColorStateList(ContextUtil.getContext(), R.color.red)
-//                btn_record.backgroundTintMode = PorterDuff.Mode.SRC_ATOP
-//                btn_record.backgroundTintList = colorStateList
-                btn_record.imageTintMode = PorterDuff.Mode.SRC_ATOP
-                btn_record.imageTintList = colorStateList
+                binding?.chronometer?.base = SystemClock.elapsedRealtime()
+                binding?.chronometer?.start()
+                val colorStateList: ColorStateList? = ContextCompat.getColorStateList(ContextUtil.getContext(), R.color.red)
+                binding?.btnRecord?.imageTintMode = PorterDuff.Mode.SRC_ATOP
+                binding?.btnRecord?.imageTintList = colorStateList
                 recordStarted = true
             } else {
                 megaphoneVM.stopRecord()
-                chronometer.stop()
-                chronometer.base = SystemClock.elapsedRealtime()
-                var colorStateList: ColorStateList? =
-                    ContextCompat.getColorStateList(ContextUtil.getContext(), R.color.green)
-                btn_record.imageTintMode = PorterDuff.Mode.SRC_ATOP
-                btn_record.imageTintList = colorStateList
+                binding?.chronometer?.stop()
+                binding?.chronometer?.base = SystemClock.elapsedRealtime()
+                val colorStateList: ColorStateList? = ContextCompat.getColorStateList(ContextUtil.getContext(), R.color.green)
+                binding?.btnRecord?.imageTintMode = PorterDuff.Mode.SRC_ATOP
+                binding?.btnRecord?.imageTintList = colorStateList
                 recordStarted = false
             }
         }
 
-        cb_play.setOnCheckedChangeListener { _, isChecked ->
+        binding?.cbPlay?.setOnCheckedChangeListener { _, isChecked ->
             megaphoneVM.isQuickPlay = isChecked
         }
     }

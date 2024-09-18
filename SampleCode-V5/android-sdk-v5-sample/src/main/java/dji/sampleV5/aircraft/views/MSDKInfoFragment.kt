@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragMainTitleBinding
 import dji.sampleV5.aircraft.pages.DJIFragment
-import kotlinx.android.synthetic.main.frag_main_title.msdk_info_text_main
-import kotlinx.android.synthetic.main.frag_main_title.msdk_info_text_second
-import kotlinx.android.synthetic.main.view_title_bar.return_btn
-import kotlinx.android.synthetic.main.view_title_bar.title_text_view
+import dji.v5.utils.common.LogUtils
 
 /**
  * Class Description
@@ -21,12 +22,26 @@ import kotlinx.android.synthetic.main.view_title_bar.title_text_view
  */
 open class MSDKInfoFragment : DJIFragment() {
 
+    private lateinit var msdkInfoTextMain: TextView
+    private lateinit var msdkInfoTextSecond: TextView
+    private lateinit var titleTextView: TextView
+    private lateinit var returnBtn: ImageButton
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_main_title, container, false)
+        val v = inflater.inflate(R.layout.frag_main_title, container, false)
+        initView(v)
+        return v
+    }
+
+    fun initView(v: View) {
+        msdkInfoTextMain = v.findViewById(R.id.msdk_info_text_main)
+        msdkInfoTextSecond = v.findViewById(R.id.msdk_info_text_second)
+        titleTextView = v.findViewById(R.id.title_text_view)
+        returnBtn = v.findViewById(R.id.return_btn)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,22 +53,22 @@ open class MSDKInfoFragment : DJIFragment() {
         msdkInfoVm.msdkInfo.observe(viewLifecycleOwner) {
             it?.let {
                 val mainInfo = "MSDK Info:[Ver:${it.SDKVersion} BuildVer:${it.buildVer} Debug:${it.isDebug} ProductCategory:${it.packageProductCategory} LDMLicenseLoaded:${it.isLDMLicenseLoaded} ]"
-                msdk_info_text_main.text = mainInfo
+                msdkInfoTextMain.text = mainInfo
                 val secondInfo = "Device:${it.productType} | Network:${it.networkInfo} | CountryCode:${it.countryCode} | FirmwareVer:${it.firmwareVer} | LDMEnabled:${it.isLDMEnabled}"
-                msdk_info_text_second.text = secondInfo
+                msdkInfoTextSecond.text = secondInfo
             }
         }
         msdkInfoVm.refreshMSDKInfo()
 
         msdkInfoVm.mainTitle.observe(viewLifecycleOwner) {
             it?.let {
-                title_text_view.text = it
+                titleTextView.text = it
             }
         }
     }
 
     private fun initListener() {
-        return_btn.setOnClickListener {
+        returnBtn.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }

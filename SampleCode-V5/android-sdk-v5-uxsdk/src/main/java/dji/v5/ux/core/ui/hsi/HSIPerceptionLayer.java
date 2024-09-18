@@ -231,10 +231,10 @@ public class HSIPerceptionLayer implements HSIContract.HSILayer {
                 mHorizontalBarrierAvoidanceDistance = (float) perceptionInfo.getHorizontalObstacleAvoidanceBrakingDistance();
                 mHorizontalPerceptionDistance = (float) perceptionInfo.getHorizontalObstacleAvoidanceWarningDistance();
 
-                mVisionPerceptionEnableState[0] = perceptionInfo.getForwardObstacleAvoidanceWorking();
-                mVisionPerceptionEnableState[1] = perceptionInfo.getRightSideObstacleAvoidanceWorking();
-                mVisionPerceptionEnableState[2] = perceptionInfo.getBackwardObstacleAvoidanceWorking();
-                mVisionPerceptionEnableState[3] = perceptionInfo.getLeftSideObstacleAvoidanceWorking();
+                mVisionPerceptionEnableState[0] = perceptionInfo.getForwardObstacleAvoidanceWorking() == Boolean.TRUE;
+                mVisionPerceptionEnableState[1] = perceptionInfo.getRightSideObstacleAvoidanceWorking() == Boolean.TRUE;
+                mVisionPerceptionEnableState[2] = perceptionInfo.getBackwardObstacleAvoidanceWorking() == Boolean.TRUE;
+                mVisionPerceptionEnableState[3] = perceptionInfo.getLeftSideObstacleAvoidanceWorking() == Boolean.TRUE;
             }
         }));
 

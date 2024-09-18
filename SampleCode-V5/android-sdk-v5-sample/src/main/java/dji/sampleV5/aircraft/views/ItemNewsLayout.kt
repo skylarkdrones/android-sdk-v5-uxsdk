@@ -2,10 +2,12 @@ package dji.sampleV5.aircraft.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import dji.sampleV5.aircraft.R
-import kotlinx.android.synthetic.main.item_news.view.*
+import dji.sampleV5.aircraft.databinding.ItemNewsBinding
+import dji.v5.ux.databinding.UxsdkPrimaryFlightDisplayWidgetBinding
 
 /**
  * Class Description
@@ -21,31 +23,33 @@ class ItemNewsLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+    private lateinit var binding: ItemNewsBinding
+
     init {
         initView(context)
     }
 
     private fun initView(context: Context) {
-        View.inflate(context, R.layout.item_news, this)
+        binding = ItemNewsBinding.inflate(LayoutInflater.from(context),this,true)
     }
 
-    fun setTitle(title : String){
-        item_title.text = title
+    fun setTitle(title: String) {
+        binding.itemTitle.text = title
     }
 
-    fun setDate(date : String){
-        item_date.text = date
+    fun setDate(date: String) {
+        binding.itemDate.text = date
     }
 
-    fun setDescription(description : String){
-        item_description.text = description
+    fun setDescription(description: String) {
+        binding.itemDescription.text = description
     }
 
     fun showAlert(isShow: Boolean) {
         if (isShow) {
-            view_alert.visibility = View.VISIBLE
+            binding.viewAlert.visibility = View.VISIBLE
         } else {
-            view_alert.visibility = View.GONE
+            binding.viewAlert.visibility = View.GONE
         }
     }
 }

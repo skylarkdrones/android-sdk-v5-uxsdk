@@ -3,6 +3,7 @@ package dji.v5.ux.warning
 import android.content.Context
 import android.graphics.Outline
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -20,7 +21,7 @@ import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.popover.Popover
 import dji.v5.ux.core.popover.PopoverHelper
-import kotlinx.android.synthetic.main.uxsdk_fpv_top_bar_widget_warning_message.view.*
+import dji.v5.ux.databinding.UxsdkFpvTopBarWidgetWarningMessageBinding
 import kotlin.math.roundToInt
 
 /**
@@ -43,13 +44,14 @@ open class DeviceHealthAndStatusWidget @JvmOverloads constructor(
 
     var popover: Popover? = null
 
+    private lateinit var binding: UxsdkFpvTopBarWidgetWarningMessageBinding
+
     private val widgetModel by lazy {
         DeviceHealthAndStatusWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance())
     }
 
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
-        inflate(context, R.layout.uxsdk_fpv_top_bar_widget_warning_message, this)
-
+        binding = UxsdkFpvTopBarWidgetWarningMessageBinding.inflate(LayoutInflater.from(context),this,true)
         warningMessageCountWrapper = findViewById(R.id.warning_message_count_wrapper)
         warningMessageCountWrapper.clipToOutline = true
         warningMessageCountWrapper.outlineProvider = object : ViewOutlineProvider() {
@@ -78,7 +80,7 @@ open class DeviceHealthAndStatusWidget @JvmOverloads constructor(
             }
             if (popover == null) {
                 val isEmpty: Boolean = widgetModel.deviceMessageProcessor.value.isEmpty()
-                popover = PopoverHelper.baseBuilder(if (isEmpty) tvNoMessage else warning_message_root_view)
+                popover = PopoverHelper.baseBuilder(if (isEmpty) tvNoMessage else binding.warningMessageRootView)
                     .yOffset(
                         if (isEmpty) AndUtil.getDimension(R.dimen.uxsdk_10_dp)
                             .roundToInt() else AndUtil.getDimension(R.dimen.uxsdk_2_dp)

@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.viewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragUasFrancePageBinding
 import dji.sampleV5.aircraft.models.UASFranceVM
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
-import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.utils.common.JsonUtil
-import kotlinx.android.synthetic.main.frag_uas_france_page.*
 
 /**
  * Description :法国无人机远程识别示例
@@ -24,19 +23,20 @@ import kotlinx.android.synthetic.main.frag_uas_france_page.*
  */
 class UASFranceFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener {
     private val uasFranceVM: UASFranceVM by viewModels()
+    private var binding: FragUasFrancePageBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_uas_france_page, container, false)
+        binding = FragUasFrancePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initListener()
-
     }
 
     private fun initListener() {
-        tb_eid_enable_switch.setOnCheckedChangeListener(this)
+        binding?.tbEidEnableSwitch?.setOnCheckedChangeListener(this)
         uasFranceVM.addElectronicIDStatusListener()
         uasFranceVM.addRemoteIdStatusListener()
         uasFranceVM.uasRemoteIDStatus.observe(viewLifecycleOwner) {
@@ -56,12 +56,12 @@ class UASFranceFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener 
         builder.append("IsElectronicIDEnabled:").append(electronicIDStatus?.isElectronicIDEnabled)
         builder.append("\n")
         mainHandler.post {
-            tv_eid_enable_tip.text = builder.toString()
+            binding?.tvEidEnableTip?.text = builder.toString()
         }
 
-        tb_eid_enable_switch.setOnCheckedChangeListener(null)
-        tb_eid_enable_switch.isChecked = electronicIDStatus?.isElectronicIDEnabled?:false
-        tb_eid_enable_switch.setOnCheckedChangeListener(this@UASFranceFragment)
+        binding?.tbEidEnableSwitch?.setOnCheckedChangeListener(null)
+        binding?.tbEidEnableSwitch?.isChecked = electronicIDStatus?.isElectronicIDEnabled?:false
+        binding?.tbEidEnableSwitch?.setOnCheckedChangeListener(this@UASFranceFragment)
 
     }
 
@@ -74,9 +74,9 @@ class UASFranceFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener 
 
 
             override fun onFailure(error: IDJIError) {
-                tb_eid_enable_switch.setOnCheckedChangeListener(null)
-                tb_eid_enable_switch.isChecked = !isChecked
-                tb_eid_enable_switch.setOnCheckedChangeListener(this@UASFranceFragment)
+                binding?.tbEidEnableSwitch?.setOnCheckedChangeListener(null)
+                binding?.tbEidEnableSwitch?.isChecked = !isChecked
+                binding?.tbEidEnableSwitch?.setOnCheckedChangeListener(this@UASFranceFragment)
                 ToastUtils.showToast(error.toString())
             }
 

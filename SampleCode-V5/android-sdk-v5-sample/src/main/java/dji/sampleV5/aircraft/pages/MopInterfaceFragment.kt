@@ -10,18 +10,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragMopInterfacePageBinding
 import dji.sampleV5.aircraft.models.MopVM
 import dji.sdk.keyvalue.value.mop.PipelineDeviceType
 import dji.sdk.keyvalue.value.mop.TransmissionControlType
 import dji.v5.utils.common.LogUtils
-import kotlinx.android.synthetic.main.frag_mop_interface_page.*
-import kotlinx.android.synthetic.main.frag_mop_interface_page.btn_disconnect
-import kotlinx.android.synthetic.main.frag_mop_interface_page.cb_reliable
-import kotlinx.android.synthetic.main.frag_mop_interface_page.et_channel_id
-import kotlinx.android.synthetic.main.frag_mop_interface_page.rg_mop_type
-import kotlinx.android.synthetic.main.frag_payload_data_page.btn_send_data_to_payload
-import kotlinx.android.synthetic.main.frag_payload_data_page.ed_data
-import kotlinx.android.synthetic.main.frag_payload_data_page.message_listview
 
 /**
  * Description :
@@ -37,6 +30,7 @@ class MopInterfaceFragment : DJIFragment() {
     }
 
     private val mopVM: MopVM by viewModels()
+    private var binding: FragMopInterfacePageBinding? = null
     private var messageList = ArrayList<String>()
     private lateinit var payLoadAdapter: ArrayAdapter<String>
 
@@ -57,9 +51,9 @@ class MopInterfaceFragment : DJIFragment() {
         }
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_mop_interface_page, container, false)
+        binding = FragMopInterfacePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,36 +64,35 @@ class MopInterfaceFragment : DJIFragment() {
 
     private fun initListener() {
         mopVM.initListener()
-        ed_data.setOnKeyListener(onKeyListener)
-        btn_connect.setOnClickListener {
-            val deviceType = getType(rg_mop_type.checkedRadioButtonId)
-            val transferType = if (cb_reliable.isChecked) TransmissionControlType.STABLE else TransmissionControlType.UNRELIABLE
-            val id = et_channel_id.text.toString().trim().toInt()
+        binding?.edData?.setOnKeyListener(onKeyListener)
+        binding?.btnConnect?.setOnClickListener {
+            val deviceType = getType(binding?.rgMopType?.checkedRadioButtonId ?: -1)
+            val transferType = if (binding?.cbReliable?.isChecked ?: false) TransmissionControlType.STABLE else TransmissionControlType.UNRELIABLE
+            val id = binding?.etChannelId?.text.toString().trim().toInt()
             mopVM.connect(id, deviceType, transferType)
         }
 
-        btn_disconnect.setOnClickListener {
+        binding?.btnDisconnect?.setOnClickListener {
             mopVM.stopMop()
         }
 
-        btn_send_data_to_payload.setOnClickListener {
+        binding?.btnSendDataToPayload?.setOnClickListener {
             LogUtils.i(PayLoadDataFragment.TAG, "------------------------Start sending data ---------------------------")
-            val sendByteArray = ed_data.text.toString().toByteArray()
+            val sendByteArray = binding?.edData?.text.toString().toByteArray()
             mopVM.sendData(sendByteArray)
         }
     }
 
     private fun initView() {
         payLoadAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, messageList)
-        message_listview.adapter = payLoadAdapter
+        binding?.messageListview?.adapter = payLoadAdapter
 
-
-        mopVM.receiveMessageLiveData.observe(viewLifecycleOwner, { t ->
+        mopVM.receiveMessageLiveData.observe(viewLifecycleOwner) { t ->
             LogUtils.i(TAG, t)
             messageList.add(t)
             payLoadAdapter.notifyDataSetChanged()
-            message_listview.setSelection(messageList.size - 1)
-        })
+            binding?.messageListview?.setSelection(messageList.size - 1)
+        }
     }
 
     private fun getType(checkedRadioButtonId: Int): PipelineDeviceType {

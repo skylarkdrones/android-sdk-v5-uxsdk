@@ -2,12 +2,14 @@ package dji.sampleV5.aircraft.views
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.source.VersionInfo
+import dji.sampleV5.aircraft.databinding.LayoutVersionInfoBinding
 import dji.sampleV5.aircraft.models.VersionInfoVm
 import dji.sampleV5.aircraft.util.DialogUtil
 import dji.v5.utils.common.DjiSharedPreferencesManager
@@ -15,9 +17,9 @@ import dji.v5.utils.common.StringUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
-import kotlinx.android.synthetic.main.layout_version_info.view.*
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class VersionInfoView @JvmOverloads constructor(
     context: Context,
@@ -25,13 +27,10 @@ class VersionInfoView @JvmOverloads constructor(
     defStyleRes: Int = 0,
 ) : FrameLayout(context, attrs, defStyleRes) {
 
+    private var binding: LayoutVersionInfoBinding = LayoutVersionInfoBinding.inflate(LayoutInflater.from(context),this)
     private val versionInfoVm: VersionInfoVm by (context as ComponentActivity).viewModels()
 
     private val disposables = CompositeDisposable()
-
-    init {
-        inflate(context, R.layout.layout_version_info, this)
-    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -57,8 +56,8 @@ class VersionInfoView @JvmOverloads constructor(
     }
 
     private fun refreshCurrentVersionInfo(currentVersionInfo: VersionInfo) {
-        scroll_news.visibility = View.VISIBLE
-        showVersionInfoTo(item_current_version_info, currentVersionInfo, R.string.release_note_tile_current)
+        binding.scrollNews.visibility = View.VISIBLE
+        showVersionInfoTo(binding.itemCurrentVersionInfo, currentVersionInfo, R.string.release_note_tile_current)
     }
 
     /**
@@ -66,18 +65,18 @@ class VersionInfoView @JvmOverloads constructor(
      * @param latestGreaterThan 最新版本是否大于当前版本，true:大于
      */
     private fun refreshLatestVersionInfo(latest: VersionInfo, latestGreaterThan: Boolean) {
-        scroll_news.visibility = View.VISIBLE
+        binding.scrollNews.visibility = View.VISIBLE
         // 有新版本时
         showVersionInfoTo(
-            item_latest_version_info,
+            binding.itemLatestVersionInfo,
             latest,
             R.string.release_note_tile_latest,
             latestGreaterThan && !isClickedLatestVersionInfo(latest)
         )
 
-        item_latest_version_info.setOnClickListener {
+        binding.itemLatestVersionInfo.setOnClickListener {
             DjiSharedPreferencesManager.putString(context, SP_KEY_CLICKED_LATEST_VERSION_INFO_STRING, latest.versionName)
-            showVersionInfoTo(item_latest_version_info, latest, R.string.release_note_tile_latest, !isClickedLatestVersionInfo(latest))
+            showVersionInfoTo(binding.itemLatestVersionInfo, latest, R.string.release_note_tile_latest, !isClickedLatestVersionInfo(latest))
 
             DialogUtil.showTwoButtonDialog(context, StringUtils.getResStr(R.string.news_dialog_content_tips),
                 StringUtils.getResStr(R.string.news_dialog_btn_left), {

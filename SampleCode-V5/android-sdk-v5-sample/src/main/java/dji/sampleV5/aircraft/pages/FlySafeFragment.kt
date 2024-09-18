@@ -11,6 +11,8 @@ import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.models.FlySafeVM
 import dji.sampleV5.aircraft.BuildConfig
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragFlySafePageBinding
 import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
 import dji.sampleV5.aircraft.util.Helper
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
@@ -28,8 +30,6 @@ import dji.v5.utils.common.DocumentUtil
 import dji.v5.ux.accessory.DescSpinnerCell
 import dji.v5.ux.map.MapWidget
 import dji.v5.ux.mapkit.core.maps.DJIMap
-import kotlinx.android.synthetic.main.frag_fly_safe_page.*
-import kotlinx.android.synthetic.main.frag_fly_safe_page.map_widget
 import java.util.*
 
 /**
@@ -49,22 +49,23 @@ class FlySafeFragment : DJIFragment() {
         private const val CE_INFO = "CE INFO :"
     }
 
+    private var binding: FragFlySafePageBinding? = null
     private val flySafeVm: FlySafeVM by viewModels()
     private val notificationBuilder = StringBuilder()
     private var notificationCount = 0
 
-
-    var lancher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var lancher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         result?.apply {
-            var uri = data?.data
-            var path = DocumentUtil.getPath(requireContext(), uri);
+            val uri = data?.data
+            val path = DocumentUtil.getPath(requireContext(), uri);
             flySafeVm.pushFlySafeDynamicDatabaseToAircraftAndApp(path)
-            ToastUtils.showToast("User Database :" + path)
+            ToastUtils.showToast("User Database :$path")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_fly_safe_page, container, false)
+        binding = FragFlySafePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,36 +108,36 @@ class FlySafeFragment : DJIFragment() {
             showFlyZoneInformation(it)
         }
         flySafeVm.serverFlyZoneLicenseInfo.observe(viewLifecycleOwner) { info ->
-            server_fly_zone_license_info.text = getFlyZoneLicenseInfoStr(info) {
+            binding?.serverFlyZoneLicenseInfo?.text = getFlyZoneLicenseInfoStr(info) {
                 it.append("------------ Server Fly Zone License Info Start------------\n")
             }
         }
         flySafeVm.aircraftFlyZoneLicenseInfo.observe(viewLifecycleOwner) { info ->
-            aircraft_fly_zone_license_info.text = getFlyZoneLicenseInfoStr(info) {
+            binding?.aircraftFlyZoneLicenseInfo?.text = getFlyZoneLicenseInfoStr(info) {
                 it.append("------------ Aircraft Fly Zone License Info Start------------\n")
             }
 
         }
         flySafeVm.toastResult?.observe(viewLifecycleOwner) { result ->
             result?.msg?.let {
-                lte_toast.text = it
+                binding?.lteToast?.text = it
             }
         }
         flySafeVm.importAndSyncState.observe(viewLifecycleOwner) {
-            sysn_and_import_info.text = "Progress:${it.importAndSyncProgress} : ${it.error?.description()}"
+            binding?.sysnAndImportInfo?.text = "Progress:${it.importAndSyncProgress} : ${it.error?.description()}"
         }
 
         flySafeVm.dataBaseInfo.observe(viewLifecycleOwner) {
             if (it.component == FlySafeDatabaseComponent.MSDK) {
-                database_info_sdk.text = "MSDK:Mode:${it.upgradeMode} ${it.dataBaseName} time:${it.dataBaseTime} size:${it.dataBaseSize} "
+                binding?.databaseInfoSdk?.text = "MSDK:Mode:${it.upgradeMode} ${it.dataBaseName} time:${it.dataBaseTime} size:${it.dataBaseSize} "
             } else {
-                database_info_aircraft.text = "Aircraft:Mode:${it.upgradeMode} time:${it.dataBaseTime}"
+                binding?.databaseInfoAircraft?.text = "Aircraft:Mode:${it.upgradeMode} time:${it.dataBaseTime}"
             }
 
         }
 
         flySafeVm.dataUpgradeState.observe(viewLifecycleOwner) {
-            update_state.text = "Upgrade State:${it.name}"
+            binding?.updateState?.text = "Upgrade State:${it.name}"
         }
 
 
@@ -150,36 +151,36 @@ class FlySafeFragment : DJIFragment() {
             map.setMapType(DJIMap.MapType.NORMAL)
         }
 
-        map_widget.initMapLibreMap(requireContext() , onMapReadyListener)
-        map_widget.onCreate(savedInstanceState) //需要再init后调用否则Amap无法显示
+        binding?.mapWidget?.initMapLibreMap(requireContext(), onMapReadyListener)
+        binding?.mapWidget?.onCreate(savedInstanceState) //需要再init后调用否则Amap无法显示
     }
 
     override fun onPause() {
         super.onPause()
-        map_widget.onPause()
+        binding?.mapWidget?.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        map_widget.onResume()
+        binding?.mapWidget?.onResume()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        map_widget.onDestroy()
+        binding?.mapWidget?.onDestroy()
     }
 
     private fun initBtnClickListener() {
-        btn_hide_or_show_all_fly_zone_info.setOnClickListener {
-            if (lte_text.isVisible) {
-                lte_text.visibility = View.INVISIBLE
-                lte_fly_zone_text.visibility = View.INVISIBLE
+        binding?.btnHideOrShowAllFlyZoneInfo?.setOnClickListener {
+            if (binding?.lteText?.isVisible == true) {
+                binding?.lteText?.visibility = View.INVISIBLE
+                binding?.lteFlyZoneText?.visibility = View.INVISIBLE
             } else {
-                lte_text.visibility = View.VISIBLE
-                lte_fly_zone_text.visibility = View.VISIBLE
+                binding?.lteText?.visibility = View.VISIBLE
+                binding?.lteFlyZoneText?.visibility = View.VISIBLE
             }
         }
-        btn_get_fly_zones_in_surrounding_area.setOnClickListener {
+        binding?.btnGetFlyZonesInSurroundingArea?.setOnClickListener {
             val location = flySafeVm.getAircraftLocation()
             KeyValueDialogUtil.showInputDialog(
                 activity, "(Latitude,Longitude)",
@@ -194,19 +195,19 @@ class FlySafeFragment : DJIFragment() {
                 }
             }
         }
-        btn_download_fly_zone_licenses_from_server.setOnClickListener {
+        binding?.btnDownloadFlyZoneLicensesFromServer?.setOnClickListener {
             flySafeVm.downloadFlyZoneLicensesFromServer()
         }
-        btn_push_fly_zone_licenses_to_aircraft.setOnClickListener {
+        binding?.btnPushFlyZoneLicensesToAircraft?.setOnClickListener {
             flySafeVm.pushFlyZoneLicensesToAircraft()
         }
-        btn_pull_fly_zone_licenses_from_aircraft.setOnClickListener {
+        binding?.btnPullFlyZoneLicensesFromAircraft?.setOnClickListener {
             flySafeVm.pullFlyZoneLicensesFromAircraft()
         }
-        btn_delete_fly_zone_licenses_from_aircraft.setOnClickListener {
+        binding?.btnDeleteFlyZoneLicensesFromAircraft?.setOnClickListener {
             flySafeVm.deleteFlyZoneLicensesFromAircraft()
         }
-        btn_set_fly_zone_licenses_enabled.setOnClickListener {
+        binding?.btnSetFlyZoneLicensesEnabled?.setOnClickListener {
             val info = flySafeVm.aircraftFlyZoneLicenseInfo.value
             if (info.isNullOrEmpty()) {
                 ToastUtils.showToast("Please download licenses and push to aircraft first.")
@@ -226,7 +227,7 @@ class FlySafeFragment : DJIFragment() {
                 return@let
             }
         }
-        btn_unlock_authorization_fly_zone.setOnClickListener {
+        binding?.btnUnlockAuthorizationFlyZone?.setOnClickListener {
             KeyValueDialogUtil.showInputDialog(
                 activity, "(FlyZoneID)",
                 "1", "", false
@@ -240,27 +241,28 @@ class FlySafeFragment : DJIFragment() {
                 }
             }
         }
-        btn_unlock_all_enhanced_warning_fly_zone.setOnClickListener {
+        binding?.btnUnlockAllEnhancedWarningFlyZone?.setOnClickListener {
             flySafeVm.unlockAllEnhancedWarningFlyZone()
         }
 
-        btn_import.setOnClickListener {
+        binding?.btnImport?.setOnClickListener {
             openFileFolder()
         }
 
-        btn_test_import_available.setOnClickListener {
+        binding?.btnTestImportAvailable?.setOnClickListener {
             flySafeVm.pushAvailableTestFlySafeDynamicDatabaseToApp()
         }
 
-        btn_test_import_unavailable.setOnClickListener {
+        binding?.btnTestImportUnavailable?.setOnClickListener {
             flySafeVm.pushUnAvailableTestFlySafeDynamicDatabaseToApp()
         }
 
-        btn_sync.setOnClickListener {
+        binding?.btnSync?.setOnClickListener {
             flySafeVm.syncFlySafeMSDKDatabaseToAircraft()
         }
 
-        importMode.addOnItemSelectedListener(object : DescSpinnerCell.OnItemSelectedListener {
+        binding?.importMode?.addOnItemSelectedListener(object :
+            DescSpinnerCell.OnItemSelectedListener {
             override fun onItemSelected(position: Int) {
                 flySafeVm.setFlySafeDynamicDatabaseUpgradeMode(FlySafeDatabaseUpgradeMode.find(position))
             }
@@ -276,7 +278,7 @@ class FlySafeFragment : DJIFragment() {
         notificationBuilder.append("<-----").append("Notification count :").append(notificationCount).append("----->\n")
         notificationBuilder.append("Time : ").append(Date(System.currentTimeMillis()).toString()).append("\n")
         infoExtend(notificationBuilder)
-        fly_safe_notification_msg.text = notificationBuilder
+        binding?.flySafeNotificationMsg?.text = notificationBuilder
     }
 
     private fun getFlyZoneLicenseInfoStr(licenseInfo: MutableList<FlyZoneLicenseInfo>, infoPre: (builder: StringBuilder) -> Unit): StringBuilder {
@@ -363,7 +365,7 @@ class FlySafeFragment : DJIFragment() {
             sb.append("------------------------\n")
             sb.append("\n")
         }
-        fly_zone_info.text = sb
+        binding?.flyZoneInfo?.text = sb
     }
 
     private fun openFileFolder() {

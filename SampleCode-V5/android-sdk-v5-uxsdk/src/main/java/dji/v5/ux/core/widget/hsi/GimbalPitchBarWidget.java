@@ -14,12 +14,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.sdk.keyvalue.value.common.DoubleMinMax;
-import dji.sdk.keyvalue.value.gimbal.GimbalAttitudeRange;
-import dji.v5.utils.common.LogUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.ICameraIndex;
@@ -563,6 +560,9 @@ public class GimbalPitchBarWidget extends FrameLayoutWidget<Boolean> implements 
 
         compositeDisposable.add(widgetModel.getGimbalAttitudeGimbalAttitudeRangeProcessorList().get(getCameraIndex().value()).toFlowable().subscribe(gimbalAttitudeRange -> {
             DoubleMinMax pitch = gimbalAttitudeRange.getPitch();
+            if (pitch == null){
+                return;
+            }
             int pitchMax = (int) Math.round(pitch.getMax());
             int pitchMin = (int) Math.round(pitch.getMin());
             int absMax = Math.abs(pitchMax);

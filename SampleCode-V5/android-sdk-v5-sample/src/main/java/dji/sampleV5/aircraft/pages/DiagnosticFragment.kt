@@ -5,20 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragDiagnosticPageBinding
 import dji.sampleV5.aircraft.models.DiagnosticVm
-import kotlinx.android.synthetic.main.frag_diagnostic_page.*
 
 class DiagnosticFragment : DJIFragment() {
 
     private val diagnosticVm: DiagnosticVm by activityViewModels()
+    private var binding: FragDiagnosticPageBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_diagnostic_page, container, false)
+        binding = FragDiagnosticPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,6 +68,6 @@ class DiagnosticFragment : DJIFragment() {
             builder.append("\n")
         }
 
-        diagnostic_msg.text = builder.toString()
+        binding?.diagnosticMsg?.text = builder.toString()
     }
 }

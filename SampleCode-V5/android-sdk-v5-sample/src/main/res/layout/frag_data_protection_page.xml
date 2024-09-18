@@ -94,7 +94,14 @@
                 style="@style/main_fragment_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="export and zip log" />
+                android:text="export+zip Log" />
+
+            <Button
+                android:id="@+id/btn_ping"
+                style="@style/main_fragment_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ping" />
 
         </LinearLayout>
 

@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragUasUsPageBinding
 import dji.sampleV5.aircraft.models.UASUAVM
-import kotlinx.android.synthetic.main.frag_uas_us_page.*
 
 /**
  * Description :美国无人机远程识别示例
@@ -19,8 +18,11 @@ import kotlinx.android.synthetic.main.frag_uas_us_page.*
  */
 class UASUSFragment : DJIFragment() {
     private val uas: UASUAVM by viewModels()
+    private var binding: FragUasUsPageBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_uas_us_page, container, false)
+        binding = FragUasUsPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,7 +30,7 @@ class UASUSFragment : DJIFragment() {
         uas.addRemoteIdStatusListener()
 
         uas.uasRemoteIDStatus.observe(viewLifecycleOwner) {
-            tv_ua_rid_status.text = "RemoteIdStatus:${it}"
+            binding?.tvUaRidStatus?.text = "RemoteIdStatus:${it}"
         }
     }
 

@@ -1,9 +1,12 @@
 package dji.sampleV5.aircraft.pages
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +18,6 @@ import dji.v5.common.error.IDJIError
 
 import dji.v5.manager.datacenter.media.MediaFile
 import dji.v5.utils.common.ContextUtil
-import kotlinx.android.synthetic.main.item_mediafile_list.view.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.util.ArrayList
 
@@ -31,19 +33,17 @@ class MediaListAdapter(
     RecyclerView.Adapter<MediaListAdapter.ViewHolder>() {
 
     val mSelectedItems: ArrayList<MediaFile> = ArrayList<MediaFile>()
-    var selectionMode : Boolean = false
+    var selectionMode: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_mediafile_list, parent, false)
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_mediafile_list, parent, false)
         return ViewHolder(view, onClick)
     }
 
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        val mediaFile = data.get(position)
-        holder.imageView.setTag(position)
+        val mediaFile = data[position]
+        holder.imageView.tag = position
         holder.setItemData(mediaFile)
         holder.imageView.setImageDrawable(
             ContextCompat.getDrawable(
@@ -54,7 +54,8 @@ class MediaListAdapter(
         if (mediaFile.thumbNail != null) {
             holder.imageView.setImageBitmap(mediaFile.thumbNail)
         } else {
-            mediaFile.pullThumbnailFromCamera(object : CommonCallbacks.CompletionCallbackWithParam<Bitmap> {
+            mediaFile.pullThumbnailFromCamera(object :
+                CommonCallbacks.CompletionCallbackWithParam<Bitmap> {
                 override fun onSuccess(t: Bitmap?) {
                     AndroidSchedulers.mainThread().scheduleDirect {
                         if (holder.imageView.tag == position) {
@@ -90,10 +91,10 @@ class MediaListAdapter(
 
     inner class ViewHolder(view: View, private val onItemClick: (MediaFile, View) -> Unit) :
         RecyclerView.ViewHolder(view) {
-        var imageView = view.iv_thumbnail
-        var textView = view.tv_media_info
+        var imageView: ImageView = view.findViewById(R.id.iv_thumbnail)
+        var textView: TextView = view.findViewById(R.id.tv_media_info)
         var mediaFile: MediaFile? = null
-        var rightTopIcon = view.right_top_icon
+        var rightTopIcon: ImageView = view.findViewById(R.id.right_top_icon)
 
         init {
 
@@ -126,32 +127,31 @@ class MediaListAdapter(
     }
 
 
-     fun holderClickAction(
-         holder: ViewHolder,
-         media: MediaFile
+    fun holderClickAction(
+        holder: ViewHolder,
+        media: MediaFile
     ) {
 
-         if (selectionMode) {
-             if (mSelectedItems.contains(holder.mediaFile)) {
-                 mSelectedItems.remove(holder.mediaFile)
-             } else {
-                 holder.mediaFile?.let { it1 -> mSelectedItems.add(it1) }
-             }
-             val selected = mSelectedItems.contains(media)
-             holder.updateSelection(selectionMode, selected)
+        if (selectionMode) {
+            if (mSelectedItems.contains(holder.mediaFile)) {
+                mSelectedItems.remove(holder.mediaFile)
+            } else {
+                holder.mediaFile?.let { it1 -> mSelectedItems.add(it1) }
+            }
+            val selected = mSelectedItems.contains(media)
+            holder.updateSelection(selectionMode, selected)
 
-         }
+        }
 
     }
 
-     fun getSelectedItems(): ArrayList<MediaFile> {
+    fun getSelectedItems(): ArrayList<MediaFile> {
         return mSelectedItems
     }
 
-    fun  setSelectMode(selectionMode: Boolean) {
+    fun setSelectMode(selectionMode: Boolean) {
         this.selectionMode = selectionMode;
     }
-
 
 
 }

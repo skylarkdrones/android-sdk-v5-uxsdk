@@ -19,7 +19,6 @@ import dji.sampleV5.aircraft.models.CameraStreamDetailVM
 import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.manager.interfaces.ICameraStreamManager
-import kotlinx.android.synthetic.main.fragment_camera_stream_detail.sv_camera
 
 class CameraStreamDetailFragment : Fragment() {
 
@@ -139,9 +138,9 @@ class CameraStreamDetailFragment : Fragment() {
 
     private fun updateCameraStream() {
         if (isNeedPreviewCamera) {
-            sv_camera.visibility = View.VISIBLE
+            cameraSurfaceView.visibility = View.VISIBLE
         } else {
-            sv_camera.visibility = View.GONE
+            cameraSurfaceView.visibility = View.GONE
         }
         if (width <= 0 || height <= 0 || surface == null || !isNeedPreviewCamera) {
             if (surface != null) {
@@ -200,6 +199,7 @@ class CameraStreamDetailFragment : Fragment() {
         }
         updateCameraStream()
     }
+
     private val mOnLensChangeListener = RadioGroup.OnCheckedChangeListener { rg, checkedId ->
         rg.findViewById<RadioButton>(checkedId)?.let {
             val tag = it.tag

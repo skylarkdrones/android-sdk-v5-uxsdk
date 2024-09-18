@@ -11,6 +11,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import dji.sampleV5.aircraft.databinding.ActivityMainBinding
 import dji.sampleV5.aircraft.models.BaseMainActivityVm
 import dji.sampleV5.aircraft.models.MSDKInfoVm
 import dji.sampleV5.aircraft.models.MSDKManagerVM
@@ -21,7 +22,6 @@ import dji.v5.utils.common.LogUtils
 import dji.v5.utils.common.PermissionUtil
 import dji.v5.utils.common.StringUtils
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_main.*
 
 /**
  * Class Description
@@ -57,6 +57,7 @@ abstract class DJIMainActivity : AppCompatActivity() {
     private val baseMainActivityVm: BaseMainActivityVm by viewModels()
     private val msdkInfoVm: MSDKInfoVm by viewModels()
     private val msdkManagerVM: MSDKManagerVM by globalViewModels()
+    private lateinit var binding: ActivityMainBinding
     private val handler: Handler = Handler(Looper.getMainLooper())
     private val disposable = CompositeDisposable()
 
@@ -66,7 +67,8 @@ abstract class DJIMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // 有一些手机从系统桌面进入的时候可能会重启main类型的activity
         // 需要校验这种情况，业界标准做法，基本所有app都需要这个
@@ -108,23 +110,24 @@ abstract class DJIMainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initMSDKInfoView() {
         msdkInfoVm.msdkInfo.observe(this) {
-            text_view_version.text = StringUtils.getResStr(R.string.sdk_version, it.SDKVersion + " " + it.buildVer)
-            text_view_product_name.text = StringUtils.getResStr(R.string.product_name, it.productType.name)
-            text_view_package_product_category.text = StringUtils.getResStr(R.string.package_product_category, it.packageProductCategory)
-            text_view_is_debug.text = StringUtils.getResStr(R.string.is_sdk_debug, it.isDebug)
-            text_core_info.text = it.coreInfo.toString()
+            binding.textViewVersion.text = StringUtils.getResStr(R.string.sdk_version, it.SDKVersion + " " + it.buildVer)
+            binding.textViewProductName.text = StringUtils.getResStr(R.string.product_name, it.productType.name)
+            binding.textViewPackageProductCategory.text = StringUtils.getResStr(R.string.package_product_category, it.packageProductCategory)
+            binding.textViewIsDebug.text = StringUtils.getResStr(R.string.is_sdk_debug, it.isDebug)
+            binding.textCoreInfo.text = it.coreInfo.toString()
         }
 
-        icon_sdk_forum.setOnClickListener {
+        binding.iconSdkForum.setOnClickListener {
             Helper.startBrowser(this, StringUtils.getResStr(R.string.sdk_forum_url))
         }
-        icon_release_node.setOnClickListener {
+
+        binding.iconReleaseNode.setOnClickListener {
             Helper.startBrowser(this, StringUtils.getResStr(R.string.release_node_url))
         }
-        icon_tech_support.setOnClickListener {
+        binding.iconTechSupport.setOnClickListener {
             Helper.startBrowser(this, StringUtils.getResStr(R.string.tech_support_url))
         }
-        view_base_info.setOnClickListener {
+        binding.viewBaseInfo.setOnClickListener {
             baseMainActivityVm.doPairing {
                 showToast(it)
             }
@@ -145,7 +148,7 @@ abstract class DJIMainActivity : AppCompatActivity() {
                 showToast("Register Failure: ${resultPair.second}")
                 statusText = StringUtils.getResStr(this, R.string.unregistered)
             }
-            text_view_registered.text = StringUtils.getResStr(R.string.registration_status, statusText)
+            binding.textViewRegistered.text = StringUtils.getResStr(R.string.registration_status, statusText)
         }
 
         msdkManagerVM.lvProductConnectionState.observe(this) { resultPair ->
@@ -172,15 +175,15 @@ abstract class DJIMainActivity : AppCompatActivity() {
 
 
     fun <T> enableDefaultLayout(cl: Class<T>) {
-        enableShowCaseButton(default_layout_button, cl)
+        enableShowCaseButton(binding.defaultLayoutButton, cl)
     }
 
     fun <T> enableWidgetList(cl: Class<T>) {
-        enableShowCaseButton(widget_list_button, cl)
+        enableShowCaseButton(binding.widgetListButton, cl)
     }
 
     fun <T> enableTestingTools(cl: Class<T>) {
-        enableShowCaseButton(testing_tool_button, cl)
+        enableShowCaseButton(binding.testingToolButton, cl)
     }
 
     private fun <T> enableShowCaseButton(view: View, cl: Class<T>) {

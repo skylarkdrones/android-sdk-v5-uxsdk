@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragLogInfoPageBinding
 import dji.sampleV5.aircraft.models.MSDKCrashLogVM
 import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_log_info_page.*
 
 /**
  * ClassName : LogInfoFragment
@@ -19,31 +18,33 @@ import kotlinx.android.synthetic.main.frag_log_info_page.*
  */
 class CrashLogInfoFragment : DJIFragment() {
     private val logVm: MSDKCrashLogVM by activityViewModels()
+    private var binding: FragLogInfoPageBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_log_info_page, container, false)
+        binding = FragLogInfoPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         logVm.updateLogInfo()
         logVm.logInfo.observe(viewLifecycleOwner) {
-            tv_log_info.text = logVm.logInfo.value
+            binding?.tvLogInfo?.text = logVm.logInfo.value
         }
         logVm.logMsg.observe(viewLifecycleOwner) {
             ToastUtils.showToast("Msg:$it")
         }
-        btn_get_log_info.setOnClickListener {
+        binding?.btnGetLogInfo?.setOnClickListener {
             logVm.updateLogInfo()
         }
-        btn_test_java_crash.setOnClickListener {
+        binding?.btnTestJavaCrash?.setOnClickListener {
             logVm.testJavaCrash(false)
         }
-        btn_test_native_crash.setOnClickListener {
+        binding?.btnTestNativeCrash?.setOnClickListener {
             logVm.testNativeCrash(true)
         }
     }

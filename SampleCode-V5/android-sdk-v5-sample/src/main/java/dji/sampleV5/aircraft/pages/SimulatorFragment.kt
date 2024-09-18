@@ -6,18 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.QuickTestConfig
+import dji.sampleV5.aircraft.databinding.FragSimulatorPageBinding
 import dji.sampleV5.aircraft.models.SimulatorVM
 import dji.sampleV5.aircraft.util.Helper
 import dji.sampleV5.aircraft.util.ToastUtils
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
-import dji.v5.manager.aircraft.simulator.*
+import dji.v5.manager.aircraft.simulator.InitializationSettings
 import dji.v5.manager.areacode.AreaCodeManager
 import dji.v5.utils.common.LogUtils
-import kotlinx.android.synthetic.main.frag_simulator_page.*
 
 /**
  * @author feel.feng
@@ -26,9 +25,11 @@ import kotlinx.android.synthetic.main.frag_simulator_page.*
  */
 class SimulatorFragment : DJIFragment() {
     private val simulatorVM: SimulatorVM by activityViewModels()
+    private var binding: FragSimulatorPageBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_simulator_page, container, false)
+        binding = FragSimulatorPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,26 +38,26 @@ class SimulatorFragment : DJIFragment() {
     }
 
     private fun initListener() {
-        btn_enable_simulator.setOnClickListener {
+        binding?.btnEnableSimulator?.setOnClickListener {
             enableSimulator()
         }
 
-        btn_disable_simulator.setOnClickListener {
+        binding?.btnDisableSimulator?.setOnClickListener {
             disableSimulator(null)
         }
 
-        btn_set_areacode.setOnClickListener {
+        binding?.btnSetAreacode?.setOnClickListener {
             updateAreaCode()
         }
 
         simulatorVM.simulatorStateSb.observe(viewLifecycleOwner) {
-            simulator_state_info_tv?.apply {
+            binding?.simulatorStateInfoTv?.apply {
                 text = it
                 setTextColor(if (simulatorVM.isSimulatorOn()) Color.BLACK else Color.RED)
             }
         }
 
-        btn_quick_simulator_area.setOnClickListener {
+        binding?.btnQuickSimulatorArea?.setOnClickListener {
             initPopupNumberPicker(Helper.makeList(simulatorVM.quickInfo)) {
                 updateView(simulatorVM.quickInfo[indexChosen[0]])
                 if (simulatorVM.isSimulatorOn()) {
@@ -79,13 +80,13 @@ class SimulatorFragment : DJIFragment() {
     }
 
     private fun enableSimulator() {
-        val coordinate2D = LocationCoordinate2D(simulator_lat_et.text.toString().toDouble(), simulator_lng_et.text.toString().toDouble())
-        val data = InitializationSettings.createInstance(coordinate2D, simulator_gps_num_et.text.toString().toInt())
+        val coordinate2D = LocationCoordinate2D(binding?.simulatorLatEt?.text.toString().toDouble(), binding?.simulatorLngEt?.text.toString().toDouble())
+        val data = InitializationSettings.createInstance(coordinate2D, binding?.simulatorGpsNumEt?.text.toString().toInt())
         simulatorVM.enableSimulator(data, object : CommonCallbacks.CompletionCallback {
             override fun onSuccess() {
                 ToastUtils.showToast("start Success")
                 mainHandler.post {
-                    simulator_state_info_tv?.setTextColor(Color.BLACK)
+                    binding?.simulatorStateInfoTv?.setTextColor(Color.BLACK)
                 }
             }
 
@@ -99,7 +100,7 @@ class SimulatorFragment : DJIFragment() {
         simulatorVM.disableSimulator(object : CommonCallbacks.CompletionCallback {
             override fun onSuccess() {
                 ToastUtils.showToast("disable Success")
-                mainHandler.post { simulator_state_info_tv?.setTextColor(Color.RED) }
+                mainHandler.post { binding?.simulatorStateInfoTv?.setTextColor(Color.RED) }
                 callbacks?.onSuccess()
             }
 
@@ -111,7 +112,7 @@ class SimulatorFragment : DJIFragment() {
     }
 
     private fun updateAreaCode() {
-        val areCode = areacode_et.text.toString()
+        val areCode = binding?.areacodeEt?.text.toString()
         LogUtils.d(tag, "areCode:$areCode")
         val idjiError = AreaCodeManager.getInstance().updateAreaCode(areCode)
         if (idjiError == null) {
@@ -122,9 +123,9 @@ class SimulatorFragment : DJIFragment() {
     }
 
     private fun updateView(info: QuickTestConfig.SimulatorArea) {
-        simulator_lat_et.setText(info.location.latitude.toString())
-        simulator_lng_et.setText(info.location.longitude.toString())
-        areacode_et.setText(info.areaCode.value())
+        binding?.simulatorLatEt?.setText(info.location.latitude.toString())
+        binding?.simulatorLngEt?.setText(info.location.longitude.toString())
+        binding?.areacodeEt?.setText(info.areaCode.value())
     }
 
     override fun onDestroy() {

@@ -29,6 +29,7 @@
             android:transitionName="tansitionImage"
             tools:ignore="ContentDescription,UnusedAttribute" />
         <include
+            android:id='@+id/layout_media_play_download_progress'
             layout="@layout/layout_media_play_download_progress"/>
     </androidx.cardview.widget.CardView>
 

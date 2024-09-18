@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -22,6 +21,10 @@ android {
     kotlinOptions{
         jvmTarget = JavaVersion.VERSION_1_8
         freeCompilerArgs += ["-Xjvm-default=all"]
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 

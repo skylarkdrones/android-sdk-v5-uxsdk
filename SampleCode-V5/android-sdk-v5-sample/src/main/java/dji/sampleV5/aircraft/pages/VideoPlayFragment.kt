@@ -1,12 +1,19 @@
 package dji.sampleV5.aircraft.pages
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.MEDIA_FILE_DETAILS_STR
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.VideoPlayPageBinding
 import dji.sampleV5.aircraft.models.VideoPlayVM
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.common.video.channel.VideoChannelType
@@ -19,13 +26,11 @@ import dji.v5.manager.datacenter.MediaDataCenter
 import dji.v5.manager.datacenter.media.MediaFile
 import dji.v5.manager.datacenter.media.VideoPlayState
 import dji.v5.utils.common.LogUtils
-import kotlinx.android.synthetic.main.video_play_page.*
-import dji.sampleV5.aircraft.util.ToastUtils
-
 
 class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickListener {
 
     val videoPlayVM : VideoPlayVM by activityViewModels()
+    private var binding: VideoPlayPageBinding? = null
     private lateinit var surfaceView: SurfaceView
     private var videoDecoder: IVideoDecoder? = null
     var mediaFile: MediaFile? = null
@@ -38,11 +43,13 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.video_play_page, container, false)
-        surfaceView = view.findViewById(R.id.surfaceView)
-        surfaceView.holder.addCallback(this)
-        mediaFile = arguments?.getSerializable(MEDIA_FILE_DETAILS_STR) as MediaFile
-        return view
+        binding = VideoPlayPageBinding.inflate(inflater, container, false)
+        binding?.root?.let {
+            surfaceView = it.findViewById(R.id.surfaceView)
+            surfaceView.holder.addCallback(this)
+            mediaFile = arguments?.getSerializable(MEDIA_FILE_DETAILS_STR) as MediaFile
+        }
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,13 +62,13 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
         MediaDataCenter.getInstance().mediaManager.enable(object :CommonCallbacks.CompletionCallback{
             override fun onSuccess() {
                 enterPlaybackSuccess = true
-                LogUtils.e(TAG , "enter success");
-                operate.visibility = View.VISIBLE
+                LogUtils.e(TAG , "enter success")
+                binding?.operate?.visibility = View.VISIBLE
             }
 
             override fun onFailure(error: IDJIError) {
                 enterPlaybackSuccess = false
-                operate.visibility = View.INVISIBLE
+                binding?.operate?.visibility = View.INVISIBLE
                 LogUtils.e(TAG , "enter failed" + error.description());
             }
 
@@ -73,7 +80,7 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
         surfaceView.setOnClickListener(this)
         operateSeekBar()
         videoPlayVM.addVideoPlayStateListener()
-        stop.setOnClickListener(){
+        binding?.stop?.setOnClickListener(){
             videoPlayVM.stop()
         }
         videoPlayVM.videoPlayStatus.observe(viewLifecycleOwner) {
@@ -89,14 +96,14 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
                     } else if (currentIntPosition >= videoTime) {
                         currentIntPosition = totalVideoTime
                     }
-                    seekBar?.progress = currentIntPosition
-                    playingtime?.setText(videoPlayVM.showTime(currentIntPosition))
-                    operate?.visibility = View.GONE
+                    binding?.seekBar?.progress = currentIntPosition
+                    binding?.playingtime?.setText(videoPlayVM.showTime(currentIntPosition))
+                    binding?.operate?.visibility = View.GONE
                 }
 
                 else -> {
-                    operate?.visibility = View.VISIBLE
-                    operate?.setImageResource(R.drawable.icon_play)
+                    binding?.operate?.visibility = View.VISIBLE
+                    binding?.operate?.setImageResource(R.drawable.icon_play)
                 }
             }
 
@@ -206,21 +213,21 @@ class VideoPlayFragment : DJIFragment(), SurfaceHolder.Callback, View.OnClickLis
     private fun operateSeekBar() {
         val timed = mediaFile!!.duration.toDouble()
         val time = timed.toInt() / 1000
-        duration?.setText(videoPlayVM.showTime(time))
+        binding?.duration?.text = videoPlayVM.showTime(time)
         val doubleDuration = mediaFile!!.duration.toDouble()
         val intDuration = doubleDuration.toInt() / 1000
-        seekBar.max = intDuration
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding?.seekBar?.max = intDuration
+        binding?.seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                seek_tip?.setText("Progress：$progress")
+                binding?.seekTip?.setText("Progress：$progress")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-                seek_tip?.setVisibility(View.VISIBLE)
+                binding?.seekTip?.setVisibility(View.VISIBLE)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                seek_tip?.setVisibility(View.INVISIBLE)
+                binding?.seekTip?.setVisibility(View.INVISIBLE)
                 val douProgress = seekBar.progress.toDouble()
                 val intProgress = douProgress.toInt()
                 videoPlayVM.seek(intProgress)

@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragFlightRecordPageBinding
 import dji.sampleV5.aircraft.models.FlightRecordVM
 import dji.sampleV5.aircraft.util.Helper
 import dji.v5.utils.common.DiskUtil
-import kotlinx.android.synthetic.main.frag_flight_record_page.*
 
 /**
  * ClassName : dji.sampleV5.aircraft.pages.FlightRecordFragment
@@ -20,43 +19,44 @@ import kotlinx.android.synthetic.main.frag_flight_record_page.*
  */
 class FlightRecordFragment : DJIFragment() {
     private val flightRecordVM: FlightRecordVM by activityViewModels()
+    private var binding: FragFlightRecordPageBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_flight_record_page, container, false)
+        binding = FragFlightRecordPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        initBtnListsner()
+        initBtnListener()
     }
 
     private fun initView() {
-        record_tv?.text = flightRecordVM.getFlightLogPath()
-        clog_path_tv?.text = flightRecordVM.getFlyClogPath()
+        binding?.recordTv?.text = flightRecordVM.getFlightLogPath()
+        binding?.clogPathTv?.text = flightRecordVM.getFlyClogPath()
     }
 
-    fun initBtnListsner() {
-        btn_open_flight_record_path.setOnClickListener {
-            var flightRecordPath = flightRecordVM.getFlightLogPath()
-            if (!flightRecordPath.contains(DiskUtil.SDCARD_ROOT )){
+    private fun initBtnListener() {
+        binding?.btnOpenFlightRecordPath?.setOnClickListener {
+            val flightRecordPath = flightRecordVM.getFlightLogPath()
+            if (!flightRecordPath.contains(DiskUtil.SDCARD_ROOT)) {
                 return@setOnClickListener
             }
-            var  uriPath = flightRecordPath.substring(DiskUtil.SDCARD_ROOT.length + 1 , flightRecordPath.length - 1).replace("/" , "%2f")
-            Helper.openFileChooser(uriPath , activity)
+            val uriPath = flightRecordPath.substring(DiskUtil.SDCARD_ROOT.length + 1, flightRecordPath.length - 1).replace("/", "%2f")
+            Helper.openFileChooser(uriPath, activity)
 
         }
-
-        btn_get_flight_compressed_log_path.setOnClickListener {
-            var flyclogPath = flightRecordVM.getFlyClogPath()
-            if (!flyclogPath.contains(DiskUtil.SDCARD_ROOT )){
+        binding?.btnGetFlightCompressedLogPath?.setOnClickListener {
+            val flyclogPath = flightRecordVM.getFlyClogPath()
+            if (!flyclogPath.contains(DiskUtil.SDCARD_ROOT)) {
                 return@setOnClickListener
             }
-            var uriPath =
+            val uriPath =
                 flyclogPath.substring(DiskUtil.SDCARD_ROOT.length + 1, flyclogPath.length - 1)
                     .replace("/", "%2f")
             Helper.openFileChooser(uriPath, activity)

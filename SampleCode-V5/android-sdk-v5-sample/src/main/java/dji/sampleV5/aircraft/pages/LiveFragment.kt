@@ -41,6 +41,8 @@ class LiveFragment : DJIFragment() {
     private lateinit var rgProtocol: RadioGroup
     private lateinit var btnStart: Button
     private lateinit var btnStop: Button
+    private lateinit var btnShow: Button
+    private lateinit var btnHide: Button
     private lateinit var rgCamera: RadioGroup
     private lateinit var rgQuality: RadioGroup
     private lateinit var rgBitRate: RadioGroup
@@ -51,6 +53,7 @@ class LiveFragment : DJIFragment() {
     private lateinit var tvLiveInfo: TextView
     private lateinit var tvLiveError: TextView
     private lateinit var svCameraStream: SurfaceView
+    private var isLocalLiveShow: Boolean = true
 
     private var cameraStreamSurface: Surface? = null
     private var cameraStreamWidth = -1
@@ -66,6 +69,8 @@ class LiveFragment : DJIFragment() {
         rgProtocol = view.findViewById(R.id.rg_protocol)
         btnStart = view.findViewById(R.id.btn_start)
         btnStop = view.findViewById(R.id.btn_stop)
+        btnShow = view.findViewById(R.id.btn_show_view)
+        btnHide = view.findViewById(R.id.btn_hide_view)
         rgCamera = view.findViewById(R.id.rg_camera)
         rgQuality = view.findViewById(R.id.rg_quality)
         rgBitRate = view.findViewById(R.id.rg_bit_rate)
@@ -150,20 +155,39 @@ class LiveFragment : DJIFragment() {
         rgCamera.setOnCheckedChangeListener { group: RadioGroup, checkedId: Int ->
             val view = group.findViewById<View>(checkedId)
             cameraIndex = ComponentIndexType.find((view.tag as String).toInt())
-            val surface = svCameraStream.holder.surface
-            if (surface != null && svCameraStream.width != 0) {
-                cameraStreamManager.putCameraStreamSurface(
-                    cameraIndex,
-                    surface,
-                    svCameraStream.width,
-                    svCameraStream.height,
-                    ICameraStreamManager.ScaleType.CENTER_INSIDE
-                )
+            cameraStreamSurface = svCameraStream.holder.surface
+            if (cameraStreamSurface != null && svCameraStream.width != 0) {
+                putCameraStreamSurface()
             }
             liveStreamVM.setCameraIndex(cameraIndex)
         }
         rgCamera.check(R.id.rb_camera_left)
     }
+
+    private fun putCameraStreamSurface() {
+        if (!isLocalLiveShow) {
+            return
+        }
+        if (cameraIndex == ComponentIndexType.UNKNOWN) {
+            return
+        }
+        cameraStreamSurface?.let {
+            cameraStreamManager.putCameraStreamSurface(
+                cameraIndex,
+                it,
+                cameraStreamWidth,
+                cameraStreamHeight,
+                cameraStreamScaleType
+            )
+        }
+    }
+
+    private fun removeCameraStreamSurface() {
+        cameraStreamSurface?.let {
+            cameraStreamManager.removeCameraStreamSurface(it)
+        }
+    }
+
 
     private fun initRGQuality() {
         rgQuality.setOnCheckedChangeListener { group: RadioGroup, checkedId: Int ->
@@ -185,7 +209,7 @@ class LiveFragment : DJIFragment() {
         rgCameraStreamScaleType.setOnCheckedChangeListener { group: RadioGroup, checkedId: Int ->
             val view = group.findViewById<View>(checkedId)
             cameraStreamScaleType = ICameraStreamManager.ScaleType.find((view.tag as String).toInt())
-            updateCameraStreamWidth()
+            putCameraStreamSurface()
         }
         rgCameraStreamScaleType.check(R.id.rb_camera_scale_type_center_inside)
     }
@@ -240,6 +264,16 @@ class LiveFragment : DJIFragment() {
         btnStop.setOnClickListener {
             stopLive()
         }
+        btnShow.setOnClickListener {
+            svCameraStream.visibility = View.VISIBLE
+            isLocalLiveShow = true
+            putCameraStreamSurface()
+        }
+        btnHide.setOnClickListener {
+            svCameraStream.visibility = View.GONE
+            isLocalLiveShow = false
+            removeCameraStreamSurface()
+        }
     }
 
     private fun initCameraStream() {
@@ -249,27 +283,13 @@ class LiveFragment : DJIFragment() {
                 cameraStreamWidth = width
                 cameraStreamHeight = height
                 cameraStreamSurface = holder.surface
-                updateCameraStreamWidth()
+                putCameraStreamSurface()
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 cameraStreamManager.removeCameraStreamSurface(holder.surface)
             }
         })
-    }
-
-    private fun updateCameraStreamWidth() {
-        if (cameraIndex != ComponentIndexType.UNKNOWN) {
-            cameraStreamSurface?.let {
-                cameraStreamManager.putCameraStreamSurface(
-                    cameraIndex,
-                    it,
-                    cameraStreamWidth,
-                    cameraStreamHeight,
-                    cameraStreamScaleType
-                )
-            }
-        }
     }
 
     private fun startLive() {

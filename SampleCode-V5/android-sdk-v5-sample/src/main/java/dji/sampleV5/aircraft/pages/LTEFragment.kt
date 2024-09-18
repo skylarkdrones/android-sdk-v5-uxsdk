@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.QuickTestConfig
-import dji.sampleV5.aircraft.models.LTEVM
+import dji.sampleV5.aircraft.databinding.FragLtePageBinding
 import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
+import dji.sampleV5.aircraft.models.LTEVM
 import dji.sampleV5.aircraft.util.Helper
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.manager.aircraft.lte.LTELinkType
 import dji.v5.manager.aircraft.lte.LTEPrivatizationServerInfo
 import dji.v5.utils.common.JsonUtil
-import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_lte_page.*
 
 /**
  * Class Description
@@ -28,9 +27,11 @@ class LTEFragment : DJIFragment() {
 
     private val lteVm: LTEVM by viewModels()
     private val lteMsgBuilder = StringBuffer()
+    private var binding: FragLtePageBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_lte_page, container, false)
+        binding = FragLtePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,17 +51,17 @@ class LTEFragment : DJIFragment() {
         }
         lteVm.toastResult?.observe(viewLifecycleOwner) { result ->
             result?.msg?.let {
-                lte_toast.text = it
+                binding?.lteToast?.text = it
             }
         }
         initBtnClickListener()
     }
 
     private fun initBtnClickListener() {
-        btn_update_lte_authentication_info.setOnClickListener {
+        binding?.btnUpdateLteAuthenticationInfo?.setOnClickListener {
             lteVm.updateLTEAuthenticationInfo()
         }
-        btn_get_lte_authentication_verification_code.setOnClickListener {
+        binding?.btnGetLteAuthenticationVerificationCode?.setOnClickListener {
             val cacheInfo = QuickTestConfig.getCacheLTEAuthenticationInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "(PhoneAreaCode,PhoneNumber)",
@@ -76,7 +77,7 @@ class LTEFragment : DJIFragment() {
                 }
             }
         }
-        btn_start_lte_authentication.setOnClickListener {
+        binding?.btnStartLteAuthentication?.setOnClickListener {
             val cacheInfo = QuickTestConfig.getCacheLTEAuthenticationInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "(PhoneAreacode,PhoneNumber,VerificationCode)",
@@ -92,16 +93,16 @@ class LTEFragment : DJIFragment() {
                 }
             }
         }
-        btn_set_lte_enhanced_transmission_type.setOnClickListener {
+        binding?.btnSetLteEnhancedTransmissionType?.setOnClickListener {
             initPopupNumberPicker(Helper.makeList(LTELinkType.values())) {
                 lteVm.setLTEEnhancedTransmissionType(LTELinkType.values()[indexChosen[0]])
                 resetIndex()
             }
         }
-        btn_get_lte_enhanced_transmission_type.setOnClickListener {
+        binding?.btnGetLteEnhancedTransmissionType?.setOnClickListener {
             lteVm.getLTEEnhancedTransmissionType()
         }
-        btn_set_lte_ac_privatization_server_info.setOnClickListener {
+        binding?.btnSetLteAcPrivatizationServerInfo?.setOnClickListener {
             val cacheInfo = QuickTestConfig.getCacheACLTEPrivatizationServerInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "AC Privatization Server Info",
@@ -118,7 +119,7 @@ class LTEFragment : DJIFragment() {
                 }
             }
         }
-        btn_set_lte_rc_privatization_server_info.setOnClickListener {
+        binding?.btnSetLteRcPrivatizationServerInfo?.setOnClickListener {
             val cacheInfo = QuickTestConfig.getCacheRCLTEPrivatizationServerInfo()
             KeyValueDialogUtil.showInputDialog(
                 activity, "RC Privatization Server Info",
@@ -135,11 +136,11 @@ class LTEFragment : DJIFragment() {
                 }
             }
         }
-        btn_clear_ac_lte_privatization_server_info.setOnClickListener {
+        binding?.btnClearAcLtePrivatizationServerInfo?.setOnClickListener {
             lteVm.clearLTEAcPrivatizationServerMsg()
         }
 
-        btn_clear_rc_lte_privatization_server_info.setOnClickListener {
+        binding?.btnClearRcLtePrivatizationServerInfo?.setOnClickListener {
             lteVm.clearLTERcPrivatizationServerMsg()
         }
     }
@@ -170,6 +171,6 @@ class LTEFragment : DJIFragment() {
             lteMsgBuilder.append(JsonUtil.toJson(it))
         }
 
-        lte_msg.text = lteMsgBuilder.toString()
+        binding?.lteMsg?.text = lteMsgBuilder.toString()
     }
 }

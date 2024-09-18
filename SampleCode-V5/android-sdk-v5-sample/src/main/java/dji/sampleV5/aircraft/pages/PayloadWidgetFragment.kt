@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.PayloadWidgetIconAdapter
 import dji.sampleV5.aircraft.data.PayloadWidgetItem
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragPayloadWidgetPageBinding
 import dji.sampleV5.aircraft.models.PayloadWidgetVM
 import dji.sdk.keyvalue.value.payload.WidgetValue
 import dji.v5.manager.aircraft.payload.PayloadIndexType
@@ -16,7 +18,6 @@ import dji.v5.manager.aircraft.payload.data.PayloadWidgetInfo
 import dji.v5.manager.aircraft.payload.widget.PayloadWidget
 import dji.v5.utils.common.LogUtils
 import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_payload_widget_page.*
 
 /**
  * Description :
@@ -34,14 +35,15 @@ class PayloadWidgetFragment : DJIFragment() {
     private val payloadBasicInfo: StringBuilder = StringBuilder()
     private val payLoadAdapter = PayloadWidgetIconAdapter()
     private val payloadVM: PayloadWidgetVM by viewModels()
+    private var binding: FragPayloadWidgetPageBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_payload_widget_page, container, false)
+        binding = FragPayloadWidgetPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initView()
     }
 
@@ -56,8 +58,8 @@ class PayloadWidgetFragment : DJIFragment() {
     }
 
     private fun initWidgetList() {
-        payload_main_widget_list.adapter = payLoadAdapter
-        payload_main_widget_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding?.payloadMainWidgetList?.adapter = payLoadAdapter
+        binding?.payloadMainWidgetList?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         payloadVM.payloadWidgetInfo.observe(viewLifecycleOwner) {
             showMainInterfaceWidgetInfo(it, payLoadAdapter)
             showPayloadOtherWidgetInfo(it)
@@ -142,14 +144,14 @@ class PayloadWidgetFragment : DJIFragment() {
                     append("configWidget $index-").append("$configWidget").append("\n")
                 }
             }
-            tv_payload_other_widget_info.text = payloadOtherWidgetInfo.toString()
+            binding?.tvPayloadOtherWidgetInfo?.text = payloadOtherWidgetInfo.toString()
 
         }
 
     }
 
     private fun initTitle() {
-        tv_payload_title.text = "This is ${payloadIndexType.name.lowercase()} payloadManager info page!"
+        binding?.tvPayloadTitle?.text = "This is ${payloadIndexType.name.lowercase()} payloadManager info page!"
     }
 
     private fun initWidgetBasicInfo() {
@@ -169,17 +171,17 @@ class PayloadWidgetFragment : DJIFragment() {
                     append("firmwareVersion:$firmwareVersion").append("\n")
 
                 }
-                tv_payload_basic_info.text = payloadBasicInfo.toString()
+                binding?.tvPayloadBasicInfo?.text = payloadBasicInfo.toString()
 
             }
         }
     }
 
     private fun initButtonListener() {
-        bt_re_pull_widget_info.setOnClickListener {
+        binding?.btRePullWidgetInfo?.setOnClickListener {
             payloadVM.pullWidgetInfo()
         }
-        bt_set_widget_value.setOnClickListener {
+        binding?.btSetWidgetValue?.setOnClickListener {
             val widgetValue = WidgetValue()
             showDialog("Please input Widget Value", widgetValue.toString()) {
                 it?.let {
@@ -195,9 +197,9 @@ class PayloadWidgetFragment : DJIFragment() {
         }
     }
 
-    private fun resetView(){
-        tv_payload_basic_info.text = ""
-        tv_payload_other_widget_info.text = ""
+    private fun resetView() {
+        binding?.tvPayloadBasicInfo?.text = ""
+        binding?.tvPayloadOtherWidgetInfo?.text = ""
         payLoadAdapter.submitList(arrayListOf<PayloadWidgetItem>())
     }
 }

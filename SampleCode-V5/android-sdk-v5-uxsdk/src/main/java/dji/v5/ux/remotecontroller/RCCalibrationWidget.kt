@@ -8,8 +8,10 @@ import dji.v5.utils.common.StringUtils
 import dji.v5.ux.R
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.util.ViewUtil
+import dji.v5.ux.databinding.UxsdkPanelNdvlBinding
+import dji.v5.ux.databinding.UxsdkWidgetRcCheckFrequencyLayoutBinding
+import dji.v5.ux.databinding.UxsdkWidgetSettingRcCalibrationLayoutBinding
 import dji.v5.ux.remotecontroller.calibration.SmartControllerCalibrationView
-import kotlinx.android.synthetic.main.uxsdk_widget_setting_rc_calibration_layout.view.*
 
 /**
  * Description :
@@ -26,32 +28,31 @@ class RCCalibrationWidget @JvmOverloads constructor(
 
     ) : ConstraintLayoutWidget<RCPairingWidget.ModelState>(context, attrs, defStyleAttr) {
 
+    private lateinit var binding: UxsdkWidgetSettingRcCalibrationLayoutBinding
     private var mSmartControllerCalibrationView: SmartControllerCalibrationView? = null
     private var sHasShowDialog = false
 
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
-        inflate(context, R.layout.uxsdk_widget_setting_rc_calibration_layout, this)
+        binding = UxsdkWidgetSettingRcCalibrationLayoutBinding.inflate(LayoutInflater.from(context),this,true)
     }
 
     override fun reactToModelChanges() {
         initSmartControllerCalibrationView()
     }
 
-
     private fun initSmartControllerCalibrationView() {
-        rc_calibration_layout?.removeAllViews()
+        binding.rcCalibrationLayout.removeAllViews()
         if (mSmartControllerCalibrationView == null) {
             mSmartControllerCalibrationView =
                 LayoutInflater.from(context).inflate(R.layout.uxsdk_setting_ui_rc_smart_controller_calibration, null, false) as SmartControllerCalibrationView
             mSmartControllerCalibrationView?.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT)
         }
-        rc_calibration_layout?.addView(mSmartControllerCalibrationView)
+        binding.rcCalibrationLayout.addView(mSmartControllerCalibrationView)
         if (!sHasShowDialog) {
             val content = StringUtils.getResStr(R.string.uxsdk_setting_ui_rc_cele_tip)
             ViewUtil.showToast(context, content)
             sHasShowDialog = true
         }
     }
-
 }

@@ -13,6 +13,7 @@ import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.sdk.keyvalue.key.KeyTools
 import dji.sdk.keyvalue.value.common.LocationCoordinate2D
 import dji.sdk.keyvalue.value.common.Velocity3D
+import dji.sdk.keyvalue.value.flightcontroller.FlightMode
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.common.utils.RxUtil
@@ -46,6 +47,7 @@ class WayPointV3VM : DJIViewModel() {
     var compassHeadKey: DJIKey<Double> = FlightControllerKey.KeyCompassHeading.create()
     var altitudeKey: DJIKey<Double> = FlightControllerKey.KeyAltitude.create()
     var flightSpeed: DJIKey<Velocity3D> = FlightControllerKey.KeyAircraftVelocity.create()
+    var flightMode : DJIKey<FlightMode> = FlightControllerKey.KeyFlightMode.create()
 
 
     fun pushKMZFileToAircraft(missionPath: String) {
@@ -225,6 +227,8 @@ class WayPointV3VM : DJIViewModel() {
     private fun getHeight(): Double = (altitudeKey.get(0.0))
 
     private fun getSpeed(): Velocity3D = flightSpeed.get(Velocity3D(0.0, 0.0, 0.0))
+
+    fun getFlightMode() :FlightMode = flightMode.get(FlightMode.UNKNOWN)
 
     fun isInMainlandChina(): Boolean {
         return AreaCodeManager.getInstance().areaCode.areaCodeEnum == AreaCode.CHINA

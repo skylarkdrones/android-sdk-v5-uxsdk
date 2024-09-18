@@ -10,22 +10,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.DJIRTKBaseStationConnectInfo
 import dji.sampleV5.aircraft.data.RtkStationScanAdapter
+import dji.sampleV5.aircraft.databinding.FragStationRtkPageBinding
 import dji.sampleV5.aircraft.models.RTKStationVM
-import dji.v5.common.utils.GpsUtils
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.sdk.keyvalue.value.common.LocationCoordinate3D
 import dji.sdk.keyvalue.value.rtkbasestation.RTKBaseStationResetPasswordInfo
 import dji.sdk.keyvalue.value.rtkbasestation.RTKStationConnetState
 import dji.sdk.keyvalue.value.rtkbasestation.RTKStationInfo
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
+import dji.v5.common.utils.GpsUtils
 import dji.v5.manager.aircraft.rtk.station.ConnectedRTKStationInfo
 import dji.v5.utils.common.LogUtils
 import dji.v5.utils.common.StringUtils
-import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.ux.core.extension.hide
 import dji.v5.ux.core.extension.show
-import kotlinx.android.synthetic.main.frag_station_rtk_page.*
-import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 /**
@@ -41,6 +40,7 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
 
     //这里只能用fragment级别的viewModel，否则会出现粘性事件
     private val rtkStationVM: RTKStationVM by viewModels()
+    private var binding: FragStationRtkPageBinding? = null
     private lateinit var rtkStationScanAdapter: RtkStationScanAdapter
     private var loginStatus = false
     private var connectState = RTKStationConnetState.UNKNOWN
@@ -52,9 +52,9 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_station_rtk_page, container, false)
+        binding = FragStationRtkPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,15 +62,13 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
         initListener()
     }
 
-
     private fun initView() {
         LogUtils.i(TAG, "initView")
         //初始化stationTRTK列表
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        rv_station_list.layoutManager = layoutManager
+        binding?.rvStationList?.layoutManager = layoutManager
         rtkStationScanAdapter = RtkStationScanAdapter(requireContext(), stationList)
-        rv_station_list.adapter = rtkStationScanAdapter
-
+        binding?.rvStationList?.adapter = rtkStationScanAdapter
 
         rtkStationVM.stationListLD.observe(viewLifecycleOwner) { result ->
             handleStationRTKList(result)
@@ -87,19 +85,17 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
         }
         rtkStationVM.rtkLocationLD.observe(viewLifecycleOwner) { result ->
             result.rtkLocation?.apply {
-                tv_station_location_info.text = baseStationLocation.toString()
+                binding?.tvStationLocationInfo?.text = baseStationLocation.toString()
                 rtkLocation = baseStationLocation
             }
 
         }
-        rtkStationVM.stationPositionLD.observe(viewLifecycleOwner, {
+        rtkStationVM.stationPositionLD.observe(viewLifecycleOwner) {
             ToastUtils.showToast(it.toString())
-        })
-
+        }
 
         //清除数据
         showConnectStationInfo(ConnectedRTKStationInfo())
-
     }
 
     override fun onResume() {
@@ -116,18 +112,18 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
         rtkStationVM.addRTKLocationListener()
         rtkStationScanAdapter.setOnItemClickListener(this)
 
-        btn_start_search_station.setOnClickListener {
+        binding?.btnStartSearchStation?.setOnClickListener {
             //初始化UI
             handleStationRTKList(null)
-            tv_station_list_tip.hide()
+            binding?.tvStationListTip?.hide()
             rtkStationVM.startSearchStation()
         }
 
-        btn_stop_search_station.setOnClickListener {
+        binding?.btnStopSearchStation?.setOnClickListener {
             rtkStationVM.stopSearchStation()
         }
 
-        btn_login.setOnClickListener {
+        binding?.btnLogin?.setOnClickListener {
             //登录操作只允许在基站连接之后才可以进行
             if (connectState != RTKStationConnetState.CONNECTED) {
                 ToastUtils.showToast("Please connect to the base station first！")
@@ -155,7 +151,7 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
             }
 
         }
-        btn_set_station_position.setOnClickListener {
+        binding?.btnSetStationPosition?.setOnClickListener {
             process {
                 rtkLocation.run {
                     val locationCoordinate3D = LocationCoordinate3D(latitude, longitude, altitude)
@@ -168,15 +164,15 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
 
             }
         }
-        btn_get_station_position.setOnClickListener {
+        binding?.btnGetStationPosition?.setOnClickListener {
             rtkStationVM.getRTKStationPosition()
         }
-        btn_reset_station_position.setOnClickListener {
+        binding?.btnResetStationPosition?.setOnClickListener {
             process {
                 rtkStationVM.resetRTKStationPosition()
             }
         }
-        btn_reset_station_password.setOnClickListener {
+        binding?.btnResetStationPassword?.setOnClickListener {
             process {
                 val rtkBaseStationResetPasswordInfo =
                     RTKBaseStationResetPasswordInfo("111111", "111111")
@@ -194,7 +190,7 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
                 }
             }
         }
-        btn_set_station_name.setOnClickListener {
+        binding?.btnSetStationName?.setOnClickListener {
             process {
                 showDialog(StringUtils.getResStr(R.string.tip_change_station_name)) {
                     it?.let {
@@ -204,8 +200,6 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
                 }
             }
         }
-
-
     }
 
     private fun checkNeedUpdateUI(list: List<RTKStationInfo>?): Boolean {
@@ -229,7 +223,7 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
                 for (i in it) {
                     LogUtils.i(TAG, "stationName=${i.rtkStationName}+,signalLevel=${i.signalLevel}")
                     stationList.add(i)
-                    tv_station_list_tip.show()
+                    binding?.tvStationListTip?.show()
                 }
             }
             rtkStationScanAdapter.notifyDataSetChanged()
@@ -298,14 +292,13 @@ class RTKStationFragment : DJIFragment(), RtkStationScanAdapter.OnItemClickListe
     private var lastStationName = ""
     private fun showConnectStationInfo(infoConnected: ConnectedRTKStationInfo?) {
         infoConnected?.run {
-            tv_station_name_info.text = "$stationName"
-            tv_station_id_info.text = "$stationId"
-            tv_station_signal_level_info.text = "$signalLevel"
-
-            tv_station_battery_current_info.text = "$batteryCurrent"
-            tv_station_battery_voltage_info.text = "$batteryVoltage"
-            tv_station_battery_temperature_info.text = "$batteryTemperature"
-            tv_station_battery_capacity_percent_info.text = "$batteryCapacityPercent"
+            binding?.tvStationNameInfo?.text = stationName
+            binding?.tvStationIdInfo?.text = "$stationId"
+            binding?.tvStationSignalLevelInfo?.text = "$signalLevel"
+            binding?.tvStationBatteryCurrentInfo?.text = "$batteryCurrent"
+            binding?.tvStationBatteryVoltageInfo?.text = "$batteryVoltage"
+            binding?.tvStationBatteryTemperatureInfo?.text = "$batteryTemperature"
+            binding?.tvStationBatteryCapacityPercentInfo?.text = "$batteryCapacityPercent"
 
             //初始化名字
             if (TextUtils.isEmpty(lastStationName)) {

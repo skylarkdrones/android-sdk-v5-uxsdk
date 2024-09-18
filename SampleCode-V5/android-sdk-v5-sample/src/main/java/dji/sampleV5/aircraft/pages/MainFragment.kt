@@ -13,15 +13,14 @@ import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.FragmentPageItem
 import dji.sampleV5.aircraft.data.FragmentPageItemList
 import dji.sampleV5.aircraft.data.MAIN_FRAGMENT_PAGE_TITLE
+import dji.sampleV5.aircraft.databinding.FragMainPageBinding
 import dji.sampleV5.aircraft.models.MSDKCommonOperateVm
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
 import dji.v5.common.ldm.LDMExemptModule
 import dji.v5.utils.common.LogUtils
 import dji.v5.utils.common.StringUtils
-import kotlinx.android.synthetic.main.frag_main_page.*
-import dji.sampleV5.aircraft.util.ToastUtils
-import dji.v5.manager.SDKManager
 
 /**
  * Class Description
@@ -32,6 +31,8 @@ import dji.v5.manager.SDKManager
  * Copyright (c) 2021, DJI All Rights Reserved.
  */
 class MainFragment : DJIFragment() {
+
+    private var binding: FragMainPageBinding? = null
 
     //默认勾选了MSDK_INIT_AND_REGISTRATION
     private val checkItem = BooleanArray(LDMExemptModule.values().size) {
@@ -49,8 +50,10 @@ class MainFragment : DJIFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.frag_main_page, container, false)
+        binding = FragMainPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,8 +68,8 @@ class MainFragment : DJIFragment() {
 
     private fun initMainList() {
         val adapter = MainFragmentListAdapter { item -> adapterOnItemClick(item) }
-        view_list.adapter = adapter
-        view_list.layoutManager = LinearLayoutManager(context)
+        binding?.viewList?.adapter = adapter
+        binding?.viewList?.layoutManager = LinearLayoutManager(context)
         msdkCommonOperateVm.mainPageInfoList.observe(viewLifecycleOwner) {
             it?.let {
                 val itemSet = LinkedHashSet<FragmentPageItem>()
@@ -86,10 +89,10 @@ class MainFragment : DJIFragment() {
     }
 
     private fun initBtnClickListener() {
-        enableLDM_btn.setOnClickListener {
+        binding?.enableLDMBtn?.setOnClickListener {
             showLDMExemptMultipleChoiceDialog()
         }
-        disableLDM_btn.setOnClickListener {
+        binding?.disableLDMBtn?.setOnClickListener {
             msdkCommonOperateVm.disableLDM(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     msdkInfoVm.updateLDMStatus()
@@ -102,7 +105,7 @@ class MainFragment : DJIFragment() {
                 }
             })
         }
-        registerApp_btn.setOnClickListener {
+        binding?.registerAppBtn?.setOnClickListener {
             msdkCommonOperateVm.registerApp()
         }
     }

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import dji.sampleV5.aircraft.R
-import kotlinx.android.synthetic.main.frag_mop_center_page.*
+import dji.sampleV5.aircraft.databinding.FragMopCenterPageBinding
 
 /**
  * Description :
@@ -18,18 +18,21 @@ import kotlinx.android.synthetic.main.frag_mop_center_page.*
  */
 class MOPCenterFragment : DJIFragment() {
 
+    private var binding: FragMopCenterPageBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_mop_center_page,container,false)
+        binding = FragMopCenterPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bt_open_mop_download_page.setOnClickListener {
+        binding?.btOpenMopDownloadPage?.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.action_open_down_page)
         }
 
-        bt_open_mop_interface_page.setOnClickListener {
+        binding?.btOpenMopInterfacePage?.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.action_open_mop_interface_page)
 
         }

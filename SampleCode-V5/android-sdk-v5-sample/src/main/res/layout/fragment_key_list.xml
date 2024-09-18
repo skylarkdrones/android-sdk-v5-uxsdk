@@ -168,9 +168,13 @@
                 android:src="@mipmap/question_mark_icon" />
         </RelativeLayout>
 
-        <include layout="@layout/layout_deliver_horizontal_line"/>
+        <include
+            android:id="@+id/layout_deliver_horizontal_line"
+            layout="@layout/layout_deliver_horizontal_line"/>
 
-        <include layout="@layout/layout_key_operate"/>
+        <include
+            android:id="@+id/layout_key_operate"
+            layout="@layout/layout_key_operate"/>
 
     </LinearLayout>
     </LinearLayout>

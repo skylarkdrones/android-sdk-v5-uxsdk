@@ -14,6 +14,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.DEFAULT_STR
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.VideoChannelPageBinding
 import dji.sampleV5.aircraft.models.MultiVideoChannelVM
 import dji.sampleV5.aircraft.models.VideoChannelVM
 import dji.sampleV5.aircraft.models.VideoChannelVMFactory
@@ -26,16 +28,15 @@ import dji.v5.common.video.decoder.*
 import dji.v5.common.video.interfaces.*
 import dji.v5.common.video.stream.StreamSource
 import dji.v5.utils.common.*
-import kotlinx.android.synthetic.main.video_channel_horizontal_scrollview.*
-import kotlinx.android.synthetic.main.video_channel_page.*
 import java.io.*
-import kotlin.Deprecated
+
 @Deprecated(message = "Replace With CameraStreamListFragment")
 class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.Callback,
     YuvDataListener {
     private val TAG = LogUtils.getTag("VideoChannelFragment")
     private val PATH: String = "/DJI_ScreenShot"
     private val multiVideoChannelVM: MultiVideoChannelVM by activityViewModels()
+    private var binding: VideoChannelPageBinding? = null
     private lateinit var channelVM: VideoChannelVM
     private lateinit var surfaceView: SurfaceView
     private lateinit var dialog: AlertDialog
@@ -112,17 +113,19 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        val view = inflater.inflate(R.layout.video_channel_page, container, false)
-        surfaceView = view.findViewById(R.id.surface_view)
-        surfaceView.holder.addCallback(this)
-        view.findViewById<Button>(R.id.startChannel).setOnClickListener(this)
-        view.findViewById<Button>(R.id.closeChannel).setOnClickListener(this)
-        view.findViewById<Button>(R.id.yuvScreenShot).setOnClickListener(this)
-        view.findViewById<Button>(R.id.startSocket).setOnClickListener(this)
-        view.findViewById<Button>(R.id.closeSocket).setOnClickListener(this)
-        view.findViewById<Button>(R.id.startBroadcast).setOnClickListener(this)
-        view.findViewById<Button>(R.id.stopBroadcast).setOnClickListener(this)
-        return view
+        binding = VideoChannelPageBinding.inflate(inflater, container, false)
+        binding?.root?.let {
+            surfaceView = it.findViewById(R.id.surface_view)
+            surfaceView.holder.addCallback(this)
+            it.findViewById<Button>(R.id.startChannel).setOnClickListener(this)
+            it.findViewById<Button>(R.id.closeChannel).setOnClickListener(this)
+            it.findViewById<Button>(R.id.yuvScreenShot).setOnClickListener(this)
+            it.findViewById<Button>(R.id.startSocket).setOnClickListener(this)
+            it.findViewById<Button>(R.id.closeSocket).setOnClickListener(this)
+            it.findViewById<Button>(R.id.startBroadcast).setOnClickListener(this)
+            it.findViewById<Button>(R.id.stopBroadcast).setOnClickListener(this)
+        }
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -154,7 +157,7 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
                             "DecoderState: [${it.decoderState}] Resolution: [${it.resolution}] \n " +
                             "FPS: [${it.fps}] Format: [${it.format}] BitRate: [${it.bitRate} Kb/s] \n " +
                             "Socket: [${it.socket}]"
-                video_stream_info.text = videoStreamInfo
+                binding?.videoStreamInfo?.text = videoStreamInfo
             }
         }
         channelVM.videoChannel?.addStreamDataListener(streamDataListener) ?: showDisconnectToast()
@@ -421,11 +424,11 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
     }
 
     private fun handlerYUV() {
-        if (!yuvScreenShot.isSelected) {
-            yuvScreenShot.setText(R.string.btn_resume_video)
-            yuvScreenShot.isSelected = true
-            yuv_screen_save_path.setText("")
-            yuv_screen_save_path.visibility = View.VISIBLE
+        if (binding?.horizontalScrollView?.yuvScreenShot?.isSelected == false) {
+            binding?.horizontalScrollView?.yuvScreenShot?.setText(R.string.btn_resume_video)
+            binding?.horizontalScrollView?.yuvScreenShot?.isSelected = true
+            binding?.yuvScreenSavePath?.text = ""
+            binding?.yuvScreenSavePath?.visibility = View.VISIBLE
             videoDecoder?.let {
                 videoDecoder!!.onPause()
                 videoDecoder!!.destroy()
@@ -444,10 +447,10 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
                 stringBuilder!!.clear()
             }
 
-            yuvScreenShot.setText(R.string.btn_yuv_screen_shot)
-            yuvScreenShot.isSelected = false
-            yuv_screen_save_path.setText("")
-            yuv_screen_save_path.visibility = View.INVISIBLE
+            binding?.horizontalScrollView?.yuvScreenShot?.setText(R.string.btn_yuv_screen_shot)
+            binding?.horizontalScrollView?.yuvScreenShot?.isSelected = false
+            binding?.yuvScreenSavePath?.setText("")
+            binding?.yuvScreenSavePath?.visibility = View.INVISIBLE
             videoDecoder?.let {
                 videoDecoder!!.onPause()
                 videoDecoder!!.destroy()
@@ -555,7 +558,7 @@ class VideoChannelFragment : DJIFragment(), View.OnClickListener, SurfaceHolder.
         stringBuilder?.let {
             it.insert(0, path)
             it.insert(0, "\n")
-            yuv_screen_save_path.text = it
+            binding?.yuvScreenSavePath?.text = it
         }
     }
 

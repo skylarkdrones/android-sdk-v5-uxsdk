@@ -144,7 +144,7 @@ class TakeOffWidgetModel(
         return djiSdkModel.performActionWithOutResult(
             KeyTools.createKey(
                 FlightControllerKey.KeyStartTakeoff))
-            .onErrorResumeNext { error: Throwable? ->
+            .onErrorResumeNext { error: Throwable ->
                 if (areMotorsOnDataProcessor.value) {
                     return@onErrorResumeNext Completable.complete()
                 } else {

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -39,6 +38,7 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+            signingConfig signingConfigs.release
         }
     }
 
@@ -63,6 +63,10 @@ android {
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     packagingOptions {

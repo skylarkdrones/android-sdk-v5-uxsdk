@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import dji.rtk.CoordinateSystem
 import dji.sampleV5.aircraft.util.Helper
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragNetworkRtkPageBinding
 import dji.sampleV5.aircraft.models.RTKNetworkVM
 import dji.sampleV5.moduledrone.pages.RTKCenterFragment.Companion.KEY_IS_CMCC_RTK
 import dji.v5.ux.core.extension.show
@@ -19,8 +19,6 @@ import dji.v5.common.error.IDJIError
 import dji.v5.utils.common.JsonUtil
 import dji.v5.utils.common.LogUtils
 import dji.sampleV5.aircraft.util.ToastUtils
-import kotlinx.android.synthetic.main.frag_network_rtk_page.*
-import kotlinx.android.synthetic.main.frag_network_rtk_page.btn_start_cmcc_rtk_service
 
 /**
  * Class Description
@@ -35,6 +33,7 @@ class RTKNetworkFragment : DJIFragment() {
     private val TAG = "RTKNetworkFragment"
     private var currentOtherError: String = ""
     private val rtkNetworkVM: RTKNetworkVM by viewModels()
+    private var binding: FragNetworkRtkPageBinding? = null
     private val rtkMsgBuilder: StringBuilder = StringBuilder()
     private var isQXRTK = false
     private var isCMCCRTK = false
@@ -44,7 +43,8 @@ class RTKNetworkFragment : DJIFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_network_rtk_page, container, false)
+        binding = FragNetworkRtkPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,29 +60,29 @@ class RTKNetworkFragment : DJIFragment() {
             isCMCCRTK = getBoolean(KEY_IS_CMCC_RTK, false)
         }
         if (isCMCCRTK) {
-            btn_start_custom_network_rtk_service.hide()
-            btn_stop_custom_network_rtk_service.hide()
-            btn_set_custom_network_rtk_settings.hide()
-            btn_start_qx_network_rtk_service.hide()
-            btn_stop_qx_network_rtk_service.hide()
-            btn_start_cmcc_rtk_service.show()
-            btn_stop_cmcc_rtk_service.show()
+            binding?.btnStartCustomNetworkRtkService?.hide()
+            binding?.btnStopCustomNetworkRtkService?.hide()
+            binding?.btnSetCustomNetworkRtkSettings?.hide()
+            binding?.btnStartQxNetworkRtkService?.hide()
+            binding?.btnStopQxNetworkRtkService?.hide()
+            binding?.btnStartCmccRtkService?.show()
+            binding?.btnStopCmccRtkService?.show()
         } else if (isQXRTK) {
-            btn_start_custom_network_rtk_service.hide()
-            btn_stop_custom_network_rtk_service.hide()
-            btn_set_custom_network_rtk_settings.hide()
-            btn_start_cmcc_rtk_service.hide()
-            btn_stop_cmcc_rtk_service.hide()
-            btn_start_qx_network_rtk_service.show()
-            btn_stop_qx_network_rtk_service.show()
+            binding?.btnStartCustomNetworkRtkService?.hide()
+            binding?.btnStopCustomNetworkRtkService?.hide()
+            binding?.btnSetCustomNetworkRtkSettings?.hide()
+            binding?.btnStartCmccRtkService?.hide()
+            binding?.btnStopCmccRtkService?.hide()
+            binding?.btnStartQxNetworkRtkService?.show()
+            binding?.btnStopQxNetworkRtkService?.show()
         } else {
-            btn_start_custom_network_rtk_service.show()
-            btn_stop_custom_network_rtk_service.show()
-            btn_set_custom_network_rtk_settings.show()
-            btn_start_cmcc_rtk_service.hide()
-            btn_stop_cmcc_rtk_service.hide()
-            btn_start_qx_network_rtk_service.hide()
-            btn_stop_qx_network_rtk_service.hide()
+            binding?.btnStartCustomNetworkRtkService?.show()
+            binding?.btnStopCustomNetworkRtkService?.show()
+            binding?.btnSetCustomNetworkRtkSettings?.show()
+            binding?.btnStartCmccRtkService?.hide()
+            binding?.btnStopCmccRtkService?.hide()
+            binding?.btnStartQxNetworkRtkService?.hide()
+            binding?.btnStopQxNetworkRtkService?.hide()
         }
     }
 
@@ -90,7 +90,7 @@ class RTKNetworkFragment : DJIFragment() {
         /**
          * 自定义网络RTK接口
          */
-        btn_start_custom_network_rtk_service.setOnClickListener {
+        binding?.btnStartCustomNetworkRtkService?.setOnClickListener {
             rtkNetworkVM.startCustomNetworkRTKService(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("StartCustomNetworkRTKService Success")
@@ -105,7 +105,7 @@ class RTKNetworkFragment : DJIFragment() {
                 }
             })
         }
-        btn_stop_custom_network_rtk_service.setOnClickListener {
+        binding?.btnStopCustomNetworkRtkService?.setOnClickListener {
             rtkNetworkVM.stopCustomNetworkRTKService(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("StopCustomNetworkRTKService Success")
@@ -119,7 +119,7 @@ class RTKNetworkFragment : DJIFragment() {
                 }
             })
         }
-        btn_set_custom_network_rtk_settings.setOnClickListener {
+        binding?.btnSetCustomNetworkRtkSettings?.setOnClickListener {
             val currentCustomNetworkRTKSettingCache = rtkNetworkVM.getCurrentCustomNetworkRTKSettingCache()
             openInputDialog(currentCustomNetworkRTKSettingCache, "Set custom network RTK account information") {
                 val setting = JsonUtil.toBean(it, RTKCustomNetworkSetting::class.java)
@@ -127,17 +127,18 @@ class RTKNetworkFragment : DJIFragment() {
                     ToastUtils.showToast("数据解析失败，请重试")
                     return@openInputDialog
                 }
-                rtkNetworkVM.setCustomNetworkRTKSettings( setting)
+                rtkNetworkVM.setCustomNetworkRTKSettings(setting)
             }
         }
         /**
          * 千寻RTK接口
          */
         //获取初始化坐标系
-        btn_start_qx_network_rtk_service.setOnClickListener {
+        binding?.btnStartQxNetworkRtkService?.setOnClickListener {
             val coordinateSystem = CoordinateSystem.values()
             initPopupNumberPicker(Helper.makeList(coordinateSystem)) {
-                rtkNetworkVM.startQXNetworkRTKService(coordinateSystem[indexChosen[0]], object : CommonCallbacks.CompletionCallback {
+                rtkNetworkVM.startQXNetworkRTKService(coordinateSystem[indexChosen[0]], object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         ToastUtils.showToast("StartQXNetworkRTKService Success")
                         updateErrMsg(isSuccess = true)
@@ -151,7 +152,7 @@ class RTKNetworkFragment : DJIFragment() {
                 resetIndex()
             }
         }
-        btn_stop_qx_network_rtk_service.setOnClickListener {
+        binding?.btnStopQxNetworkRtkService?.setOnClickListener {
             rtkNetworkVM.stopQXNetworkRTKService(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("StopQXNetworkRTKService Success")
@@ -167,10 +168,11 @@ class RTKNetworkFragment : DJIFragment() {
         /**
          * CMCC接口
          */
-        btn_start_cmcc_rtk_service.setOnClickListener {
+        binding?.btnStartCmccRtkService?.setOnClickListener {
             val coordinateSystem = CoordinateSystem.values()
             initPopupNumberPicker(Helper.makeList(coordinateSystem)) {
-                rtkNetworkVM.startCMCCRTKService(coordinateSystem[indexChosen[0]], object : CommonCallbacks.CompletionCallback {
+                rtkNetworkVM.startCMCCRTKService(coordinateSystem[indexChosen[0]], object :
+                    CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         ToastUtils.showToast("startCMCCRTKService Success")
                         updateErrMsg(isSuccess = true)
@@ -185,7 +187,7 @@ class RTKNetworkFragment : DJIFragment() {
             }
         }
 
-        btn_stop_cmcc_rtk_service.setOnClickListener {
+        binding?.btnStopCmccRtkService?.setOnClickListener {
             rtkNetworkVM.stopCMCCRTKService(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("stopCMCCRTKService Success")
@@ -237,7 +239,7 @@ class RTKNetworkFragment : DJIFragment() {
                 .append("\n")
         }
         activity?.runOnUiThread {
-            text_network_rtk_info.text = rtkMsgBuilder.toString()
+            binding?.textNetworkRtkInfo?.text = rtkMsgBuilder.toString()
         }
     }
 

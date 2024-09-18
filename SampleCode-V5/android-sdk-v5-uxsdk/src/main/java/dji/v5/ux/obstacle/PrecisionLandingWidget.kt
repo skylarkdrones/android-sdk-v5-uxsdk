@@ -2,6 +2,7 @@ package dji.v5.ux.obstacle
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import dji.v5.utils.common.LogUtils
 import dji.v5.ux.R
 import dji.v5.ux.core.base.DJISDKModel
@@ -9,9 +10,9 @@ import dji.v5.ux.core.base.SchedulerProvider
 import dji.v5.ux.core.base.SwitcherCell
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
+import dji.v5.ux.databinding.UxsdkWidgetPrecisionLandingWidgetLayoutBinding
 import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.disposables.Disposable
-import kotlinx.android.synthetic.main.uxsdk_widget_precision_landing_widget_layout.view.*
 
 /**
  * Description :该控件不支持M3系列飞机
@@ -29,6 +30,8 @@ class PrecisionLandingWidget @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : ConstraintLayoutWidget<VisionPositionWidget.ModelState>(context, attrs, defStyleAttr), SwitcherCell.OnCheckedChangedListener {
 
+    private lateinit var binding: UxsdkWidgetPrecisionLandingWidgetLayoutBinding
+
     private val widgetModel by lazy {
         PrecisionLandingWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance())
     }
@@ -38,7 +41,7 @@ class PrecisionLandingWidget @JvmOverloads constructor(
 
             widgetModel.setPrecisionLandingEnabled(isChecked).observeOn(SchedulerProvider.ui())
                 .subscribe(object : CompletableObserver {
-                    override fun onSubscribe(d: Disposable?) {
+                    override fun onSubscribe(d: Disposable) {
                         //do nothing
                     }
 
@@ -46,7 +49,7 @@ class PrecisionLandingWidget @JvmOverloads constructor(
                         LogUtils.i(TAG,"setPrecisionLandingEnabled onComplete!")
                     }
 
-                    override fun onError(e: Throwable?) {
+                    override fun onError(e: Throwable) {
                         //do nothing
                         LogUtils.e(TAG, "setPrecisionLandingEnabled onError:$e")
                         updatePrecisionLandingEnable(!isChecked)
@@ -58,7 +61,7 @@ class PrecisionLandingWidget @JvmOverloads constructor(
     }
 
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
-        inflate(context, R.layout.uxsdk_widget_precision_landing_widget_layout, this)
+        binding = UxsdkWidgetPrecisionLandingWidgetLayoutBinding.inflate(LayoutInflater.from(context),this,true)
     }
 
     override fun reactToModelChanges() {
@@ -67,16 +70,14 @@ class PrecisionLandingWidget @JvmOverloads constructor(
             .subscribe {
                 updatePrecisionLandingEnable(it.isPrecisionLandingEnabled)
             })
-
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!isInEditMode) {
             widgetModel.setup()
-
         }
-        omni_common_precision_landing.setOnCheckedChangedListener(this)
+        binding.omniCommonPrecisionLanding.setOnCheckedChangedListener(this)
     }
 
     override fun onDetachedFromWindow() {
@@ -87,9 +88,8 @@ class PrecisionLandingWidget @JvmOverloads constructor(
     }
 
     private fun updatePrecisionLandingEnable(enable: Boolean) {
-        omni_common_precision_landing.setOnCheckedChangedListener(null)
-        omni_common_precision_landing.isChecked = enable
-        omni_common_precision_landing.setOnCheckedChangedListener(this)
+        binding.omniCommonPrecisionLanding.setOnCheckedChangedListener(null)
+        binding.omniCommonPrecisionLanding.isChecked = enable
+        binding.omniCommonPrecisionLanding.setOnCheckedChangedListener(this)
     }
-
 }

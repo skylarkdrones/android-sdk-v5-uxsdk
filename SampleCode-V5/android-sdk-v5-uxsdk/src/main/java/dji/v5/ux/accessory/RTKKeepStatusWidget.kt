@@ -88,7 +88,7 @@ class RTKKeepStatusWidget @JvmOverloads constructor(
         widgetModel.setRTKKeepStatusEnable(isChecked)
             .observeOn(SchedulerProvider.ui())
             .subscribe(object : CompletableObserver {
-                override fun onSubscribe(d: Disposable?) {
+                override fun onSubscribe(d: Disposable) {
                     //Do nothing
                 }
 
@@ -96,7 +96,7 @@ class RTKKeepStatusWidget @JvmOverloads constructor(
                     //Do nothing
                 }
 
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     setRTKSwitch(!isChecked)
                     UxErrorHandle.logErrorConsumer(TAG, "canEnableRTK: ")
                 }

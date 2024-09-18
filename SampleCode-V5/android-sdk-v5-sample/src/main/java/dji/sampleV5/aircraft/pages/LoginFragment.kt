@@ -9,16 +9,16 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragLoginAccountPageBinding
 import dji.sampleV5.aircraft.models.LoginVM
+import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.DJILoginError
 import dji.v5.common.error.IDJIError
 import dji.v5.manager.account.LoginInfo
 import dji.v5.utils.common.JsonUtil
 import dji.v5.utils.common.LogUtils
-import dji.sampleV5.aircraft.util.ToastUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.frag_login_account_page.*
 
 /**
  * Description :
@@ -31,8 +31,11 @@ import kotlinx.android.synthetic.main.frag_login_account_page.*
 class LoginFragment : DJIFragment() {
     private val loginVM: LoginVM by viewModels()
     private var userLogin: UserLogin = UserLogin()
+    private var binding: FragLoginAccountPageBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_login_account_page, container, false)
+        binding = FragLoginAccountPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,16 +49,17 @@ class LoginFragment : DJIFragment() {
         loginVM.addLoginStateChangeListener {
             mainHandler.post {
                 it?.run {
-                    tv_login_account_info.text = if (TextUtils.isEmpty(account)) {
+                    binding?.tvLoginAccountInfo?.text = if (TextUtils.isEmpty(account)) {
                         "UNKNOWN"
                     } else {
                         account
                     }
-                    tv_login_state_info.text = loginState.name
+                    binding?.tvLoginStateInfo?.text = loginState.name
                 }
             }
         }
-        btn_login.setOnClickListener {
+
+        binding?.btnLogin?.setOnClickListener {
             loginVM.loginAccount(requireActivity(), object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("Login Success!")
@@ -70,7 +74,7 @@ class LoginFragment : DJIFragment() {
             })
         }
 
-        btn_user_login.setOnClickListener {
+        binding?.btnUserLogin?.setOnClickListener {
             val loginParam = JsonUtil.toJson(userLogin)
             showDialog("Please enter login information ", loginParam.toString()) {
                 it?.let {
@@ -86,7 +90,7 @@ class LoginFragment : DJIFragment() {
             }
         }
 
-        btn_logout.setOnClickListener {
+        binding?.btnLogout?.setOnClickListener {
             loginVM.logoutAccount(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
                     ToastUtils.showToast("Logout Success!")
@@ -100,10 +104,11 @@ class LoginFragment : DJIFragment() {
 
             })
         }
-        btn_get_login_info.setOnClickListener {
+
+        binding?.btnGetLoginInfo?.setOnClickListener {
             val loginInfo = showLoginInfo()
             //同时将获取到的结果Toast出来
-            ToastUtils.showToast(tv_login_account_info.text.toString() + "-" + loginInfo.loginState.name)
+            ToastUtils.showToast(binding?.tvLoginAccountInfo?.text.toString() + "-" + loginInfo.loginState.name)
         }
 
     }
@@ -111,12 +116,12 @@ class LoginFragment : DJIFragment() {
     private fun showLoginInfo(): LoginInfo {
         //将获取到的结果刷新到UI
         val loginInfo = loginVM.getLoginInfo()
-        tv_login_account_info.text = if (TextUtils.isEmpty(loginInfo.account)) {
+        binding?.tvLoginAccountInfo?.text = if (TextUtils.isEmpty(loginInfo.account)) {
             "UNKNOWN"
         } else {
             loginInfo.account
         }
-        tv_login_state_info.text = loginInfo.loginState.name
+        binding?.tvLoginStateInfo?.text = loginInfo.loginState.name
         return loginInfo
     }
 
@@ -130,10 +135,10 @@ class LoginFragment : DJIFragment() {
         AndroidSchedulers.mainThread().scheduleDirect {
             if (isFragmentShow()) {
                 mainHandler.post {
-                    tv_login_error_info.text = ""
+                    binding?.tvLoginErrorInfo?.text = ""
                 }
-                tv_verification_code_image.visibility = View.GONE
-                iv_verification_code_image_info.visibility = View.GONE
+                binding?.tvVerificationCodeImage?.visibility = View.GONE
+                binding?.ivVerificationCodeImageInfo?.visibility = View.GONE
             }
         }
     }
@@ -141,7 +146,7 @@ class LoginFragment : DJIFragment() {
     private fun showErrMsg(msg: String) {
         if (isFragmentShow()) {
             mainHandler.post {
-                tv_login_error_info.text = msg
+                binding?.tvLoginErrorInfo?.text = msg
             }
 
         }
@@ -150,17 +155,19 @@ class LoginFragment : DJIFragment() {
 
     private fun showVerificationCodeImage() {
         AndroidSchedulers.mainThread().scheduleDirect {
-            tv_verification_code_image.visibility = View.VISIBLE
-            iv_verification_code_image_info.visibility = View.VISIBLE
+            binding?.tvVerificationCodeImage?.visibility = View.VISIBLE
+            binding?.ivVerificationCodeImageInfo?.visibility = View.VISIBLE
             val verificationCodeImageURL = loginVM.getVerificationCodeImageURL()
             LogUtils.d(tag, "verificationCodeImageURL=$verificationCodeImageURL")
-            Glide.with(requireActivity())
-                .asBitmap()
-                .load(verificationCodeImageURL)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .fitCenter()
-                .error(R.mipmap.ic_no_connection)
-                .into(iv_verification_code_image_info)
+            binding?.ivVerificationCodeImageInfo?.let {
+                Glide.with(requireActivity())
+                    .asBitmap()
+                    .load(verificationCodeImageURL)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .fitCenter()
+                    .error(R.mipmap.ic_no_connection)
+                    .into(it)
+            }
         }
     }
 

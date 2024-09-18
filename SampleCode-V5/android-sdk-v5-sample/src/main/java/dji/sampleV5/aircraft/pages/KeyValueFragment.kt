@@ -1,6 +1,7 @@
 package dji.sampleV5.aircraft.pages
 
 
+import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,10 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragmentKeyListBinding
 import dji.sampleV5.aircraft.keyvalue.KeyItemHelper.processSubListLogic
 import dji.sampleV5.aircraft.util.ToastUtils.showToast
 import dji.sampleV5.aircraft.util.Util
@@ -31,35 +31,12 @@ import dji.sdk.keyvalue.value.product.ProductType
 import dji.v5.manager.KeyManager
 import dji.v5.manager.capability.CapabilityManager
 import dji.v5.utils.common.DjiSharedPreferencesManager
+import dji.v5.utils.common.JsonUtil
+import dji.v5.utils.common.LogPath
 import dji.v5.utils.common.LogUtils
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_key_list.et_filter
-import kotlinx.android.synthetic.main.fragment_key_list.iv_capability
-import kotlinx.android.synthetic.main.fragment_key_list.iv_question_mark
-import kotlinx.android.synthetic.main.fragment_key_list.ll_channel_filter_container
-import kotlinx.android.synthetic.main.fragment_key_list.ll_filter_container
-import kotlinx.android.synthetic.main.fragment_key_list.tv_capablity
-import kotlinx.android.synthetic.main.fragment_key_list.tv_count
-import kotlinx.android.synthetic.main.fragment_key_list.tv_operate_title
-import kotlinx.android.synthetic.main.fragment_key_list.tv_operate_title_lyt
-import kotlinx.android.synthetic.main.layout_key_operate.bt_action
-import kotlinx.android.synthetic.main.layout_key_operate.bt_add_command
-import kotlinx.android.synthetic.main.layout_key_operate.bt_get
-import kotlinx.android.synthetic.main.layout_key_operate.bt_gpscoord
-import kotlinx.android.synthetic.main.layout_key_operate.bt_listen
-import kotlinx.android.synthetic.main.layout_key_operate.bt_set
-import kotlinx.android.synthetic.main.layout_key_operate.bt_unlistenall
-import kotlinx.android.synthetic.main.layout_key_operate.btn_clearlog
-import kotlinx.android.synthetic.main.layout_key_operate.sp_index
-import kotlinx.android.synthetic.main.layout_key_operate.sp_subindex
-import kotlinx.android.synthetic.main.layout_key_operate.sp_subtype
-import kotlinx.android.synthetic.main.layout_key_operate.tv_name
-import kotlinx.android.synthetic.main.layout_key_operate.tv_result
-import kotlinx.android.synthetic.main.layout_key_operate.tv_subtype
-import kotlinx.android.synthetic.main.layout_key_operate.tv_tip
 import java.text.SimpleDateFormat
 import java.util.Arrays
-import java.util.Collections
 import java.util.Date
 
 
@@ -80,11 +57,8 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     val HIGH_FREQUENCY_KEY_SP_NAME = "highfrequencykey"
     val LENS_TAG = "CAMERA_LENS_"
 
-    var contentView: View? = null
-    var recyclerView: RecyclerView? = null
-    var btAction: Button? = null
+    private var binding: FragmentKeyListBinding? = null
     val logMessage = StringBuilder()
-
 
     var currentKeyItem: dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>? = null
     val currentKeyTypeList: MutableList<dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>> = ArrayList()
@@ -123,20 +97,17 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        if (contentView == null) {
-            contentView = inflater.inflate(R.layout.fragment_key_list, container, false)
-        }
-        return contentView
+        binding = FragmentKeyListBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initLocalData()
-        contentView?.let { initView(it) }
+        binding?.root?.let { initView(it) }
         initRemoteData()
-        val parent = contentView!!.parent as ViewGroup
-        parent.removeView(contentView)
+        val parent = binding?.root?.parent as ViewGroup
+        parent.removeView(binding?.root)
     }
 
     private fun initLocalData() {
@@ -149,24 +120,24 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
 
     private fun initView(view: View) {
         initViewAndListener(view)
-        tv_result!!.setOnLongClickListener {
+        binding?.layoutKeyOperate?.tvResult?.setOnLongClickListener {
             val cmb = activity
                 ?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            cmb.text = tv_result!!.text.toString()
+            cmb.text = binding?.layoutKeyOperate?.tvResult?.text.toString()
             true
         }
-        bt_get.setOnClickListener(this)
-        bt_set.setOnClickListener(this)
-        bt_listen.setOnClickListener(this)
-        bt_action.setOnClickListener(this)
-        btn_clearlog.setOnClickListener(this)
-        bt_unlistenall.setOnClickListener(this)
-        iv_question_mark.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btGet?.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btSet?.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btListen?.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btAction?.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btnClearlog?.setOnClickListener(this)
+        binding?.layoutKeyOperate?.btUnlistenall?.setOnClickListener(this)
+        binding?.ivQuestionMark?.setOnClickListener(this)
 
-        iv_capability.isChecked = isCapabilitySwitchOn()
+        binding?.ivCapability?.isChecked = isCapabilitySwitchOn()
         msdkInfoVm.msdkInfo.observe(viewLifecycleOwner) {
-            iv_capability.isEnabled = it.productType != ProductType.UNRECOGNIZED
-            setDataWithCapability(iv_capability.isChecked)
+            binding?.ivCapability?.isEnabled = it.productType != ProductType.UNRECOGNIZED
+            setDataWithCapability(binding?.ivCapability?.isChecked ?: false)
             Schedulers.single().scheduleDirect {
                 if (totalKeyCount == null || capabilityKeyCount == null) {
                     totalKeyCount = dji.sampleV5.aircraft.keyvalue.KeyItemDataUtil.getAllKeyListCount();
@@ -174,7 +145,8 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
                 }
             }
         }
-        sp_index.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding?.layoutKeyOperate?.spIndex?.onItemSelectedListener = object :
+            AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 setKeyInfo()
                 currentKeyItem?.let { updateComponentSpinner(it) }
@@ -184,27 +156,25 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
                 //do nothing
             }
         }
-        iv_capability.setOnCheckedChangeListener { _, enable ->
+        binding?.ivCapability?.setOnCheckedChangeListener { _, enable ->
             if (enable) {
-                capabilityKeyCount?.let { showToast(tv_capablity?.text.toString() + " count:$it") }
+                capabilityKeyCount?.let { showToast(binding?.ivCapability?.text.toString() + " count:$it") }
             } else {
-                totalKeyCount?.let { showToast(tv_capablity?.text.toString() + " count:$it") }
+                totalKeyCount?.let { showToast(binding?.ivCapability?.text.toString() + " count:$it") }
             }
             setDataWithCapability(enable)
         }
     }
 
     private fun initViewAndListener(view: View) {
-        recyclerView = view.findViewById(R.id.recyclerView)
-        tv_operate_title_lyt.setOnClickListener {
+        binding?.tvOperateTitleLyt?.setOnClickListener {
             channelTypeFilterOperate()
         }
-        ll_filter_container.setOnClickListener {
+        binding?.llFilterContainer?.setOnClickListener {
             keyFilterOperate()
         }
 
-        btAction = view.findViewById(R.id.bt_action)
-        et_filter.addTextChangedListener(object : TextWatcher {
+        binding?.etFilter?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 //Do Something
             }
@@ -220,10 +190,10 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     }
 
     private fun initRemoteData() {
-        recyclerView!!.layoutManager = LinearLayoutManager(activity)
-        recyclerView!!.adapter = cameraParamsAdapter
-        tv_tip!!.movementMethod = ScrollingMovementMethod.getInstance()
-        tv_result!!.movementMethod = ScrollingMovementMethod.getInstance()
+        binding?.recyclerView?.layoutManager = LinearLayoutManager(activity)
+        binding?.recyclerView?.adapter = cameraParamsAdapter
+        binding?.layoutKeyOperate?.tvTip?.movementMethod = ScrollingMovementMethod.getInstance()
+        binding?.layoutKeyOperate?.tvResult?.movementMethod = ScrollingMovementMethod.getInstance()
     }
 
     override fun onResume() {
@@ -237,6 +207,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     val itemClickCallback: dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>?> = object :
         dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>?> {
 
+        @SuppressLint("NotifyDataSetChanged")
         override fun actionChange(keyItem: dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>?) {
             if (keyItem == null) {
                 return
@@ -252,19 +223,21 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     private val keyItemOperateCallBack: dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<Any> =
         dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<Any> { t -> //  processListenLogic();
             t?.let {
-                tv_result.text = appendLogMessageRecord(t.toString())
+                binding?.layoutKeyOperate?.tvResult?.text = appendLogMessageRecord(t.toString())
                 scrollToBottom()
             }
 
         }
 
     private fun scrollToBottom() {
-        val scrollOffset = (tv_result!!.layout.getLineTop(tv_result!!.lineCount)
-                - tv_result!!.height)
-        if (scrollOffset > 0) {
-            tv_result!!.scrollTo(0, scrollOffset)
-        } else {
-            tv_result!!.scrollTo(0, 0)
+        val tvResult = binding?.layoutKeyOperate?.tvResult
+        tvResult?.let {
+            val scrollOffset = (it.layout.getLineTop(it.lineCount) - it.height)
+            if (scrollOffset > 0) {
+                it.scrollTo(0, scrollOffset)
+            } else {
+                it.scrollTo(0, 0)
+            }
         }
     }
 
@@ -288,9 +261,8 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
      */
     val pushCallback: dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<String> =
         dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<String> { t -> //  processListenLogic();
-            tv_result?.text = appendLogMessageRecord(t)
+            binding?.layoutKeyOperate?.tvResult?.text = appendLogMessageRecord(t)
             scrollToBottom()
-
         }
 
     /**
@@ -301,17 +273,17 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     private fun initKeyInfo(keyItem: dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>) {
         currentKeyItem = keyItem
         currentKeyItem!!.setKeyOperateCallBack(keyItemOperateCallBack)
-        tv_name?.text = keyItem.name
-        bt_add_command.visibility = if (selectMode) View.VISIBLE else View.GONE
+        binding?.layoutKeyOperate?.tvName?.text = keyItem.name
+        binding?.layoutKeyOperate?.btAddCommand?.visibility = if (selectMode) View.VISIBLE else View.GONE
         processListenLogic()
-        bt_gpscoord.visibility = View.GONE
-        tv_tip.visibility = View.GONE
+        binding?.layoutKeyOperate?.btGpscoord?.visibility = View.GONE
+        binding?.layoutKeyOperate?.tvTip?.visibility = View.GONE
         keyItem.count = System.currentTimeMillis()
         resetSelected()
-        bt_set.isEnabled = currentKeyItem!!.canSet()
-        bt_get.isEnabled = currentKeyItem!!.canGet()
-        bt_listen.isEnabled = currentKeyItem!!.canListen()
-        bt_action.isEnabled = currentKeyItem!!.canAction()
+        binding?.layoutKeyOperate?.btSet?.isEnabled = currentKeyItem!!.canSet()
+        binding?.layoutKeyOperate?.btGet?.isEnabled = currentKeyItem!!.canGet()
+        binding?.layoutKeyOperate?.btListen?.isEnabled = currentKeyItem!!.canListen()
+        binding?.layoutKeyOperate?.btAction?.isEnabled = currentKeyItem!!.canAction()
         keyValuesharedPreferences?.edit()?.putLong(keyItem.toString(), keyItem.count)?.apply()
         keyItem.isItemSelected = true
 
@@ -328,11 +300,11 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
                 android.R.layout.simple_list_item_1,
                 list
             )
-            sp_subtype.adapter = adapter
-            tv_subtype.text = "lenstype"
+            binding?.layoutKeyOperate?.spSubtype?.adapter = adapter
+            binding?.layoutKeyOperate?.tvSubtype?.text = "lenstype"
             val defalutIndex = list.indexOf("DEFAULT")
             if (defalutIndex != -1) {
-                sp_subtype.setSelection(defalutIndex)
+                binding?.layoutKeyOperate?.spSubtype?.setSelection(defalutIndex)
             }
         } else {
             val adapter = ArrayAdapter(
@@ -340,8 +312,8 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
                 android.R.layout.simple_list_item_1,
                 requireContext().resources.getStringArray(R.array.sub_type_arrays)
             )
-            sp_subtype.adapter = adapter
-            tv_subtype.text = "subtype"
+            binding?.layoutKeyOperate?.spSubtype?.adapter = adapter
+            binding?.layoutKeyOperate?.tvSubtype?.text = "subtype"
         }
     }
 
@@ -358,28 +330,25 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
      */
     private fun processListenLogic() {
         if (currentKeyItem == null) {
-
-            bt_listen?.text = "Listen"
-            tv_name?.text = ""
+            binding?.layoutKeyOperate?.btListen?.text = "Listen"
+            binding?.layoutKeyOperate?.tvName?.text = ""
             return
         }
         val needShowListenView =
-            currentKeyItem!!.canListen() && currentKeyItem!!.getListenHolder() is KeyValueFragment && Util.isNotBlank(
-                currentKeyItem!!.getListenRecord()
+            currentKeyItem!!.canListen() && currentKeyItem!!.listenHolder is KeyValueFragment && Util.isNotBlank(
+                currentKeyItem!!.listenRecord
             )
         if (needShowListenView) {
-            tv_tip.visibility = View.VISIBLE
-            tv_tip.text = currentKeyItem!!.getListenRecord()
+            binding?.layoutKeyOperate?.tvTip?.visibility = View.VISIBLE
+            binding?.layoutKeyOperate?.tvTip?.text = currentKeyItem!!.getListenRecord()
         } else {
-            tv_tip.visibility = View.GONE
-            tv_tip.setText(R.string.operate_listen_record_tips)
+            binding?.layoutKeyOperate?.tvTip?.visibility = View.GONE
+            binding?.layoutKeyOperate?.tvTip?.setText(R.string.operate_listen_record_tips)
         }
-        if (currentKeyItem!!.getListenHolder() == null) {
-
-            bt_listen?.text = "Listen"
+        if (currentKeyItem!!.listenHolder == null) {
+            binding?.layoutKeyOperate?.btListen?.text = "Listen"
         } else {
-
-            bt_listen?.text = "UNListen"
+            binding?.layoutKeyOperate?.btListen?.text = "UNListen"
         }
     }
 
@@ -496,7 +465,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             }
 
             else -> {
-               LogUtils.d(TAG , "nothing to do")
+                LogUtils.d(TAG, "nothing to do")
             }
         }
         for (item in currentKeyItemList) {
@@ -507,7 +476,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             }
         }
 
-        tv_operate_title?.text = tips
+        binding?.tvOperateTitle?.text = tips
         setDataWithCapability(isCapabilitySwitchOn())
     }
 
@@ -524,9 +493,9 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
         cameraParamsAdapter?.notifyDataSetChanged()
         DjiSharedPreferencesManager.putBoolean(context, CAPABILITY_ENABLE, enable)
         if (enable) {
-            tv_capablity?.text = "Officially released key"
+            binding?.tvCapablity?.text = "Officially released key"
         } else {
-            tv_capablity?.text = "All key"
+            binding?.tvCapablity?.text = "All key"
         }
     }
 
@@ -607,8 +576,8 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
      * 清空search框
      */
     private fun resetSearchFilter() {
-        et_filter.setText("")
-        cameraParamsAdapter?.getFilter()?.filter("")
+        binding?.etFilter?.setText("")
+        cameraParamsAdapter?.filter?.filter("")
     }
 
     private fun isCapabilitySwitchOn(): Boolean {
@@ -616,18 +585,17 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     }
 
     private fun setKeyCount(count: Int) {
-        tv_count.text = "(${count})";
+        binding?.tvCount?.text = "(${count})";
     }
 
     override fun onClick(view: View) {
-
-        if (Util.isBlank(tv_name.text?.toString()) || currentKeyItem == null) {
+        if (Util.isBlank(binding?.layoutKeyOperate?.tvName?.text?.toString()) || currentKeyItem == null) {
             showToast("please select key first")
             return
         }
         setKeyInfo()
 
-        when (view?.id) {
+        when (view.id) {
             R.id.bt_get -> {
                 get()
             }
@@ -649,7 +617,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             }
 
             R.id.btn_clearlog -> {
-                tv_result?.text = ""
+                binding?.layoutKeyOperate?.tvResult?.text = ""
                 logMessage.delete(0, logMessage.length)
             }
 
@@ -681,16 +649,11 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
     private fun keyFilterOperate() {
         val sortlist: MutableList<dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>> = ArrayList(currentKeyItemList)
         changeCurrentList(isCapabilitySwitchOn(), sortlist)
-        Collections.sort(sortlist)
+        sortlist.sort()
         dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil.showFilterListWindow(
-            ll_channel_filter_container,
-            sortlist,
-            object :
-                dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>?> {
-                override fun actionChange(item: dji.sampleV5.aircraft.keyvalue.KeyItem<*, *>?) {
-                    itemClickCallback.actionChange(item)
-                }
-            })
+            binding?.llChannelFilterContainer,
+            sortlist
+        ) { item -> itemClickCallback.actionChange(item) }
     }
 
     private fun channelTypeFilterOperate() {
@@ -705,7 +668,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             showChannelList = currentChannelList
         }
         dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil.showChannelFilterListWindow(
-            tv_operate_title,
+            binding?.tvOperateTitle,
             showChannelList
         ) { channelType ->
             currentChannelType = channelType
@@ -742,7 +705,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             return
         }
         try {
-            val index = getComponentIndex(sp_index.selectedItem.toString())
+            val index = getComponentIndex(binding?.layoutKeyOperate?.spIndex?.selectedItem?.toString() ?: "")
 
             if (index != -1) {
                 currentKeyItem!!.componetIndex = index
@@ -750,19 +713,20 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             }
             val subtype: Int
             if (ComponentType.find(currentKeyItem!!.keyInfo.componentType) == ComponentType.CAMERA && isCapabilitySwitchOn()) {
-                subtype = getCameraSubIndex(LENS_TAG + sp_subtype.selectedItem.toString())
+                subtype = getCameraSubIndex(LENS_TAG + binding?.layoutKeyOperate?.spSubtype?.selectedItem?.toString())
 
             } else {
-                subtype = sp_subtype.selectedItem.toString().toInt()
+                subtype = binding?.layoutKeyOperate?.spSubtype?.selectedItem?.toString()?.toInt() ?: -1
             }
 
             if (subtype != -1) {
                 currentKeyItem!!.subComponetType = subtype
             }
-            val subIndex = sp_subindex.selectedItem.toString().toInt()
+            val subIndex = binding?.layoutKeyOperate?.spSubindex?.selectedItem?.toString()?.toInt() ?: -1
             if (subIndex != -1) {
                 currentKeyItem!!.subComponetIndex = subIndex
             }
+            LogUtils.i(LogPath.SAMPLE,"setKeyInfo:",JsonUtil.toJson(currentKeyItem))
         } catch (e: Exception) {
             LogUtils.e(TAG, e.message)
         }
@@ -793,15 +757,14 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             return
         }
         currentKeyItem!!.setPushCallBack(pushCallback)
-        val listenHolder = currentKeyItem!!.getListenHolder()
+        val listenHolder = currentKeyItem!!.listenHolder
         if (listenHolder == null) {
             currentKeyItem!!.listen(this)
             currentKeyItem!!.setKeyOperateCallBack(keyItemOperateCallBack)
-
-            bt_listen?.text = "Un-Listen"
+            binding?.layoutKeyOperate?.btListen?.text = "Un-Listen"
         } else if (listenHolder is KeyValueFragment) {
             currentKeyItem!!.cancelListen(this)
-            bt_listen?.text = "Listen"
+            binding?.layoutKeyOperate?.btListen?.text = "Listen"
         }
         processListenLogic()
     }
@@ -820,12 +783,11 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
         }
         if (currentKeyItem!!.subItemMap.isNotEmpty()) {
             processSubListLogic(
-                bt_set,
+                binding?.layoutKeyOperate?.btSet as View,
                 currentKeyItem!!.param,
                 currentKeyItem!!.subItemMap as Map<String?, List<dji.sampleV5.aircraft.keyvalue.EnumItem>>,
                 object :
                     dji.sampleV5.aircraft.keyvalue.KeyItemActionListener<String?> {
-
 
                     override fun actionChange(paramJsonStr: String?) {
                         if (Util.isBlank(paramJsonStr)) {
@@ -880,7 +842,7 @@ class KeyValueFragment : DJIFragment(), View.OnClickListener {
             currentKeyItem?.doAction("")
         } else if (currentKeyItem?.subItemMap!!.isNotEmpty()) {
             processSubListLogic(
-                bt_set,
+                binding?.layoutKeyOperate?.btSet as View,
                 currentKeyItem?.param,
                 currentKeyItem?.subItemMap as Map<String?, List<dji.sampleV5.aircraft.keyvalue.EnumItem>>,
                 object :

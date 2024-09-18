@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragPayloadCenterPageBinding
 import dji.sampleV5.aircraft.util.Helper
 import dji.v5.manager.aircraft.payload.PayloadIndexType
-import kotlinx.android.synthetic.main.frag_payload_center_page.*
 
 /**
  * Description :
@@ -19,19 +19,23 @@ import kotlinx.android.synthetic.main.frag_payload_center_page.*
  * Copyright (c) 2022, DJI All Rights Reserved.
  */
 class PayloadCenterFragment : DJIFragment() {
+
+    private var binding: FragPayloadCenterPageBinding? = null
+
     companion object {
         const val KEY_PAYLOAD_INDEX_TYPE = "payload_index_type"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_payload_center_page, container, false)
+        binding = FragPayloadCenterPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bt_open_payload_data_page.setOnClickListener {
-            val values = PayloadIndexType.values()
+        binding?.btOpenPayloadDataPage?.setOnClickListener {
+            val values = PayloadIndexType.allValues
             initPopupNumberPicker(Helper.makeList(values)) {
                 val bundle = Bundle()
                 bundle.putInt(KEY_PAYLOAD_INDEX_TYPE, values[indexChosen[0]].value())
@@ -39,8 +43,8 @@ class PayloadCenterFragment : DJIFragment() {
             }
         }
 
-        bt_open_payload_widget_page.setOnClickListener {
-            val values = PayloadIndexType.values()
+        binding?.btOpenPayloadWidgetPage?.setOnClickListener {
+            val values = PayloadIndexType.allValues
             initPopupNumberPicker(Helper.makeList(values)) {
                 val bundle = Bundle()
                 bundle.putInt(KEY_PAYLOAD_INDEX_TYPE, values[indexChosen[0]].value())
@@ -48,7 +52,6 @@ class PayloadCenterFragment : DJIFragment() {
 
             }
         }
-
 
     }
 }

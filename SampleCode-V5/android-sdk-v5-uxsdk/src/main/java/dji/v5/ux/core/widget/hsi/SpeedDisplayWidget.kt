@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.util.*
 
 open class SpeedDisplayWidget @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    ConstraintLayoutWidget<Boolean?>(context, attrs, defStyleAttr) {
+    ConstraintLayoutWidget<Boolean>(context, attrs, defStyleAttr) {
     @ExportedProperty(category = "dji", formatToHexString = true)
     private val mWindTextColor: Int
     private var mTvWsValue: TextView? = null

@@ -23,7 +23,7 @@ open class GimbalSettingWidget @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayoutWidget<Any?>(context, attrs, defStyleAttr), View.OnClickListener, IGimbalIndex {
+) : ConstraintLayoutWidget<Any>(context, attrs, defStyleAttr), View.OnClickListener, IGimbalIndex {
 
     companion object {
         private const val TAG = "GimbalSettingWidget"

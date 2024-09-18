@@ -9,49 +9,52 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragDataProtectionPageBinding
 import dji.sampleV5.aircraft.models.DataProtectionVm
 import dji.sampleV5.aircraft.util.Helper
+import dji.sampleV5.aircraft.util.ToastUtils
+import dji.v5.common.error.IDJIError
+import dji.v5.common.ldm.LDMExemptModule
+import dji.v5.network.DJIHttpCallback
+import dji.v5.network.DJIHttpRequest
+import dji.v5.network.DJIHttpResponse
+import dji.v5.network.DJINetworkManager
 import dji.v5.utils.common.DiskUtil
-import kotlinx.android.synthetic.main.frag_data_protection_page.btn_clear_log
-import kotlinx.android.synthetic.main.frag_data_protection_page.btn_export_and_zip_log
-import kotlinx.android.synthetic.main.frag_data_protection_page.btn_open_log_path
-import kotlinx.android.synthetic.main.frag_data_protection_page.log_path_tv
-import kotlinx.android.synthetic.main.frag_data_protection_page.msdk_log_switch
-import kotlinx.android.synthetic.main.frag_data_protection_page.product_improvement_switch
 
 class DataProtectionFragment : DJIFragment() {
 
     private val diagnosticVm: DataProtectionVm by activityViewModels()
+    private var binding: FragDataProtectionPageBinding? = null
+    private var urlCache = "https://"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_data_protection_page, container, false)
+        binding = FragDataProtectionPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        product_improvement_switch.isChecked = diagnosticVm.isAgreeToProductImprovement()
-        product_improvement_switch.setOnCheckedChangeListener { _: CompoundButton?,
+        binding?.productImprovementSwitch?.isChecked = diagnosticVm.isAgreeToProductImprovement()
+        binding?.productImprovementSwitch?.setOnCheckedChangeListener { _: CompoundButton?,
             isChecked: Boolean ->
             diagnosticVm.agreeToProductImprovement(isChecked)
         }
 
-        msdk_log_switch.isChecked = diagnosticVm.isLogEnable()
-        msdk_log_switch.setOnCheckedChangeListener { _: CompoundButton?,
+        binding?.msdkLogSwitch?.isChecked = diagnosticVm.isLogEnable()
+        binding?.msdkLogSwitch?.setOnCheckedChangeListener { _: CompoundButton?,
             isChecked: Boolean ->
             diagnosticVm.enableLog(isChecked)
         }
 
-        log_path_tv.text = diagnosticVm.logPath()
+        binding?.logPathTv?.text = diagnosticVm.logPath()
 
-        btn_open_log_path.setOnClickListener {
+        binding?.btnOpenLogPath?.setOnClickListener {
             val path = diagnosticVm.logPath()
             if (!path.contains(DiskUtil.SDCARD_ROOT)) {
                 return@setOnClickListener
@@ -60,7 +63,7 @@ class DataProtectionFragment : DJIFragment() {
             Helper.openFileChooser(uriPath, activity)
         }
 
-        btn_clear_log.setOnClickListener {
+        binding?.btnClearLog?.setOnClickListener {
             val configDialog = requireContext().let {
                 AlertDialog.Builder(it, R.style.Base_ThemeOverlay_AppCompat_Dialog_Alert)
                     .setTitle(R.string.clear_msdk_log)
@@ -81,13 +84,38 @@ class DataProtectionFragment : DJIFragment() {
             configDialog.show()
         }
 
-        btn_export_and_zip_log.setOnClickListener {
+        binding?.btnExportAndZipLog?.setOnClickListener {
             checkPermission()
             diagnosticVm.zipAndExportLog()
         }
+
+        binding?.btnPing?.setOnClickListener {
+            openInputDialog(urlCache, "Ping") {
+                urlCache = it
+                val request = DJIHttpRequest.Builder.newBuilder()
+                    .ldmExemptModule(LDMExemptModule.MSDK_INIT_AND_REGISTRATION)
+                    .requestType(DJIHttpRequest.RequestType.GET)
+                    .url(it)
+                    .build()
+                DJINetworkManager.getInstance().enqueue(request, object :
+                    DJIHttpCallback<DJIHttpResponse> {
+                    override fun onFailure(error: IDJIError?) {
+                        ToastUtils.showToast("url:$it,error:$error")
+                    }
+
+                    override fun onResponse(response: DJIHttpResponse) {
+                        ToastUtils.showToast("url:$it,response:${response}")
+                    }
+
+                    override fun onLoading(current: Long, total: Long) {
+//                    super.onLoading(current, total)
+                    }
+                })
+            }
+        }
     }
 
-    private fun checkPermission(){
+    private fun checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             val intent = Intent("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION")
             startActivityForResult(intent, 0)

@@ -5,13 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import dji.sampleV5.aircraft.R
-import dji.sampleV5.aircraft.models.UASEuropeanVM
+import dji.sampleV5.aircraft.databinding.FragUasEuropeanPageBinding
 import dji.sampleV5.aircraft.keyvalue.KeyValueDialogUtil
+import dji.sampleV5.aircraft.models.UASEuropeanVM
 import dji.v5.utils.common.JsonUtil
-import kotlinx.android.synthetic.main.frag_uas_european_page.bt_get_operator_registration_number
-import kotlinx.android.synthetic.main.frag_uas_european_page.bt_set_operator_registration_number
-import kotlinx.android.synthetic.main.frag_uas_european_page.tv_uas_european_info
 
 /**
  * Description :欧洲无人机远程识别示例
@@ -23,8 +20,11 @@ import kotlinx.android.synthetic.main.frag_uas_european_page.tv_uas_european_inf
  */
 class UASEuropeanFragment : DJIFragment() {
     private val uasEuropeanVM: UASEuropeanVM by viewModels()
+    private var binding: FragUasEuropeanPageBinding? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_uas_european_page, container, false)
+        binding = FragUasEuropeanPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,7 +44,7 @@ class UASEuropeanFragment : DJIFragment() {
         uasEuropeanVM.currentOperatorRegistrationNumber.observe(viewLifecycleOwner) {
             updateUASInfo()
         }
-        bt_set_operator_registration_number.setOnClickListener {
+        binding?.btSetOperatorRegistrationNumber?.setOnClickListener {
             KeyValueDialogUtil.showInputDialog(
                 activity, "Operator Registration Number",
                 uasEuropeanVM.currentOperatorRegistrationNumber.value + "-xxx", "", false
@@ -54,7 +54,7 @@ class UASEuropeanFragment : DJIFragment() {
                 }
             }
         }
-        bt_get_operator_registration_number.setOnClickListener {
+        binding?.btGetOperatorRegistrationNumber?.setOnClickListener {
             uasEuropeanVM.getOperatorRegistrationNumber()
         }
         uasEuropeanVM.getOperatorRegistrationNumber()
@@ -75,7 +75,7 @@ class UASEuropeanFragment : DJIFragment() {
         builder.append("Uas Operator Registration Number Status:").append(JsonUtil.toJson(uasEuropeanVM.operatorRegistrationNumberStatus.value))
         builder.append("\n")
         mainHandler.post {
-            tv_uas_european_info.text = builder.toString()
+            binding?.tvUasEuropeanInfo?.text = builder.toString()
         }
     }
 }

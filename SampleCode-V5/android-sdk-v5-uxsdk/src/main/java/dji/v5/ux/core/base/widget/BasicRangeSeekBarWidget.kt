@@ -226,7 +226,7 @@ class BasicRangeSeekBar @JvmOverloads constructor(
     }
 
     @SuppressLint("DrawAllocation")
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         leftPadding = (leftThumbImg.width + thumbLeftPointerPadding).toFloat()

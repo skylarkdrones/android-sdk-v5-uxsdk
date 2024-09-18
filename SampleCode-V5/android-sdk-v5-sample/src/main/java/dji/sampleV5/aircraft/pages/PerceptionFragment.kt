@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragPerceptionPageBinding
 import dji.sampleV5.aircraft.models.PerceptionVM
 import dji.sampleV5.aircraft.util.Helper
 import dji.v5.common.callback.CommonCallbacks
@@ -16,11 +18,9 @@ import dji.v5.manager.aircraft.perception.data.PerceptionDirection
 import dji.v5.manager.aircraft.perception.data.PerceptionInfo
 import dji.v5.manager.aircraft.perception.data.ObstacleData
 import dji.v5.manager.aircraft.perception.radar.RadarInformation
-import dji.v5.utils.common.LogUtils
 import dji.sampleV5.aircraft.util.ToastUtils
 import dji.v5.ux.core.extension.hide
 import dji.v5.ux.core.extension.show
-import kotlinx.android.synthetic.main.frag_perception_page.*
 
 /**
  * Description :感知模块Fragment
@@ -31,8 +31,8 @@ import kotlinx.android.synthetic.main.frag_perception_page.*
  * Copyright (c) 2022, DJI All Rights Reserved.
  */
 class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener {
-    private val TAG = LogUtils.getTag("PerceptionFragment")
 
+    private var binding: FragPerceptionPageBinding? = null
     private val perceptionVM: PerceptionVM by viewModels()
 
     //感知开关等信息
@@ -53,30 +53,31 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
     private var isRadarConnected = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_perception_page, container, false)
+        binding = FragPerceptionPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tb_set_vision_positioning_enable_switch.setOnCheckedChangeListener(this)
-        tv_radar_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this)
-        tv_radar_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this)
-        tb_set_precision_landing_enable_switch.setOnCheckedChangeListener(this)
-        tv_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this)
-        tv_obstacle_avoidance_down_switch.setOnCheckedChangeListener(this)
-        tv_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this)
+        binding?.tbSetVisionPositioningEnableSwitch?.setOnCheckedChangeListener(this)
+        binding?.tvRadarObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this)
+        binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this)
+        binding?.tbSetPrecisionLandingEnableSwitch?.setOnCheckedChangeListener(this)
+        binding?.tvObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this)
+        binding?.tvObstacleAvoidanceDownSwitch?.setOnCheckedChangeListener(this)
+        binding?.tvObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this)
 
         perceptionVM.addPerceptionInfoListener()
         observerPerceptionInfo()
 
-        bt_set_obstacle_avoidance_type.setOnClickListener {
+        binding?.btSetObstacleAvoidanceType?.setOnClickListener {
             val values = ObstacleAvoidanceType.values()
             initPopupNumberPicker(Helper.makeList(values)) {
                 perceptionVM.setObstacleAvoidanceType(values[indexChosen[0]], buttonCompletionCallback)
             }
         }
 
-        bt_set_obstacle_avoidance_warning_distance.setOnClickListener {
+        binding?.btSetObstacleAvoidanceWarningDistance?.setOnClickListener {
             val distance = doubleArrayOf(2.3, 6.7, 9.8, 10.0, 20.0, 30.0)
             val direction = PerceptionDirection.values()
 
@@ -89,7 +90,7 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
             }
         }
 
-        bt_set_obstacle_avoidance_braking_distance.setOnClickListener {
+        binding?.btSetObstacleAvoidanceBrakingDistance?.setOnClickListener {
             val distance = doubleArrayOf(1.8, 2.0, 3.5, 5.6, 8.9, 10.0, 20.0)
             val direction = PerceptionDirection.values()
 
@@ -108,7 +109,7 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         when (buttonView) {
-            tb_set_vision_positioning_enable_switch -> {
+            binding?.tbSetVisionPositioningEnableSwitch -> {
                 perceptionVM.setVisionPositioningEnabled(isChecked, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -118,16 +119,16 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tb_set_vision_positioning_enable_switch.setOnCheckedChangeListener(null)
-                        tb_set_vision_positioning_enable_switch.isChecked = !isChecked
-                        tb_set_vision_positioning_enable_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                        binding?.tbSetVisionPositioningEnableSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tbSetVisionPositioningEnableSwitch?.isChecked = !isChecked
+                        binding?.tbSetVisionPositioningEnableSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
 
                     }
 
                 })
             }
 
-            tb_set_precision_landing_enable_switch -> {
+            binding?.tbSetPrecisionLandingEnableSwitch -> {
                 perceptionVM.setPrecisionLandingEnabled(isChecked, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -137,16 +138,15 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tb_set_precision_landing_enable_switch.setOnCheckedChangeListener(null)
-                        tb_set_precision_landing_enable_switch.isChecked = !isChecked
-                        tb_set_precision_landing_enable_switch.setOnCheckedChangeListener(this@PerceptionFragment)
-
+                        binding?.tbSetPrecisionLandingEnableSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tbSetPrecisionLandingEnableSwitch?.isChecked = !isChecked
+                        binding?.tbSetPrecisionLandingEnableSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
                     }
-
                 })
             }
+
             //避障子开关
-            tv_obstacle_avoidance_up_switch -> {
+            binding?.tvObstacleAvoidanceUpSwitch -> {
                 perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -156,16 +156,16 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tv_obstacle_avoidance_up_switch.setOnCheckedChangeListener(null)
-                        tv_obstacle_avoidance_up_switch.isChecked = !isChecked
-                        tv_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                        binding?.tvObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tvObstacleAvoidanceUpSwitch?.isChecked = !isChecked
+                        binding?.tvObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
 
                     }
 
                 })
             }
 
-            tv_obstacle_avoidance_down_switch -> {
+            binding?.tvObstacleAvoidanceDownSwitch -> {
                 perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.DOWNWARD, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -175,36 +175,31 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tv_obstacle_avoidance_down_switch.setOnCheckedChangeListener(null)
-                        tv_obstacle_avoidance_down_switch.isChecked = !isChecked
-                        tv_obstacle_avoidance_down_switch.setOnCheckedChangeListener(this@PerceptionFragment)
-
+                        binding?.tvObstacleAvoidanceDownSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tvObstacleAvoidanceDownSwitch?.isChecked = !isChecked
+                        binding?.tvObstacleAvoidanceDownSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
                     }
-
                 })
             }
 
-            tv_obstacle_avoidance_horizontal_switch -> {
+            binding?.tvObstacleAvoidanceHorizontalSwitch -> {
                 perceptionVM.setObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
                         updateCurrentErrorMsg(isSuccess = true)
-
                     }
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tv_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(null)
-                        tv_obstacle_avoidance_horizontal_switch.isChecked = !isChecked
-                        tv_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this@PerceptionFragment)
-
+                        binding?.tvObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tvObstacleAvoidanceHorizontalSwitch?.isChecked = !isChecked
+                        binding?.tvObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
                     }
-
                 })
             }
 
             //雷达避障子开关
-            tv_radar_obstacle_avoidance_up_switch -> {
+            binding?.tvRadarObstacleAvoidanceUpSwitch -> {
                 perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.UPWARD, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -214,16 +209,14 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tv_radar_obstacle_avoidance_up_switch.setOnCheckedChangeListener(null)
-                        tv_radar_obstacle_avoidance_up_switch.isChecked = !isChecked
-                        tv_radar_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this@PerceptionFragment)
-
+                        binding?.tvRadarObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tvRadarObstacleAvoidanceUpSwitch?.isChecked = !isChecked
+                        binding?.tvRadarObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
                     }
-
                 })
             }
 
-            tv_radar_obstacle_avoidance_horizontal_switch -> {
+            binding?.tvRadarObstacleAvoidanceHorizontalSwitch -> {
                 perceptionVM.setRadarObstacleAvoidanceEnabled(isChecked, PerceptionDirection.HORIZONTAL, object :
                     CommonCallbacks.CompletionCallback {
                     override fun onSuccess() {
@@ -233,12 +226,10 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
                     override fun onFailure(error: IDJIError) {
                         handleSwitchButtonError(error)
-                        tv_radar_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(null)
-                        tv_radar_obstacle_avoidance_horizontal_switch.isChecked = !isChecked
-                        tv_radar_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this@PerceptionFragment)
-
+                        binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(null)
+                        binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.isChecked = !isChecked
+                        binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
                     }
-
                 })
             }
         }
@@ -270,7 +261,7 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
 
     private fun updateCurrentErrorMsg(errorMsg: String? = null, isSuccess: Boolean = false) {
         if (isFragmentShow()) {
-            tv_error_msg.text = if (isSuccess) "" else errorMsg
+            binding?.tvErrorMsg?.text = if (isSuccess) "" else errorMsg
         }
     }
 
@@ -279,96 +270,92 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
     }
 
     private fun observerPerceptionInfo() {
-        perceptionVM.perceptionInfo.observe(viewLifecycleOwner, {
+        perceptionVM.perceptionInfo.observe(viewLifecycleOwner) {
             perceptionInfo = it
             updatePerceptionInfo()
             changeObstacleAvoidanceEnableSwitch()
             changeOtherEnableSwitch(it)
-        })
-        perceptionVM.obstacleData.observe(viewLifecycleOwner, {
+        }
+        perceptionVM.obstacleData.observe(viewLifecycleOwner) {
             obstacleData = it
             updatePerceptionInfo()
-        })
-        perceptionVM.obstacleDataForRadar.observe(viewLifecycleOwner, {
+        }
+        perceptionVM.obstacleDataForRadar.observe(viewLifecycleOwner) {
             radarObstacleData = it
             updatePerceptionInfo()
-        })
+        }
 
-        perceptionVM.radarInformation.observe(viewLifecycleOwner, {
+        perceptionVM.radarInformation.observe(viewLifecycleOwner) {
             radarInformation = it
             changeObstacleAvoidanceEnableSwitch()
             updatePerceptionInfo()
-        })
-        perceptionVM.radarConnect.observe(viewLifecycleOwner, {
+        }
+        perceptionVM.radarConnect.observe(viewLifecycleOwner) {
             isRadarConnected = it
             if (it) {
-                rl_radar_obstacle_avoidance_switch.show()
+                binding?.rlRadarObstacleAvoidanceSwitch?.show()
             } else {
-                rl_radar_obstacle_avoidance_switch.hide()
+                binding?.rlRadarObstacleAvoidanceSwitch?.hide()
             }
-        })
-
-
+        }
     }
 
     private fun changeOtherEnableSwitch(perceptionInfo: PerceptionInfo) {
         perceptionInfo.apply {
             //视觉定位
-            val checked2 = tb_set_vision_positioning_enable_switch.isChecked
+            val checked2 = binding?.tbSetVisionPositioningEnableSwitch?.isChecked
             if (checked2 != isVisionPositioningEnabled) {
-                tb_set_vision_positioning_enable_switch.setOnCheckedChangeListener(null)
-                tb_set_vision_positioning_enable_switch.isChecked = isVisionPositioningEnabled
-                tb_set_vision_positioning_enable_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tbSetVisionPositioningEnableSwitch?.setOnCheckedChangeListener(null)
+                binding?.tbSetVisionPositioningEnableSwitch?.isChecked = isVisionPositioningEnabled
+                binding?.tbSetVisionPositioningEnableSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
             //精准降落
-            val check3 = tb_set_precision_landing_enable_switch.isChecked
+            val check3 = binding?.tbSetPrecisionLandingEnableSwitch?.isChecked
             if (check3 != isPrecisionLandingEnabled) {
-                tb_set_precision_landing_enable_switch.setOnCheckedChangeListener(null)
-                tb_set_precision_landing_enable_switch.isChecked = isPrecisionLandingEnabled
-                tb_set_precision_landing_enable_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tbSetPrecisionLandingEnableSwitch?.setOnCheckedChangeListener(null)
+                binding?.tbSetPrecisionLandingEnableSwitch?.isChecked = isPrecisionLandingEnabled
+                binding?.tbSetPrecisionLandingEnableSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
         }
-
-
     }
 
     private fun changeObstacleAvoidanceEnableSwitch() {
         perceptionInfo?.apply {
             //避障子开关
-            val checked1 = tv_obstacle_avoidance_up_switch.isChecked
+            val checked1 = binding?.tvObstacleAvoidanceUpSwitch?.isChecked
             if (checked1 != isUpwardObstacleAvoidanceEnabled) {
-                tv_obstacle_avoidance_up_switch.setOnCheckedChangeListener(null)
-                tv_obstacle_avoidance_up_switch.isChecked = isUpwardObstacleAvoidanceEnabled
-                tv_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tvObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(null)
+                binding?.tvObstacleAvoidanceUpSwitch?.isChecked = isUpwardObstacleAvoidanceEnabled
+                binding?.tvObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
 
-            val checked2 = tv_obstacle_avoidance_down_switch.isChecked
+            val checked2 = binding?.tvObstacleAvoidanceDownSwitch?.isChecked
             if (checked2 != isDownwardObstacleAvoidanceEnabled) {
-                tv_obstacle_avoidance_down_switch.setOnCheckedChangeListener(null)
-                tv_obstacle_avoidance_down_switch.isChecked = isDownwardObstacleAvoidanceEnabled
-                tv_obstacle_avoidance_down_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tvObstacleAvoidanceDownSwitch?.setOnCheckedChangeListener(null)
+                binding?.tvObstacleAvoidanceDownSwitch?.isChecked = isDownwardObstacleAvoidanceEnabled
+                binding?.tvObstacleAvoidanceDownSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
 
-            val checked3 = tv_obstacle_avoidance_horizontal_switch.isChecked
+            val checked3 = binding?.tvObstacleAvoidanceHorizontalSwitch?.isChecked
             if (checked3 != isHorizontalObstacleAvoidanceEnabled) {
-                tv_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(null)
-                tv_obstacle_avoidance_horizontal_switch.isChecked = isHorizontalObstacleAvoidanceEnabled
-                tv_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tvObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(null)
+                binding?.tvObstacleAvoidanceHorizontalSwitch?.isChecked = isHorizontalObstacleAvoidanceEnabled
+                binding?.tvObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
         }
         radarInformation?.apply {
-            val checked1 = tv_radar_obstacle_avoidance_up_switch.isChecked
+            val checked1 = binding?.tvRadarObstacleAvoidanceUpSwitch?.isChecked
             if (checked1 != isUpwardObstacleAvoidanceEnabled) {
-                tv_radar_obstacle_avoidance_up_switch.setOnCheckedChangeListener(null)
-                tv_radar_obstacle_avoidance_up_switch.isChecked = isUpwardObstacleAvoidanceEnabled
-                tv_radar_obstacle_avoidance_up_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tvRadarObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(null)
+                binding?.tvRadarObstacleAvoidanceUpSwitch?.isChecked = isUpwardObstacleAvoidanceEnabled
+                binding?.tvRadarObstacleAvoidanceUpSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
 
-            val checked2 = tv_radar_obstacle_avoidance_horizontal_switch.isChecked
+            val checked2 = binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.isChecked
             if (checked2 != isHorizontalObstacleAvoidanceEnabled) {
-                tv_radar_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(null)
-                tv_radar_obstacle_avoidance_horizontal_switch.isChecked = isHorizontalObstacleAvoidanceEnabled
-                tv_radar_obstacle_avoidance_horizontal_switch.setOnCheckedChangeListener(this@PerceptionFragment)
+                binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(null)
+                binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.isChecked = isHorizontalObstacleAvoidanceEnabled
+                binding?.tvRadarObstacleAvoidanceHorizontalSwitch?.setOnCheckedChangeListener(this@PerceptionFragment)
             }
         }
 
@@ -434,7 +421,7 @@ class PerceptionFragment : DJIFragment(), CompoundButton.OnCheckedChangeListener
         }
 
         activity?.runOnUiThread {
-            tv_perception_info.text = result
+            binding?.tvPerceptionInfo?.text = result
         }
     }
 }

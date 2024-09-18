@@ -6,12 +6,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.navigation.Navigation
+import dji.sampleV5.aircraft.databinding.ActivityMainBinding
+import dji.sampleV5.aircraft.databinding.ActivityTestingToolsBinding
 import dji.sampleV5.aircraft.models.MSDKCommonOperateVm
 import dji.sampleV5.aircraft.util.DJIToastUtil
 import dji.sampleV5.aircraft.util.ToastUtils
 import dji.sampleV5.aircraft.views.MSDKInfoFragment
 import dji.v5.ux.core.util.ViewUtil
-import kotlinx.android.synthetic.main.activity_testing_tools.nav_host_fragment_container
 
 /**
  * Class Description
@@ -23,13 +24,15 @@ import kotlinx.android.synthetic.main.activity_testing_tools.nav_host_fragment_c
  */
 abstract class TestingToolsActivity : AppCompatActivity() {
 
+    protected lateinit var binding: ActivityTestingToolsBinding
     protected val msdkCommonOperateVm: MSDKCommonOperateVm by viewModels()
 
     private val testToolsVM: TestToolsVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_testing_tools)
+        binding = ActivityTestingToolsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         window.decorView.apply {
             systemUiVisibility =
@@ -81,8 +84,8 @@ abstract class TestingToolsActivity : AppCompatActivity() {
      * 本activity的NavController，都是基于nav_host_fragment_container的
      */
     private fun addDestination(id: Int) {
-        val v = Navigation.findNavController(nav_host_fragment_container).navInflater.inflate(id)
-        Navigation.findNavController(nav_host_fragment_container).graph.addAll(v)
+        val v = Navigation.findNavController(binding.navHostFragmentContainer).navInflater.inflate(id)
+        Navigation.findNavController(binding.navHostFragmentContainer).graph.addAll(v)
     }
 
     override fun onDestroy() {

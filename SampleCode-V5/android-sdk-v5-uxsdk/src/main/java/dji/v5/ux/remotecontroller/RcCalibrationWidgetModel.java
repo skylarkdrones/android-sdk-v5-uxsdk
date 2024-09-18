@@ -1,16 +1,16 @@
 package dji.v5.ux.remotecontroller;
 
 
-import androidx.annotation.NonNull;
-
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import dji.sdk.keyvalue.key.KeyTools;
 import dji.sdk.keyvalue.key.RemoteControllerKey;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.sdk.keyvalue.value.remotecontroller.RcCalibrateState;
 import dji.v5.common.utils.RxUtil;
 import dji.v5.manager.KeyManager;
+import dji.v5.utils.common.LogPath;
 import dji.v5.utils.common.LogUtils;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.WidgetModel;
@@ -52,7 +52,7 @@ public class RcCalibrationWidgetModel extends WidgetModel {
 
         //波轮
         addDisposable(Flowable.combineLatest(RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyConnection,
-                ComponentIndexType.LEFT_OR_MAIN), this),
+                        ComponentIndexType.LEFT_OR_MAIN), this),
                 RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyLeftDial), this),
                 RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRightDial), this),
                 (connect, leftGyroValue, rightGyroValue) -> new SmartControllerCalibrationInfo(connect, rcCalibrateStateDataProcessor.getValue(),
@@ -63,31 +63,31 @@ public class RcCalibrationWidgetModel extends WidgetModel {
         }));
 
         addDisposable(Flowable.combineLatest(
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateNumberOfSegment), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateAAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateBAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateCAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateDAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateEAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateFAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateGAxisStatus), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateHAxisStatus), this),
-                (segmentNum, aAxis, bAxis, cAxis, dAxis, eAxis, fAxis, gAxis, hAxis) -> {
-                    StickState state = new StickState();
-                    state.calibrationState = rcCalibrateStateDataProcessor.getValue();
-                    state.isConnection = connectDataProcessor.getValue();
-                    state.segmentNum = segmentNum;
-                    state.rightTop = aAxis;
-                    state.rightBottom = bAxis;
-                    state.rightRight = cAxis;
-                    state.rightLeft = dAxis;
-                    state.leftTop = eAxis;
-                    state.leftBottom = fAxis;
-                    state.leftRight = gAxis;
-                    state.leftLeft = hAxis;
-                    return state;
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateNumberOfSegment), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateAAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateBAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateCAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateDAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateEAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateFAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateGAxisStatus), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateHAxisStatus), this),
+                        (segmentNum, aAxis, bAxis, cAxis, dAxis, eAxis, fAxis, gAxis, hAxis) -> {
+                            StickState state = new StickState();
+                            state.calibrationState = rcCalibrateStateDataProcessor.getValue();
+                            state.isConnection = connectDataProcessor.getValue();
+                            state.segmentNum = segmentNum;
+                            state.rightTop = aAxis;
+                            state.rightBottom = bAxis;
+                            state.rightRight = cAxis;
+                            state.rightLeft = dAxis;
+                            state.leftTop = eAxis;
+                            state.leftBottom = fAxis;
+                            state.leftRight = gAxis;
+                            state.leftLeft = hAxis;
+                            return state;
 
-                }).
+                        }).
 
                 subscribe(stickState -> {
                     if (stickState != null) {
@@ -98,17 +98,15 @@ public class RcCalibrationWidgetModel extends WidgetModel {
 
         //摇杆
         addDisposable(Flowable.combineLatest(
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickLeftVertical), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickLeftHorizontal), this),
-                (StickValue::new))
-                .subscribe(stickValue -> {
-                    leftStickValueDataProcessor.onNext(stickValue);
-                }));
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickLeftVertical), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickLeftHorizontal), this),
+                        (StickValue::new))
+                .subscribe(stickValue -> leftStickValueDataProcessor.onNext(stickValue)));
 
         addDisposable(Flowable.combineLatest(
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickRightVertical), this),
-                RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickRightHorizontal), this),
-                (StickValue::new))
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickRightVertical), this),
+                        RxUtil.addListener(KeyTools.createKey(RemoteControllerKey.KeyStickRightHorizontal), this),
+                        (StickValue::new))
                 .subscribe(stickValue -> rightStickValueDataProcessor.onNext(stickValue)));
 
 
@@ -121,13 +119,14 @@ public class RcCalibrationWidgetModel extends WidgetModel {
 
     public void setRcCalibrateChannels(RcCalibrateState rcCalibrateState, boolean isDelay) {
         addDisposable(RxUtil.performActionSingWithResult(KeyTools.createKey(RemoteControllerKey.KeyRcCalibrateChannels), rcCalibrateState)
-                .delay(isDelay ? 500 : 0, TimeUnit.MILLISECONDS).subscribe(rcCalibrateState1 -> {
+                .delay(isDelay ? 500 : 0, TimeUnit.MILLISECONDS)
+                .subscribe(rcCalibrateState1 -> {
                     if (rcCalibrateState1 != null) {
                         updateRcMode(rcCalibrateState1);
                     } else {
                         doNext(true);
                     }
-                }));
+                },throwable -> LogUtils.e(LogPath.COMMON, throwable.getMessage())));
 
     }
 

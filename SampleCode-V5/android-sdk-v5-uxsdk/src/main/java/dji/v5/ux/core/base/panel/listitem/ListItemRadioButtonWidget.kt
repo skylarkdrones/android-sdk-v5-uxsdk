@@ -46,7 +46,7 @@ import dji.v5.ux.core.util.ViewIDGenerator
  * This is the base class to be used for radio button type list item
  * The class represents the item with icon, item name and radio group options
  */
-abstract class ListItemRadioButtonWidget<T> @JvmOverloads constructor(
+abstract class ListItemRadioButtonWidget<T : Any> @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,

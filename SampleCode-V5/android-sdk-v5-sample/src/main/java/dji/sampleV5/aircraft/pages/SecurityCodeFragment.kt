@@ -9,6 +9,8 @@ import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
 import dji.sampleV5.aircraft.data.DeviceLockStatus
 import dji.sampleV5.aircraft.data.ModifyPasswordBean
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragSecurityCodePageBinding
 import dji.sampleV5.aircraft.models.SecurityCodeVM
 import dji.sampleV5.aircraft.util.Helper
 import dji.sampleV5.aircraft.util.ToastUtils
@@ -17,7 +19,6 @@ import dji.v5.utils.common.JsonUtil
 import dji.v5.utils.common.StringUtils
 import dji.v5.ux.core.extension.hide
 import dji.v5.ux.core.extension.show
-import kotlinx.android.synthetic.main.frag_security_code_page.*
 
 /**
  * Description :安全密码界面，主要演示密码相关功能
@@ -34,26 +35,27 @@ class SecurityCodeFragment : DJIFragment() {
         private const val DEVICE_IS_EMPTY = "DeviceList is empty!!!"
     }
 
+    private var binding: FragSecurityCodePageBinding? = null
     private val securityCodeVM: SecurityCodeVM by viewModels()
     private var deviceIndexList = ArrayList<AccessLockerDeviceType>()
     private var currentDeviceStatsList = ArrayList<DeviceLockStatus>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_security_code_page, container, false)
+        binding = FragSecurityCodePageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         securityCodeVM.addQueryAllDeviceStatesListener()
         securityCodeVM.deviceStatusListLD.observe(viewLifecycleOwner) {
-            tv_device_status_tip.show()
-            tv_device_status.text = it.toString()
+            binding?.tvDeviceStatusTip?.show()
+            binding?.tvDeviceStatus?.text = it.toString()
             deviceIndexList.clear()
             it.forEach { deviceLockStatus: DeviceLockStatus ->
                 deviceIndexList.add(deviceLockStatus.deviceIndex)
                 if (deviceLockStatus.isFeatureNeedToBeVerified) {
-                    btn_verify_password.show()
+                    binding?.btnVerifyPassword?.show()
                 }
             }
             currentDeviceStatsList = it
@@ -64,20 +66,18 @@ class SecurityCodeFragment : DJIFragment() {
             ToastUtils.showToast(it)
         }
 
-        btn_set_password.setOnClickListener {
+        binding?.btnSetPassword?.setOnClickListener {
             setPassword()
         }
-        btn_modify_password.setOnClickListener {
+        binding?.btnModifyPassword?.setOnClickListener {
             modifyPassword()
         }
-        btn_reset_password.setOnClickListener {
+        binding?.btnResetPassword?.setOnClickListener {
             resetPassword()
         }
-        btn_verify_password.setOnClickListener {
+        binding?.btnVerifyPassword?.setOnClickListener {
             verifyPassword()
         }
-
-
     }
 
 
@@ -108,9 +108,9 @@ class SecurityCodeFragment : DJIFragment() {
 
     private fun showProcessBar(isShow: Boolean = true) {
         if (isShow && activity?.isFinishing == false) {
-            operate_process.show()
+            binding?.operateProcess?.show()
         } else {
-            operate_process.hide()
+            binding?.operateProcess?.hide()
         }
     }
 

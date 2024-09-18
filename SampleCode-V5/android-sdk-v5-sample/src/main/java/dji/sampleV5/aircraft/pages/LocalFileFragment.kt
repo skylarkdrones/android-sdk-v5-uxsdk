@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragLocalFileBinding
 import dji.sampleV5.aircraft.models.MegaphoneVM
 import dji.v5.common.callback.CommonCallbacks
 import dji.v5.common.error.IDJIError
@@ -18,7 +18,6 @@ import dji.v5.manager.aircraft.megaphone.FileInfo
 import dji.v5.manager.aircraft.megaphone.UploadType
 import dji.v5.utils.common.ContextUtil
 import dji.v5.utils.common.FileUtils
-import kotlinx.android.synthetic.main.frag_local_file.*
 import java.io.File
 
 /**
@@ -30,12 +29,15 @@ import java.io.File
 class LocalFileFragment: DJIFragment(){
     private val megaphoneVM: MegaphoneVM by activityViewModels()
     private val REQUEST_CODE = 100
+    private var binding: FragLocalFileBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_local_file,container,false)
+        binding = FragLocalFileBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,14 +45,14 @@ class LocalFileFragment: DJIFragment(){
         initBtnListener()
     }
 
-    fun initBtnListener(){
-        btn_choose_local_file.setOnClickListener {
+    private fun initBtnListener(){
+        binding?.btnChooseLocalFile?.setOnClickListener {
             pickFile()
         }
 
-        btn_start_upload.setOnClickListener {
-            if (et_local_file_path!!.text != null) {
-                val filePath:String = et_local_file_path!!.text.toString()
+        binding?.btnStartUpload?.setOnClickListener {
+            if (binding?.etLocalFilePath?.text != null) {
+                val filePath:String = binding?.etLocalFilePath?.text.toString()
                 val file = File(filePath)
                 if(file.exists()){
                     val fileInfo = FileInfo(
@@ -62,22 +64,22 @@ class LocalFileFragment: DJIFragment(){
                         fileInfo,
                         object : CommonCallbacks.CompletionCallbackWithProgress<Int> {
                             override fun onProgressUpdate(progress: Int) {
-                                tv_local_file_upload_status.text = progress.toString()
+                                binding?.tvLocalFileUploadStatus?.text = progress.toString()
                             }
 
                             override fun onSuccess() {
-                                tv_local_file_upload_status.text = "upload success"
+                                binding?.tvLocalFileUploadStatus?.text = "upload success"
                             }
 
                             override fun onFailure(error: IDJIError) {
-                                tv_local_file_upload_status.text = "upload failed"
+                                binding?.tvLocalFileUploadStatus?.text = "upload failed"
                             }
                         })
                 }
             }
         }
 
-        btn_start_upload_last_opus_file.setOnClickListener {
+        binding?.btnStartUploadLastOpusFile?.setOnClickListener {
             val fileName = "AudioTest.opus"
             val file = File(
                 FileUtils.getMainDir(
@@ -95,28 +97,28 @@ class LocalFileFragment: DJIFragment(){
                     fileInfo,
                     object : CommonCallbacks.CompletionCallbackWithProgress<Int> {
                         override fun onProgressUpdate(progress: Int) {
-                            tv_local_file_upload_status.text = progress.toString()
+                            binding?.tvLocalFileUploadStatus?.text = progress.toString()
                         }
 
                         override fun onSuccess() {
-                            tv_local_file_upload_status.text = "upload success"
+                            binding?.tvLocalFileUploadStatus?.text = "upload success"
                         }
 
                         override fun onFailure(error: IDJIError) {
-                            tv_local_file_upload_status.text = "upload failed"
+                            binding?.tvLocalFileUploadStatus?.text = "upload failed"
                         }
                     })
             }
         }
 
-        btn_cancel_upload.setOnClickListener {
+        binding?.btnCancelUpload?.setOnClickListener {
             megaphoneVM.stopPushingFile(object : CommonCallbacks.CompletionCallback {
                 override fun onSuccess() {
-                    tv_local_file_upload_status.text = "upload cancel success"
+                    binding?.tvLocalFileUploadStatus?.text = "upload cancel success"
                 }
 
                 override fun onFailure(error: IDJIError) {
-                    tv_local_file_upload_status.text = "upload cancel failed"
+                    binding?.tvLocalFileUploadStatus?.text = "upload cancel failed"
                 }
             })
         }
@@ -134,11 +136,12 @@ class LocalFileFragment: DJIFragment(){
         super.onActivityResult(requestCode, resultCode, data)
         data?.apply {
             getData()?.let {
-                et_local_file_path.setText(getPath(context, it))
+                binding?.etLocalFilePath?.setText(getPath(context, it))
             }
         }
     }
-    fun getPath(context: Context?, uri: Uri?): String {
+
+    private fun getPath(context: Context?, uri: Uri?): String {
         if (DocumentsContract.isDocumentUri(context, uri) && isExternalStorageDocument(uri)) {
             val docId = DocumentsContract.getDocumentId(uri)
             val split = docId.split(":".toRegex()).toTypedArray()
@@ -153,7 +156,7 @@ class LocalFileFragment: DJIFragment(){
         return ""
     }
 
-    fun isExternalStorageDocument(uri: Uri?): Boolean {
+    private fun isExternalStorageDocument(uri: Uri?): Boolean {
         return "com.android.externalstorage.documents" == uri?.authority
     }
 }

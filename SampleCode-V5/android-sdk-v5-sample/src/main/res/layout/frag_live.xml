@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_light_divider_line"
@@ -86,6 +88,26 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:text="stop"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_show_view"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="show local"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_hide_view"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="hide local"
             android:textSize="12sp" />
 
     </LinearLayout>

@@ -5,11 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import dji.sampleV5.aircraft.R
+import dji.sampleV5.aircraft.databinding.FragAppSilentlyUpgradePageBinding
+import dji.sampleV5.aircraft.databinding.FragUasChinaPageBinding
 import dji.sampleV5.aircraft.pages.DJIFragment
 import dji.sampleV5.moduleaircraft.models.UASChinaVM
 import dji.sdk.keyvalue.value.flightcontroller.RealNameRegistrationState
 import dji.v5.utils.common.JsonUtil
-import kotlinx.android.synthetic.main.frag_uas_china_page.*
 import java.util.*
 
 /**
@@ -22,9 +23,11 @@ import java.util.*
  */
 class UASChinaFragment : DJIFragment() {
     private val uasChinaVM: UASChinaVM by viewModels()
+    private var binding: FragUasChinaPageBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.frag_uas_china_page, container, false)
+        binding = FragUasChinaPageBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,8 +41,7 @@ class UASChinaFragment : DJIFragment() {
         uasChinaVM.uomRealNameFCStatus.observe(viewLifecycleOwner) {
             updateInfo()
         }
-
-        bt_update_real_name_state.setOnClickListener {
+        binding?.btUpdateRealNameState?.setOnClickListener {
             uasChinaVM.updateRealNameRegistrationStateFromUOM()
         }
     }
@@ -58,7 +60,7 @@ class UASChinaFragment : DJIFragment() {
             .append(uasChinaVM.uomRealNameFCStatus.value?.name +getRealNameStatusTip(uasChinaVM.uomRealNameFCStatus.value))
         builder.append("\n")
         mainHandler.post {
-            tv_uas_china_real_name_status_tip.text = builder.toString()
+            binding?.tvUasChinaRealNameStatusTip?.text = builder.toString()
         }
     }
 

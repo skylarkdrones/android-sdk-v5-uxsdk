@@ -21,6 +21,8 @@ class AircraftMSDKInfoFragment : MSDKInfoFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.frag_aircraft_main_title, container, false)
+        val v = inflater.inflate(R.layout.frag_aircraft_main_title, container, false)
+        initView(v)
+        return v
     }
 }
