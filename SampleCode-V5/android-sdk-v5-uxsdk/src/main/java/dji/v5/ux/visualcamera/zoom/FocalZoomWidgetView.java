@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import dji.sdk.keyvalue.utils.CameraUtil;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.utils.common.LogUtils;
@@ -149,6 +151,18 @@ public class FocalZoomWidgetView extends ViewWidget implements ICameraIndex {
         addDisposable(widgetModel.focalZoomRatiosRange.toFlowable()
                 .observeOn(SchedulerProvider.ui())
                 .subscribe(range -> pushFocalLengthRange(range.getGears())));
+
+        addReaction(widgetModel.streamSourceCameraTypeProcessor.toFlowable()
+                .observeOn(SchedulerProvider.ui())
+                .subscribe(this::updateVisibilityBasedOnLensType));
+    }
+
+    private void updateVisibilityBasedOnLensType(CameraVideoStreamSourceType cameraVideoStreamSourceType) {
+        if (cameraVideoStreamSourceType != CameraVideoStreamSourceType.ZOOM_CAMERA) {
+            setVisibility(GONE);
+        } else {
+            setVisibility(VISIBLE);
+        }
     }
 
     @NonNull

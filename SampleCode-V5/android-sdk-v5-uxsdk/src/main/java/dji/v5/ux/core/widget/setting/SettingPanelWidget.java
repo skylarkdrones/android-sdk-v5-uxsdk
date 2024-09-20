@@ -98,7 +98,6 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         }
     }
 
-
     protected void prepareData() {
         mCompositeDisposable.add(widgetModel.getRcModeProcessor().toFlowableOnUI().distinctUntilChanged().subscribe(rcMode -> {
             if (rcMode != RCMode.UNKNOWN && rcMode != mCurrentRcMode) {

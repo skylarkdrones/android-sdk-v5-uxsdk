@@ -27,7 +27,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.core.content.res.use
-import dji.v5.utils.common.LogUtils
+import androidx.core.view.setPadding
 import dji.v5.ux.R
 import dji.v5.ux.core.base.WidgetSizeDescription
 import dji.v5.ux.core.base.panel.BarPanelWidget
@@ -37,6 +37,7 @@ import dji.v5.ux.core.extension.getDimension
 import dji.v5.ux.core.extension.getIntegerAndUse
 import dji.v5.ux.core.widget.airsense.AirSenseWidget
 import dji.v5.ux.core.widget.battery.BatteryWidget
+import dji.v5.ux.core.widget.battery.RCBatteryWidget
 import dji.v5.ux.core.widget.connection.ConnectionWidget
 import dji.v5.ux.core.widget.flightmode.FlightModeWidget
 import dji.v5.ux.core.widget.gpssignal.GpsSignalWidget
@@ -147,6 +148,16 @@ open class TopBarPanelWidget @JvmOverloads constructor(
      * Getter for [ConnectionWidget]. Null when excluded from the bar panel.
      */
 //    val connectionWidget: ConnectionWidget?
+
+    /**
+     * Getter for [BackButtonWidget]. Null when excluded from the bar panel.
+     */
+    val backButtonWidget: BackButtonWidget?
+
+    /**
+     * Getter for [BatteryWidget]. Null when excluded from the bar panel.
+     */
+    val rcBatteryWidget: RCBatteryWidget?
     //endregion
 
     //region Private properties
@@ -157,10 +168,18 @@ open class TopBarPanelWidget @JvmOverloads constructor(
 
     override fun initPanelWidget(context: Context, attrs: AttributeSet?, defStyleAttr: Int, widgetConfiguration: PanelWidgetConfiguration?) {
         // Nothing to do
+        setPadding(0)
     }
 
     init {
         val leftPanelItems = ArrayList<PanelItem>()
+        // order of items being added is important
+        if (!WidgetValue.BACK_BUTTON.isItemExcluded(excludedItemsValue)) {
+            backButtonWidget = BackButtonWidget(context, attrs)
+            leftPanelItems.add(PanelItem(backButtonWidget, itemMarginTop = 0, itemMarginBottom = 0))
+        } else {
+            backButtonWidget = null
+        }
         if (!WidgetValue.SYSTEM_STATUS.isItemExcluded(excludedItemsValue)) {
             systemStatusWidget = SystemStatusWidget(context, attrs)
             leftPanelItems.add(PanelItem(systemStatusWidget, itemMarginTop = 0, itemMarginBottom = 0))
@@ -224,6 +243,12 @@ open class TopBarPanelWidget @JvmOverloads constructor(
         } else {
             batteryWidget = null
         }
+        if (!WidgetValue.RC_BATTERY.isItemExcluded(excludedItemsValue)) {
+            rcBatteryWidget = RCBatteryWidget(context, attrs)
+            rightPanelItems.add(PanelItem(rcBatteryWidget))
+        } else {
+            rcBatteryWidget = null
+        }
 
         if (!WidgetValue.SETTING.isItemExcluded(excludedItemsValue)) {
             settingWidget = SettingWidget(context, attrs)
@@ -268,16 +293,18 @@ open class TopBarPanelWidget @JvmOverloads constructor(
     private enum class WidgetValue(val value: Int) {
         SYSTEM_STATUS(1),
         DEVICE_HEALTH(2),
-        FLIGHT_MODE(3),
-        SIMULATOR_INDICATOR(4),
-        AIR_SENSE(8),
-        GPS_SIGNAL(16),
-        VISION(32),
-        RC_SIGNAL(64),
-        VIDEO_SIGNAL(128),
-        BATTERY(256),
-        SETTING(512),
-        CONNECTION(1024);
+        FLIGHT_MODE(4),
+        SIMULATOR_INDICATOR(8),
+        AIR_SENSE(16),
+        GPS_SIGNAL(32),
+        VISION(64),
+        RC_SIGNAL(128),
+        VIDEO_SIGNAL(256),
+        BATTERY(512),
+        SETTING(1024),
+        CONNECTION(2048),
+        BACK_BUTTON(4096),
+        RC_BATTERY(8192);
 
         fun isItemExcluded(excludeItems: Int): Boolean {
             return excludeItems and this.value == this.value

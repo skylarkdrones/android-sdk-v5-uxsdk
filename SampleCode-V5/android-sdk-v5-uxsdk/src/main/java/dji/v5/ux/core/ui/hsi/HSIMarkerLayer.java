@@ -34,6 +34,7 @@ import dji.v5.ux.core.ui.hsi.dashboard.FpvStrokeConfig;
 import dji.v5.utils.common.AndUtil;
 import dji.v5.common.utils.UnitUtils;
 import dji.v5.ux.core.util.DrawUtils;
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5;
 import dji.v5.ux.mapkit.core.utils.DJIGpsUtils;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -166,6 +167,8 @@ public class HSIMarkerLayer implements HSIContract.HSILayer {
     @NonNull
     private HSIWidgetModel widgetModel;
 
+    private Boolean isDistanceUnitMetric = true;
+
     public HSIMarkerLayer(@NonNull Context context, @Nullable AttributeSet attrs, @NonNull HSIContract.HSIContainer container,
                           HSIWidgetModel widgetModel) {
         mHSIContainer = container;
@@ -265,6 +268,7 @@ public class HSIMarkerLayer implements HSIContract.HSILayer {
         mRemoteControlDirectionInfo.showOnCorner = false;
 
         mCompassProcesser = new HSICompassProcesser(context, this::onRcDegreeChanged);
+        isDistanceUnitMetric = DataStoreUnitPreferenceStorageManagerDJIV5.INSTANCE.isDistanceMetric();
     }
 
     public void onRcDegreeChanged(int strength, float degree) {
@@ -1027,7 +1031,8 @@ public class HSIMarkerLayer implements HSIContract.HSILayer {
         String unit;
         String extra = "";
         boolean hasDecimals = false;
-        if (!UnitUtils.isMetricUnits()) {
+        // default to metric units
+        if (!isDistanceUnitMetric) {
             value = UnitUtils.getValueFromMetricByLength(value, UnitUtils.UnitType.IMPERIAL);
             unit = UnitUtils.getUintStrByLength(UnitUtils.UnitType.IMPERIAL);
             // 加 0.5f 是为了避免出现 999.5m 出现 1000m 这样的场景
