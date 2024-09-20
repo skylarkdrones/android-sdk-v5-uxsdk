@@ -20,6 +20,7 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     private lateinit var binding: UxsdkPanelCommonCameraBinding
     private var mCameraIndex = ComponentIndexType.LEFT_OR_MAIN
     private var mLensType = CameraLensType.CAMERA_LENS_ZOOM
+    private var controlVisibility = false
 
     override fun getCameraIndex(): ComponentIndexType {
         return mCameraIndex
@@ -50,8 +51,31 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         binding = UxsdkPanelCommonCameraBinding.inflate(LayoutInflater.from(context), this, true)
         if (background == null) {
-            setBackgroundResource(R.drawable.uxsdk_background_black_rectangle)
+            setBackgroundResource(R.drawable.uxsdk_background_black_rounded)
         }
+
+        updateUI()
+    }
+
+    init {
+        attrs?.let { initAttributes(context, it) }
+    }
+
+    private fun initAttributes(context: Context, attrs: AttributeSet) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CameraVisiblePanelWidget)
+        try {
+            controlVisibility = typedArray.getBoolean(
+                R.styleable.CameraVisiblePanelWidget_uxsdk_show_camera_controls,
+                false
+            )
+            updateUI()
+        } finally {
+            typedArray.recycle()
+        }
+    }
+
+    private fun updateUI() {
+        binding.panelCameraControls.root.visibility = if (controlVisibility) VISIBLE else GONE
     }
 
     override fun reactToModelChanges() {
