@@ -65,7 +65,7 @@ class FPVWidgetModel(
      * The current camera index. This value should only be used for video size calculation.
      * To get the camera side, use [FPVWidgetModel.cameraSide] instead.
      */
-    private var currentCameraIndex: ComponentIndexType = ComponentIndexType.UNKNOWN
+    private var currentCameraIndex: ComponentIndexType = ComponentIndexType.LEFT_OR_MAIN
 
     /**
      * Get whether the video view has changed
