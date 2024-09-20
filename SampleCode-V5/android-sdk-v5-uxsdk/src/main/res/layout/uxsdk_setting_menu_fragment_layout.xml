@@ -49,6 +49,7 @@
             android:layout_centerVertical="true"
             android:background="@drawable/uxsdk_selector_blue_oval_mask"
             android:padding="12dp"
+            android:visibility="gone"
             android:scaleType="centerCrop"
             app:iiv_color="@color/uxsdk_dic_color_c8_white"
             app:iiv_icon="gmd-close" />
