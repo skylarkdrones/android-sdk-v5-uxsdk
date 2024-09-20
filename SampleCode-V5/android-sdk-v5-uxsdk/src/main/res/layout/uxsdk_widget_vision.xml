@@ -30,8 +30,9 @@
 
     <ImageView
         android:id="@+id/imageview_vision_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/uxsdk_16_dp"
+        android:layout_height="@dimen/uxsdk_16_dp"
+        android:layout_gravity="center"
         tools:ignore="ContentDescription"
         tools:src="@drawable/uxsdk_ic_avoid_normal_all" />
 

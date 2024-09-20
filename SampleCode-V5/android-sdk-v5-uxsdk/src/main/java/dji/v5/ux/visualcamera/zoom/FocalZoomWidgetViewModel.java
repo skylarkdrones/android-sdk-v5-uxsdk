@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import dji.sdk.keyvalue.key.CameraKey;
 import dji.sdk.keyvalue.key.DJIKey;
 import dji.sdk.keyvalue.key.KeyTools;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.manager.KeyManager;
@@ -42,6 +43,9 @@ class FocalZoomWidgetViewModel extends WidgetModel implements ICameraIndex {
 
     private long mSendFocusDistanceTime = 0;
 
+    final DataProcessor<CameraVideoStreamSourceType> streamSourceCameraTypeProcessor =
+            DataProcessor.create(CameraVideoStreamSourceType.UNKNOWN);
+
     public FocalZoomWidgetViewModel(@NonNull DJISDKModel djiSdkModel, @NonNull ObservableInMemoryKeyedStore uxKeyManager) {
         super(djiSdkModel, uxKeyManager);
     }
@@ -62,6 +66,37 @@ class FocalZoomWidgetViewModel extends WidgetModel implements ICameraIndex {
                 focalZoomRatios.onNext(ratios);
             }
         });
+        bindDataProcessor(
+                KeyTools.createCameraKey(CameraKey.KeyCameraVideoStreamSource, cameraIndex, CameraLensType.CAMERA_LENS_ZOOM),
+                streamSourceCameraTypeProcessor, cameraVideoStreamSourceType -> {
+                    lensType = convertCameraType(cameraVideoStreamSourceType);
+                }
+        );
+    }
+
+    private CameraLensType convertCameraType(CameraVideoStreamSourceType sourceType) {
+        switch (sourceType) {
+            case WIDE_CAMERA:
+                return CameraLensType.CAMERA_LENS_WIDE;
+            case ZOOM_CAMERA:
+                return CameraLensType.CAMERA_LENS_ZOOM;
+            case INFRARED_CAMERA:
+                return CameraLensType.CAMERA_LENS_THERMAL;
+            case NDVI_CAMERA:
+                return CameraLensType.CAMERA_LENS_MS_NDVI;
+            case MS_G_CAMERA:
+                return CameraLensType.CAMERA_LENS_MS_G;
+            case MS_R_CAMERA:
+                return CameraLensType.CAMERA_LENS_MS_R;
+            case MS_RE_CAMERA:
+                return CameraLensType.CAMERA_LENS_MS_RE;
+            case MS_NIR_CAMERA:
+                return CameraLensType.CAMERA_LENS_MS_NIR;
+            case RGB_CAMERA:
+                return CameraLensType.CAMERA_LENS_RGB;
+            default:
+                return CameraLensType.CAMERA_LENS_DEFAULT;
+        }
     }
 
     @Override

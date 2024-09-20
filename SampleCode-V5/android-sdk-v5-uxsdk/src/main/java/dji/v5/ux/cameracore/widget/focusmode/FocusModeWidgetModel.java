@@ -29,6 +29,7 @@ import dji.sdk.keyvalue.key.CameraKey;
 import dji.sdk.keyvalue.key.DJIKey;
 import dji.sdk.keyvalue.key.KeyTools;
 import dji.sdk.keyvalue.value.camera.CameraFocusMode;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.ux.core.base.DJISDKModel;
@@ -66,6 +67,7 @@ public class FocusModeWidgetModel extends WidgetModel implements ICameraIndex {
     private UXKey controlModeKey;
     private ComponentIndexType cameraIndex = ComponentIndexType.LEFT_OR_MAIN;
     private CameraLensType lensType = CameraLensType.CAMERA_LENS_ZOOM;
+    private final DataProcessor<CameraVideoStreamSourceType> cameraVideoStreamSourceProcessor;
     //endregion
 
     //region Lifecycle
@@ -86,6 +88,7 @@ public class FocusModeWidgetModel extends WidgetModel implements ICameraIndex {
         }
         this.preferencesManager = preferencesManager;
         this.keyedStore = keyedStore;
+        cameraVideoStreamSourceProcessor = DataProcessor.create(CameraVideoStreamSourceType.UNKNOWN);
     }
 
     @Override
@@ -102,6 +105,18 @@ public class FocusModeWidgetModel extends WidgetModel implements ICameraIndex {
         if (preferencesManager != null) {
             preferencesManager.setUpListener();
         }
+        bindDataProcessor(
+                KeyTools.createCameraKey(CameraKey.KeyCameraVideoStreamSource, cameraIndex, lensType),
+                cameraVideoStreamSourceProcessor, cameraVideoStreamSourceType -> {
+                    if ((cameraVideoStreamSourceType == CameraVideoStreamSourceType.WIDE_CAMERA
+                            || cameraVideoStreamSourceType == CameraVideoStreamSourceType.ZOOM_CAMERA)
+                            && isFocusSupported()) {
+                        isFocusModeSupportedDataProcessor.onNext(true);
+                    } else {
+                        isFocusModeSupportedDataProcessor.onNext(false);
+                    }
+                }
+        );
     }
 
     @Override
@@ -122,12 +137,16 @@ public class FocusModeWidgetModel extends WidgetModel implements ICameraIndex {
 
     @Override
     protected void onProductConnectionChanged(boolean isConnected) {
-//        super.onProductConnectionChanged(isConnected);
-//        if (isConnected) {
-//            isFocusModeSupportedDataProcessor.onNext(djiSdkModel.isKeySupported(focusModeKey));
-//        } else {
-//            isFocusModeSupportedDataProcessor.onNext(false);
-//        }
+        super.onProductConnectionChanged(isConnected);
+        if (isConnected) {
+            isFocusModeSupportedDataProcessor.onNext(isFocusSupported());
+        } else {
+            isFocusModeSupportedDataProcessor.onNext(false);
+        }
+    }
+
+    private boolean isFocusSupported() {
+        return djiSdkModel.isKeySupported(focusModeKey);
     }
 
     //endregion

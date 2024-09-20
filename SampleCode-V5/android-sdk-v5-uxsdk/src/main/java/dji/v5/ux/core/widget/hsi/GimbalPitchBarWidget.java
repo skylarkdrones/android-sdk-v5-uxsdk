@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -540,7 +539,6 @@ public class GimbalPitchBarWidget extends FrameLayoutWidget<Boolean> implements 
     public void updateCameraSource(@NonNull ComponentIndexType cameraIndex, @NonNull CameraLensType lensType) {
         widgetModel.updateCameraSource(cameraIndex, lensType);
 
-        Log.e("testMM" ,"updateCameraSource" + componentIndexType + "---" + cameraIndex);
         if (componentIndexType != cameraIndex) {
             componentIndexType = cameraIndex;
             onStop();

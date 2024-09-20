@@ -4,6 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <dji.v5.ux.core.ui.setting.taplayout.TabViewPager
+        android:id="@+id/setting_viewpager"
+        android:layout_width="459dp"
+        android:layout_height="match_parent"
+        android:descendantFocusability="afterDescendants" />
+
+    <View
+        android:layout_width="@dimen/uxsdk_1_dp"
+        android:layout_height="match_parent"
+        android:background="@color/uxsdk_dic_color_c20_divider" />
+
     <dji.v5.ux.core.ui.setting.taplayout.VerticalTabLayout
         android:id="@+id/setting_vertical_tabLayout"
         android:layout_width="@dimen/uxsdk_48_dp"
@@ -15,14 +26,4 @@
         app:uxsdk_tab_margin="1dp"
         app:uxsdk_tab_mode="fixed" />
 
-    <View
-        android:layout_width="@dimen/uxsdk_1_dp"
-        android:layout_height="match_parent"
-        android:background="@color/uxsdk_dic_color_c20_divider" />
-
-    <dji.v5.ux.core.ui.setting.taplayout.TabViewPager
-        android:id="@+id/setting_viewpager"
-        android:layout_width="459dp"
-        android:layout_height="match_parent"
-        android:descendantFocusability="afterDescendants" />
 </LinearLayout>

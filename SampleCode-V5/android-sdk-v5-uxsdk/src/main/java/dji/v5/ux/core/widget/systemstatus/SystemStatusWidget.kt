@@ -252,7 +252,7 @@ open class SystemStatusWidget @JvmOverloads constructor(
 
     override val widgetSizeDescription: WidgetSizeDescription = WidgetSizeDescription(
         WidgetSizeDescription.SizeType.OTHER,
-        widthDimension = WidgetSizeDescription.Dimension.EXPAND,
+        widthDimension = WidgetSizeDescription.Dimension.WRAP,
         heightDimension = WidgetSizeDescription.Dimension.EXPAND
     )
     //endregion

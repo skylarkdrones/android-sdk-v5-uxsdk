@@ -26,7 +26,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:parentTag="dji.v5.ux.visualcamera.storage.CameraConfigStorageWidget">
 
     <ImageView
@@ -65,7 +65,6 @@
         android:textSize="@dimen/uxsdk_text_size_normal"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@+id/textview_status_capacity_value"
-        app:layout_constraintBottom_toBottomOf="@+id/textview_status_capacity_value"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/barrier"
         tools:text="1080P/240" />
@@ -79,13 +78,22 @@
         app:constraint_referenced_ids="imageview_storage_icon, textview_camera_color,
         textview_image_format" />
 
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"
+        android:background="@color/uxsdk_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/textview_status_capacity_title"
+        app:layout_constraintStart_toStartOf="@id/barrier"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textview_status_capacity_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="2dp"
-        android:textColor="@color/uxsdk_white_33_percent"
+        android:textColor="@color/uxsdk_white_75_percent"
         android:textSize="@dimen/uxsdk_text_size_small"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
@@ -103,8 +111,8 @@
         android:textColor="@color/uxsdk_white"
         android:textSize="@dimen/uxsdk_text_size_normal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/textview_status_capacity_title"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_status_capacity_title"
         app:layout_constraintStart_toEndOf="@+id/barrier"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="100:33" />

@@ -2,6 +2,7 @@ package dji.v5.ux.visualcamera
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.core.content.res.use
 import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.ux.R
@@ -18,6 +19,7 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
 
     var mCameraIndex = ComponentIndexType.LEFT_OR_MAIN
     var mLensType = CameraLensType.CAMERA_LENS_ZOOM
+    private var controlVisibility = false
 
     override fun getCameraIndex(): ComponentIndexType {
         return mCameraIndex
@@ -48,8 +50,30 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         inflate(context, R.layout.uxsdk_panel_common_camera, this)
         if (background == null) {
-            setBackgroundResource(R.drawable.uxsdk_background_black_rectangle)
+            setBackgroundResource(R.drawable.uxsdk_background_black_rounded)
         }
+
+        updateUI()
+    }
+
+    init {
+        attrs?.let { initAttributes(context, it) }
+    }
+
+    private fun initAttributes(context: Context, attrs: AttributeSet) {
+        context.obtainStyledAttributes(attrs, R.styleable.CameraVisiblePanelWidget)
+            .use { typedArray ->
+                controlVisibility = typedArray.getBoolean(
+                    R.styleable.CameraVisiblePanelWidget_uxsdk_show_camera_controls,
+                    false
+                )
+
+               updateUI()
+            }
+    }
+
+    private fun updateUI() {
+        panelCameraControls.visibility = if (controlVisibility)  VISIBLE else GONE
     }
 
     override fun reactToModelChanges() {

@@ -16,12 +16,14 @@ import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.R
 import dji.v5.ux.core.ui.hsi.FlashTimer
 import io.reactivex.rxjava3.core.Flowable
-import dji.v5.common.utils.UnitUtils
 import android.graphics.Color
 import android.util.AttributeSet
 import dji.sdk.keyvalue.value.common.Attitude
 import dji.sdk.keyvalue.value.flightcontroller.WindDirection
 import dji.sdk.keyvalue.value.flightcontroller.WindWarning
+import dji.v5.ux.core.util.UnitConversionUtil
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5.getSpeedUnit
+import dji.v5.ux.core.util.units.UnitsDJIV5
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.util.*
 
@@ -35,6 +37,8 @@ open class SpeedDisplayWidget @JvmOverloads constructor(context: Context, attrs:
     private val mCompositeDisposable = CompositeDisposable()
     private var mListener: FlashTimer.Listener? = null
     private val widgetModel = SpeedDisplayModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance())
+    private var speedUnit = UnitsDJIV5.METRE_PER_SECOND.name
+
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         loadLayout(context)
         mSpeedDashBoard = findViewById(R.id.pfd_speed_dash_board)
@@ -61,6 +65,7 @@ open class SpeedDisplayWidget @JvmOverloads constructor(context: Context, attrs:
                 postTvWsVisibility(visible)
             }
         }
+        speedUnit = getSpeedUnit()
     }
 
     override fun onDetachedFromWindow() {
@@ -100,9 +105,33 @@ open class SpeedDisplayWidget @JvmOverloads constructor(context: Context, attrs:
         mTvWsValue?.post { mTvWsValue?.visibility = visible }
     }
 
+    /**
+     * Converts the speed to preferred unit.
+     *
+     * @param windSpeed speed in meters per second
+     */
+    private fun convertSpeedUnit(windSpeed: Float): Float {
+        return when (speedUnit) {
+            UnitsDJIV5.MILES_PER_HOUR.name -> {
+                UnitConversionUtil.convertMetersPerSecToMilesPerHr(windSpeed)
+            }
+            UnitsDJIV5.KILOMETRE_PER_HOUR.name -> {
+                UnitConversionUtil.convertMetersPerSecToKmPerHr(windSpeed)
+            }
+            else -> {
+                windSpeed
+            }
+        }
+    }
+
     private fun updateWindStatus(windSpeed: Float, fcWindDirectionStatus: WindDirection, fcWindWarning: WindWarning, aircraftDegree: Float) {
-        val value = UnitUtils.transFormSpeedIntoDifferentUnit(windSpeed)
-        val textStr = String.format(Locale.ENGLISH, "WS %04.1f %s", value, getWindDirectionText(fcWindDirectionStatus, aircraftDegree))
+        val convertedWindSpeed = convertSpeedUnit(windSpeed)
+        val textStr = String.format(
+            Locale.ENGLISH,
+            "WS %04.1f %s",
+            convertedWindSpeed,
+            getWindDirectionText(fcWindDirectionStatus, aircraftDegree)
+        )
         if (textStr != mTvWsValue?.text.toString()) {
             mTvWsValue!!.text = textStr
         }

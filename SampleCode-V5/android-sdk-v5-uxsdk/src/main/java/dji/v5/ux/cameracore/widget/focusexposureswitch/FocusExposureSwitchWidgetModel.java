@@ -30,6 +30,7 @@ import dji.sdk.keyvalue.key.CameraKey;
 import dji.sdk.keyvalue.key.KeyTools;
 import dji.sdk.keyvalue.value.camera.CameraFocusMode;
 import dji.sdk.keyvalue.value.camera.CameraMeteringMode;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.utils.common.LogUtils;
@@ -64,6 +65,8 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
     private UXKey controlModeKey;
     private ComponentIndexType cameraIndex = ComponentIndexType.LEFT_OR_MAIN;
     private CameraLensType lensType = CameraLensType.CAMERA_LENS_ZOOM;
+    private final DataProcessor<CameraVideoStreamSourceType> cameraVideoStreamSourceProcessor;
+
     //endregion
 
     //region Lifecycle
@@ -79,6 +82,7 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
             controlModeDataProcessor.onNext(preferencesManager.getControlMode());
         }
         this.preferencesManager = preferencesManager;
+        cameraVideoStreamSourceProcessor = DataProcessor.create(CameraVideoStreamSourceType.UNKNOWN);
     }
 
 
@@ -93,6 +97,18 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
         if (preferencesManager != null) {
             preferencesManager.setUpListener();
         }
+        bindDataProcessor(
+                KeyTools.createCameraKey(CameraKey.KeyCameraVideoStreamSource, cameraIndex, lensType),
+                cameraVideoStreamSourceProcessor, cameraVideoStreamSourceType -> {
+                    if ((cameraVideoStreamSourceType == CameraVideoStreamSourceType.WIDE_CAMERA
+                            || cameraVideoStreamSourceType == CameraVideoStreamSourceType.ZOOM_CAMERA)
+                            && isFocusSupported()) {
+                        isFocusModeSupportedDataProcessor.onNext(true);
+                    } else {
+                        isFocusModeSupportedDataProcessor.onNext(false);
+                    }
+                }
+        );
     }
 
     @Override
@@ -109,12 +125,16 @@ public class FocusExposureSwitchWidgetModel extends WidgetModel implements ICame
 
     @Override
     protected void onProductConnectionChanged(boolean isConnected) {
-//        super.onProductConnectionChanged(isConnected);
-//        if (isConnected) {
-//            isFocusModeSupportedDataProcessor.onNext(djiSdkModel.isKeySupported(KeyTools.createCameraKey(CameraKey.KeyCameraFocusMode,cameraIndex, lensType)));
-//        } else {
-//            isFocusModeSupportedDataProcessor.onNext(false);
-//        }
+        super.onProductConnectionChanged(isConnected);
+        if (isConnected) {
+            isFocusModeSupportedDataProcessor.onNext(isFocusSupported());
+        } else {
+            isFocusModeSupportedDataProcessor.onNext(false);
+        }
+    }
+
+    private boolean isFocusSupported() {
+        return djiSdkModel.isKeySupported(KeyTools.createCameraKey(CameraKey.KeyCameraFocusMode, cameraIndex, lensType));
     }
     //endregion
 

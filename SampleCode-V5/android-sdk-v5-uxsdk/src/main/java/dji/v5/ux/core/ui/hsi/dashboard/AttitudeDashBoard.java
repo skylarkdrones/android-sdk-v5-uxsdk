@@ -25,6 +25,7 @@ import dji.v5.ux.core.ui.hsi.config.IOmniAbility;
 import dji.v5.utils.common.AndUtil;
 import dji.v5.ux.core.util.DrawUtils;
 import dji.v5.ux.core.util.FontUtils;
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5;
 import dji.v5.ux.core.widget.hsi.AttitudeDisplayModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -137,6 +138,8 @@ public class AttitudeDashBoard extends ScrollableAttributeDashBoard {
 
     private AttitudeDisplayModel mWidgetModel;
     private ObstacleData mPerceptionObstacleData = new ObstacleData();
+
+    private boolean isHeightUnitMetric = false;
 
 
     public void setModel(AttitudeDisplayModel model) {
@@ -271,6 +274,7 @@ public class AttitudeDashBoard extends ScrollableAttributeDashBoard {
             updateWidget();
         }));
 
+        isHeightUnitMetric = DataStoreUnitPreferenceStorageManagerDJIV5.INSTANCE.isHeightMetric();
     }
 
 
@@ -970,12 +974,20 @@ public class AttitudeDashBoard extends ScrollableAttributeDashBoard {
 
     @Override
     protected String getAttributeUnit() {
-        return UnitUtils.getUintStrByLength(UnitUtils.isMetricUnits() ? UnitUtils.UnitType.METRIC : UnitUtils.UnitType.IMPERIAL);
+        UnitUtils.UnitType unitType = UnitUtils.UnitType.METRIC;
+        if (!isHeightUnitMetric) {
+            unitType = UnitUtils.UnitType.IMPERIAL;
+        }
+        return UnitUtils.getUintStrByLength(unitType);
     }
 
     @Override
     protected float getDisplayValue(float value) {
-        return UnitUtils.getValueFromMetricByLength(value, UnitUtils.isMetricUnits() ? UnitUtils.UnitType.METRIC : UnitUtils.UnitType.IMPERIAL);
+        UnitUtils.UnitType unitType = UnitUtils.UnitType.METRIC;
+        if (!isHeightUnitMetric) {
+            unitType = UnitUtils.UnitType.IMPERIAL;
+        }
+        return UnitUtils.getValueFromMetricByLength(value, unitType);
     }
 
     @Override

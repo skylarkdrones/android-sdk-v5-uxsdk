@@ -41,6 +41,7 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.sdk.keyvalue.value.common.PhysicalSource;
@@ -77,6 +78,7 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
     //region Fields
     private FocusTargetView focusTargetView;
     private ExposureMeteringWidget exposureMeterView;
+    private ThermalMeteringWidget thermalMeteringWidget;
     private GimbalControlView gimbalControlView;
     private FPVInteractionWidgetModel widgetModel;
     private int relativeViewHeight, relativeViewWidth;
@@ -86,6 +88,7 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
     private int widthOffset, heightOffset;
     private boolean touchFocusEnabled = true;
     private boolean spotMeteringEnabled = true;
+    private boolean spotMeteringThermalEnabled = true;
     private boolean gimbalControlEnabled = true;
     private float firstX;
     private float firstY;
@@ -120,6 +123,7 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
         inflate(context, R.layout.uxsdk_widget_fpv_interaction, this);
         focusTargetView = findViewById(R.id.view_focus_target);
         exposureMeterView = findViewById(R.id.view_exposure_meter);
+        thermalMeteringWidget = findViewById(R.id.view_thermal_meter);
         gimbalControlView = findViewById(R.id.view_gimbal_control);
         setOnTouchListener(this);
         velocityFactor = DEFAULT_VELOCITY_FACTOR;
@@ -158,6 +162,22 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
     @Override
     protected void reactToModelChanges() {
         addReaction(reactToUpdateVisibility());
+        addReaction(widgetModel.getVideoSource()
+                .observeOn(SchedulerProvider.ui())
+                .subscribe(this::updateVisibilityBasedOnVideoSource)
+        );
+    }
+
+    private void updateVisibilityBasedOnVideoSource(
+            CameraVideoStreamSourceType cameraVideoStreamSourceType
+    ) {
+        if (cameraVideoStreamSourceType == CameraVideoStreamSourceType.INFRARED_CAMERA) {
+            thermalMeteringWidget.enableSpotMetering();
+        } else  {
+            thermalMeteringWidget.disableSpotMetering();
+        }
+        focusTargetView.setVisibility(GONE);
+        exposureMeterView.setVisibility(GONE);
     }
 
     //region Reaction helpers
@@ -169,6 +189,11 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
     }
 
     private void updateViewVisibility(ControlMode controlMode, boolean isAeLocked) {
+        if (widgetModel.getLensType() == CameraLensType.CAMERA_LENS_THERMAL) {
+            exposureMeterView.setVisibility(GONE);
+            focusTargetView.setVisibility(GONE);
+            return;
+        }
         if (controlMode == ControlMode.SPOT_METER || controlMode == ControlMode.CENTER_METER) {
             if (isAeLocked) {
                 exposureMeterView.setVisibility(View.GONE);
@@ -290,6 +315,7 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
     public void updateCameraSource(@NonNull ComponentIndexType cameraIndex, @NonNull CameraLensType lensType) {
         widgetModel.updateCameraSource(cameraIndex, lensType);
         exposureMeterView.updateCameraSource(cameraIndex, lensType);
+        thermalMeteringWidget.updateCameraSource(cameraIndex, lensType);
     }
 
     @NonNull
@@ -315,7 +341,9 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
 
     //region Helpers
     private void updateTarget(ControlMode controlMode, boolean isAeLocked, float targetX, float targetY) {
-        if (controlMode == ControlMode.SPOT_METER || controlMode == ControlMode.CENTER_METER) {
+         if (spotMeteringThermalEnabled && widgetModel.getLensType() == CameraLensType.CAMERA_LENS_THERMAL) {
+            thermalMeteringWidget.clickEvent(absTargetX, absTargetY, viewWidth, viewHeight);
+        } else if (controlMode == ControlMode.SPOT_METER || controlMode == ControlMode.CENTER_METER) {
             if (spotMeteringEnabled && isInBounds() && !isAeLocked) {
                 final ControlMode newControlMode = exposureMeterView.clickEvent(controlMode, absTargetX, absTargetY, viewWidth, viewHeight);
                 addDisposable(widgetModel.setControlMode(newControlMode)
@@ -477,6 +505,7 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
         setInteractionEnabled(typedArray.getBoolean(R.styleable.FPVInteractionWidget_uxsdk_interactionEnabled, true));
         touchFocusEnabled = typedArray.getBoolean(R.styleable.FPVInteractionWidget_uxsdk_touchFocusEnabled, true);
         spotMeteringEnabled = typedArray.getBoolean(R.styleable.FPVInteractionWidget_uxsdk_spotMeteringEnabled, true);
+        spotMeteringThermalEnabled = typedArray.getBoolean(R.styleable.FPVInteractionWidget_uxsdk_spotMeteringThermalEnabled, true);
         gimbalControlEnabled = typedArray.getBoolean(R.styleable.FPVInteractionWidget_uxsdk_gimbalControlEnabled, true);
 
         typedArray.recycle();
@@ -843,6 +872,24 @@ public class FPVInteractionWidget extends FrameLayoutWidget<Object> implements V
      */
     public void setSpotMeteringEnabled(boolean isSpotMeteringEnabled) {
         this.spotMeteringEnabled = isSpotMeteringEnabled;
+    }
+
+    /**
+     * Method to check if thermal spot metering using touch is enabled.
+     *
+     * @return `true` if enabled, `false` if disabled.
+     */
+    public boolean isSpotMeteringThermalEnabled() {
+        return spotMeteringThermalEnabled;
+    }
+
+    /**
+     * Enable or disable thermal spot metering by this method. Enabled by default.
+     *
+     * @param isSpotMeteringThermalEnabled `true` to enable, `false` to disable.
+     */
+    public void setSpotMeteringThermalEnabled(boolean isSpotMeteringThermalEnabled) {
+        this.spotMeteringThermalEnabled = isSpotMeteringThermalEnabled;
     }
 
     /**

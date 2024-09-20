@@ -44,4 +44,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <dji.v5.ux.cameracore.widget.fpvinteraction.ThermalMeteringWidget
+        android:id="@+id/view_thermal_meter"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </FrameLayout>

@@ -189,6 +189,7 @@ public class ExposureMeteringWidget extends ConstraintLayoutWidget<Object> imple
      */
     public ControlMode clickEvent(@NonNull ControlMode controlMode, float x, float y,
                                   float parentWidth, float parentHeight) {
+        setVisibility(VISIBLE);
         switch (controlMode) {
             case CENTER_METER:
             case SPOT_METER:

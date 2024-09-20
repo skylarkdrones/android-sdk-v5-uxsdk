@@ -32,20 +32,19 @@
 
             <ImageView
                 android:id="@+id/iv_satellite_icon"
-                android:layout_width="@dimen/uxsdk_8_dp"
-                android:layout_height="@dimen/uxsdk_8_dp"
+                android:layout_width="@dimen/uxsdk_16_dp"
+                android:layout_height="@dimen/uxsdk_16_dp"
                 android:src="@drawable/uxsdk_ic_fpv_topbar_satellite_normal" />
 
             <TextView
                 android:id="@+id/tv_satellite_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/uxsdk_2_dp"
+                android:layout_marginLeft="@dimen/uxsdk_4_dp"
                 android:fontFamily="sans-serif-condensed"
                 android:text="0"
                 android:textColor="@color/uxsdk_white"
-                android:textSize="@dimen/uxsdk_9_dp"
-                android:textStyle="bold" />
+                android:textSize="@dimen/uxsdk_text_size_normal_medium" />
 
         </LinearLayout>
 

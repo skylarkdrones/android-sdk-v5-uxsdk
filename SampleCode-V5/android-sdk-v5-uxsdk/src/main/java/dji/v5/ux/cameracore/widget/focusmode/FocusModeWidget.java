@@ -50,6 +50,7 @@ import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.ICameraIndex;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.FrameLayoutWidget;
+import dji.v5.ux.core.communication.DefaultGlobalPreferences;
 import dji.v5.ux.core.communication.GlobalPreferencesManager;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.UxErrorHandle;
@@ -98,6 +99,9 @@ public class FocusModeWidget extends FrameLayoutWidget<Object> implements OnClic
             setBackgroundResource(R.drawable.uxsdk_background_black_rectangle);
         }
         titleTextView = findViewById(R.id.text_view_camera_control_af);
+        if (GlobalPreferencesManager.getInstance() == null) {
+            GlobalPreferencesManager.initialize(new DefaultGlobalPreferences(context));
+        }
         if (!isInEditMode()) {
             widgetModel = new FocusModeWidgetModel(DJISDKModel.getInstance(),
                     ObservableInMemoryKeyedStore.getInstance(),

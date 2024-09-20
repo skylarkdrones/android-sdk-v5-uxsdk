@@ -11,7 +11,10 @@ import androidx.core.content.ContextCompat;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.common.utils.UnitUtils;
+import dji.v5.ux.core.util.UnitConversionUtil;
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5;
 import dji.v5.ux.core.widget.hsi.SpeedDisplayModel;
+import dji.v5.ux.core.util.units.UnitsDJIV5;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class SpeedDashBoard extends ScrollableAttributeDashBoard {
@@ -40,6 +43,8 @@ public class SpeedDashBoard extends ScrollableAttributeDashBoard {
         widgetModel = model;
     }
 
+    private String speedUnit = UnitsDJIV5.METRE_PER_SECOND.name();
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -55,6 +60,8 @@ public class SpeedDashBoard extends ScrollableAttributeDashBoard {
                     setCurrentValue(mSpeed);
 
                 }));
+
+        speedUnit = DataStoreUnitPreferenceStorageManagerDJIV5.INSTANCE.getSpeedUnit();
     }
 
     @Override
@@ -112,7 +119,19 @@ public class SpeedDashBoard extends ScrollableAttributeDashBoard {
         if (tmp < 0) {
             tmp = 0;
         }
-        return (float) Math.sqrt(tmp);
+
+        if (speedUnit.equals(UnitsDJIV5.MILES_PER_HOUR.name())) {
+            return (float) Math.sqrt(tmp);
+        }
+
+        // convert miles per hour to meters per second
+        float speedInMetersPerSecond =
+                UnitConversionUtil.convertMilesPerHrToMetersPerSec((float) Math.sqrt(tmp));
+        if (speedUnit.equals(UnitsDJIV5.KILOMETRE_PER_HOUR.name())) {
+            return UnitConversionUtil.convertMetersPerSecToKmPerHr(speedInMetersPerSecond);
+        } else {
+            return speedInMetersPerSecond;
+        }
     }
 
     @Override
@@ -122,7 +141,9 @@ public class SpeedDashBoard extends ScrollableAttributeDashBoard {
 
     @Override
     protected String getAttributeUnit() {
-        return UnitUtils.getSpeedUnit();
+        // only used to show the unit
+        UnitsDJIV5 unit = UnitsDJIV5.Companion.fromString(speedUnit);
+        return unit.formattedStr();
     }
 
     @Override

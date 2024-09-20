@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/imageview_battery_icon"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/uxsdk_16_dp"
+        android:layout_height="@dimen/uxsdk_16_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="@string/uxsdk_icon_single_battery_ratio"
         app:layout_constraintStart_toStartOf="parent"

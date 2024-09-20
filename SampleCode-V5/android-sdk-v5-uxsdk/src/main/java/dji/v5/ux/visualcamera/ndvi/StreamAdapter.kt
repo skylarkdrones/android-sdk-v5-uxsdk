@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dji.v5.utils.common.JsonUtil
 import dji.v5.utils.common.LogUtils
 import dji.v5.ux.R
+import dji.v5.ux.visualcamera.thermal.StreamPanelUtil.ThermalPaletteModel
 
 class StreamAdapter<T>(val onClickCallback: (T) -> Unit) :
     RecyclerView.Adapter<StreamAdapter.ViewHolder>() {
@@ -74,6 +75,32 @@ class StreamAdapter<T>(val onClickCallback: (T) -> Unit) :
             val currentItem = currentPosition as StreamPanelUtil.VegetationModel
             holder.ivPreview.setImageResource(item.imageRes)
             holder.tvName.text = item.nameRes
+            currentItem.let {
+                val isSelected = item.sourceType == it.sourceType
+                holder.ivPreview.isSelected = isSelected
+                holder.tvName.isSelected = isSelected
+            }
+            holder.itemView.isClickable = true
+
+            holder.itemView.setOnClickListener {
+                onClickCallback(item as T)
+            }
+        } else if (itemOrigin is ThermalPaletteModel) {
+            val item = itemOrigin as ThermalPaletteModel
+            if (currentPosition == null) {
+                holder.ivPreview.setImageResource(item.image)
+                holder.tvName.text = item.name
+                holder.itemView.isClickable = true
+                holder.ivPreview.isSelected = false
+                holder.tvName.isSelected = false
+                holder.itemView.setOnClickListener {
+                    onClickCallback(item as T)
+                }
+                return
+            }
+            val currentItem = currentPosition as ThermalPaletteModel
+            holder.ivPreview.setImageResource(item.image)
+            holder.tvName.text = item.name
             currentItem.let {
                 val isSelected = item.sourceType == it.sourceType
                 holder.ivPreview.isSelected = isSelected

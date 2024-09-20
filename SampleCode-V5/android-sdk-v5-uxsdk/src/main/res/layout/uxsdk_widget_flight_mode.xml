@@ -30,8 +30,8 @@
 
     <ImageView
         android:id="@+id/imageview_flight_mode_icon"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/uxsdk_16_dp"
+        android:layout_height="@dimen/uxsdk_16_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="@string/uxsdk_icon_flight_mode_ratio"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,10 +43,10 @@
         android:id="@+id/textview_flight_mode_string"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
+        android:layout_marginStart="4dp"
         android:text="@string/uxsdk_string_default_value"
         android:textColor="@color/uxsdk_white"
-        android:textSize="@dimen/uxsdk_text_size_medium"
+        android:textSize="@dimen/uxsdk_text_size_normal_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageview_flight_mode_icon"
         app:layout_constraintTop_toTopOf="parent" />

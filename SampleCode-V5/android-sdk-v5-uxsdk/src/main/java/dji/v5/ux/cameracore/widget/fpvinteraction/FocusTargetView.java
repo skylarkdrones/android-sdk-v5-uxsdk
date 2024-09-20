@@ -101,6 +101,7 @@ public class FocusTargetView extends FrameLayout {
         }
         setX(x - getWidth() / 2f);
         setY(y - getHeight() / 2f);
+        setVisibility(VISIBLE);
     }
 
     /**

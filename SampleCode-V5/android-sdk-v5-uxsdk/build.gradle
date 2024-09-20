@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "dji.v5.ux"
     compileSdkVersion Integer.parseInt(project.ANDROID_COMPILE_SDK_VERSION)
 
     resourcePrefix "uxsdk_"
@@ -32,7 +33,6 @@ dependencies {
     implementation deps.legacySupport
     implementation deps.recyclerview
     implementation deps.okio
-    implementation deps.wire
     implementation deps.constraintLayout
     implementation deps.lifecycleJava8
     implementation deps.lifecycleRuntime
@@ -64,5 +64,12 @@ dependencies {
 
     compileOnly deps.aircraftProvided
     compileOnly deps.aircraft
+
+    // DMO Dependencies - Sync versions with DMO Project
+    // Coroutines - Async
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+
+    // Key value Store - Unit Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
 }

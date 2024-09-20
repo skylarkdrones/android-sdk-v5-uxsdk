@@ -43,6 +43,7 @@ import dji.v5.ux.core.base.ICameraIndex;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.FrameLayoutWidget;
 import dji.v5.ux.core.communication.GlobalPreferencesManager;
+import dji.v5.ux.core.communication.DefaultGlobalPreferences;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.UxErrorHandle;
 import dji.v5.ux.core.util.SettingDefinitions.ControlMode;
@@ -84,6 +85,9 @@ public class FocusExposureSwitchWidget extends FrameLayoutWidget<Object> impleme
         focusExposureSwitchImageView = findViewById(R.id.focus_exposure_switch_image_view);
         if (getBackground() == null) {
             setBackgroundResource(R.drawable.uxsdk_background_black_rectangle);
+        }
+        if (GlobalPreferencesManager.getInstance() == null) {
+            GlobalPreferencesManager.initialize(new DefaultGlobalPreferences(context));
         }
         if (!isInEditMode()) {
             widgetModel = new FocusExposureSwitchWidgetModel(DJISDKModel.getInstance(),
