@@ -7,28 +7,37 @@
     android:background="@android:color/transparent"
     tools:parentTag="dji.v5.ux.cameracore.widget.cameracontrols.lenscontrol.LensControlWidget">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/first_len_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="35dp"
+        android:backgroundTint="#80000000"
+        android:background="@drawable/uxsdk_background_white_rounded"
+        android:elevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/second_len_btn"
         android:text="first"
-        android:textColor="@color/uxsdk_black"
+        android:textColor="@color/uxsdk_white"
         android:textSize="@dimen/uxsdk_text_size_normal_medium" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/second_len_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="35dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#80000000"
+        android:background="@drawable/uxsdk_background_white_rounded"
+        android:elevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/first_len_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="second"
-        android:textColor="@color/uxsdk_black"
+        android:textColor="@color/uxsdk_white"
         android:textSize="@dimen/uxsdk_text_size_normal_medium" />
 
 </merge>
