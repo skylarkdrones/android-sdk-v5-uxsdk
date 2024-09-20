@@ -22,6 +22,7 @@ import dji.v5.ux.core.base.SchedulerProvider
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.util.ViewUtil
+import dji.v5.ux.core.widget.CertificationUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -53,13 +54,20 @@ class AvoidanceShortcutWidget @JvmOverloads constructor(
 
     private var flightMode = FCFlightMode.UNKNOWN
 
-    private val tabItemResMap = mapOf(
-        ObstacleAvoidanceType.BRAKE to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_brake_btn,
-        ObstacleAvoidanceType.BYPASS to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_detour_btn,
-        ObstacleAvoidanceType.CLOSE to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_off_btn
-    )
+    private val tabItemResMap = if (CertificationUtils.isCertificationBuild()) {
+        mapOf(
+            ObstacleAvoidanceType.BRAKE to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_brake_btn,
+            ObstacleAvoidanceType.BYPASS to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_detour_btn,
+        )
+    } else {
+        mapOf(
+            ObstacleAvoidanceType.BRAKE to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_brake_btn,
+            ObstacleAvoidanceType.BYPASS to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_detour_btn,
+            ObstacleAvoidanceType.CLOSE to R.string.uxsdk_fpv_setting_safe_obstacle_avoidance_behavior_off_btn
+        )
+    }
 
-    private var currentMode = ObstacleAvoidanceType.CLOSE
+    private var currentMode = ObstacleAvoidanceType.BRAKE
     private val widgetModel by lazy {
         AvoidanceShortcutWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance())
     }
