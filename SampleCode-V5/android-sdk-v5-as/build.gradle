@@ -23,6 +23,10 @@ allprojects {
         maven {
             url REPO_MAVEN2
         }
+        // See https://github.com/dji-sdk/Mobile-SDK-Android-V5/issues/424
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://repo.huaweicloud.com/repository/maven'}
         google()
         jcenter()
         mavenCentral()
