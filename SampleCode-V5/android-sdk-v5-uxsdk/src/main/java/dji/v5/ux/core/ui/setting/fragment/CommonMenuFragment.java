@@ -11,6 +11,7 @@ import dji.v5.utils.common.StringUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.TextCell;
 import dji.v5.ux.core.ui.setting.ui.MenuFragment;
+import dji.v5.ux.core.widget.CertificationUtils;
 
 /**
  * Description :
@@ -35,6 +36,10 @@ public class CommonMenuFragment extends MenuFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (CertificationUtils.INSTANCE.isCertificationBuild()) {
+            view.findViewById(R.id.setting_common_about).setVisibility(View.GONE);
+        }
 
         view.findViewById(R.id.setting_common_about).setOnClickListener(view1 -> {
             CommonAboutFragment fragment = new CommonAboutFragment();

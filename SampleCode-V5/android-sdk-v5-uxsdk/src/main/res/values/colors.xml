@@ -340,4 +340,6 @@
 
     <color name="uxsdk_theme_fpv_dark_main">#F2141414</color>
     <color name="uxsdk_dialog_divide_line_gray">#EFEFEF</color>
+
+    <color name="uxsdk_dropdown_bg">#F2262626</color>
 </resources>
