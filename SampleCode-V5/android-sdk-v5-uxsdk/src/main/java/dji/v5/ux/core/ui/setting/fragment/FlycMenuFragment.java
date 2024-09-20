@@ -11,6 +11,7 @@ import dji.v5.utils.common.StringUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.TextCell;
 import dji.v5.ux.core.ui.setting.ui.MenuFragment;
+import dji.v5.ux.core.widget.CertificationUtils;
 
 /**
  * Description :
@@ -40,5 +41,20 @@ public class FlycMenuFragment extends MenuFragment {
             addFragment(getFragmentManager(), fragment, true);
         });
 
+        hideHomePointWidget(view);
+        hideFlightModeWidget(view);
+    }
+
+    private void hideHomePointWidget(View view) {
+        if (CertificationUtils.INSTANCE.isCertificationBuild()) {
+            view.findViewById(R.id.homePointWidget).setVisibility(View.GONE);
+            view.findViewById(R.id.dividerHomePointWidget).setVisibility(View.GONE);
+        }
+    }
+
+    private void hideFlightModeWidget(View view) {
+        if (CertificationUtils.INSTANCE.isCertificationBuild()) {
+            view.findViewById(R.id.widgetFlightMode).setVisibility(View.GONE);
+        }
     }
 }

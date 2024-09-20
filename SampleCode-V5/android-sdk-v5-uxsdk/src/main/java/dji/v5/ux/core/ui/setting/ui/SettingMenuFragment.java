@@ -37,8 +37,8 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
     private FragmentManager fragmentManager;
     private Runnable mLazyInflateTask;
 
-    private SettingMenuFragment() {
-        // Required empty private constructor
+    public SettingMenuFragment() {
+        // Required empty constructor
     }
 
     public static SettingMenuFragment newInstance(String tag) {

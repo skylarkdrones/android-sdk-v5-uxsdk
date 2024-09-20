@@ -19,6 +19,10 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import dji.v5.ux.R
 import dji.v5.ux.core.base.SchedulerProvider
+import dji.v5.ux.core.util.UnitConversionUtil
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5.getSpeedUnit
+import dji.v5.ux.core.util.units.DataStoreUnitPreferenceStorageManagerDJIV5.isHeightMetric
+import dji.v5.ux.core.util.units.UnitsDJIV5
 import io.reactivex.rxjava3.core.Observable
 import java.util.*
 
@@ -52,12 +56,17 @@ open class AttitudeDisplayWidget @JvmOverloads constructor(context: Context?, at
     private var mDroneLocation: LocationCoordinate2D? = null
     private val mCompositeDisposable = CompositeDisposable()
     private val widgetModel = AttitudeDisplayModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance())
+
+    private var speedUnit = UnitsDJIV5.METRE_PER_SECOND.name
+    private var isHeightUnitMetric = isHeightMetric()
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!isInEditMode) {
             mAttitudeDashBoard?.setModel(widgetModel)
             widgetModel.setup()
         }
+        speedUnit = getSpeedUnit()
     }
 
     override fun onDetachedFromWindow() {
@@ -72,8 +81,11 @@ open class AttitudeDisplayWidget @JvmOverloads constructor(context: Context?, at
             val lat = if (mDroneLocation != null) mDroneLocation!!.latitude else Double.NaN
             val lon = if (mDroneLocation != null) mDroneLocation!!.longitude else Double.NaN
             val aslValue = GpsUtils.egm96Altitude(mHomePointAltitude + mAltitude, lat, lon)
-            val value = UnitUtils.getValueFromMetricByLength(aslValue.toFloat(),
-                if (UnitUtils.isMetricUnits()) UnitUtils.UnitType.METRIC else UnitUtils.UnitType.IMPERIAL)
+            val unitType =
+                if (isHeightUnitMetric) UnitUtils.UnitType.METRIC else UnitUtils.UnitType.IMPERIAL
+            val value =
+                UnitUtils.getValueFromMetricByLength(aslValue.toFloat(), unitType)
+
             emitter.onNext(value)
             emitter.onComplete()
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe { aValue: Any? ->
@@ -84,12 +96,32 @@ open class AttitudeDisplayWidget @JvmOverloads constructor(context: Context?, at
         })
     }
 
+    /**
+     * Converts the speed to preferred unit.
+     *
+     * @param speed speed in meters per second
+     */
+    private fun convertSpeedUnit(speed: Float): Float {
+        return when (speedUnit) {
+            UnitsDJIV5.MILES_PER_HOUR.name -> {
+                UnitConversionUtil.convertMetersPerSecToMilesPerHr(speed)
+            }
+            UnitsDJIV5.KILOMETRE_PER_HOUR.name -> {
+                UnitConversionUtil.convertMetersPerSecToKmPerHr(speed)
+            }
+            else -> {
+                // meters per second
+                speed
+            }
+        }
+    }
+
     private fun updateSpeed() {
         var showSpeedZ = mSpeedZ
         if (!java.lang.Float.isNaN(mSpeedZ) && mSpeedZ != 0f) {
             showSpeedZ = -mSpeedZ
         }
-        val value = UnitUtils.transFormSpeedIntoDifferentUnit(showSpeedZ)
+        val value = convertSpeedUnit(showSpeedZ)
         mTvVsValue?.text = String.format(Locale.US, "%03.1f", value)
     }
 
