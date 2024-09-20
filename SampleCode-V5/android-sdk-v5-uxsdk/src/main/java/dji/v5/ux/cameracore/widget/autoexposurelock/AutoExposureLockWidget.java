@@ -105,6 +105,17 @@ public class AutoExposureLockWidget extends ConstraintLayoutWidget<Object> imple
     @Override
     protected void reactToModelChanges() {
         addReaction(widgetModel.isAutoExposureLockOn().observeOn(SchedulerProvider.ui()).subscribe(this::onAELockChange));
+        addReaction(widgetModel.isSupported()
+                .observeOn(SchedulerProvider.ui())
+                .subscribe(this::updateVisibility));
+    }
+
+    private void updateVisibility(Boolean isSupported) {
+        if (isSupported) {
+            setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
+        }
     }
 
     @Override
