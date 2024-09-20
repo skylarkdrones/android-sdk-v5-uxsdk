@@ -3,6 +3,7 @@ package dji.v5.ux.visualcamera
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.ux.R
@@ -20,6 +21,9 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     private lateinit var binding: UxsdkPanelCommonCameraBinding
     private var mCameraIndex = ComponentIndexType.LEFT_OR_MAIN
     private var mLensType = CameraLensType.CAMERA_LENS_ZOOM
+    private var controlVisibility = false
+
+    private var cameraVisiblePanelListener: CameraVisiblePanelListener? = null
 
     override fun getCameraIndex(): ComponentIndexType {
         return mCameraIndex
@@ -50,11 +54,60 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         binding = UxsdkPanelCommonCameraBinding.inflate(LayoutInflater.from(context), this, true)
         if (background == null) {
-            setBackgroundResource(R.drawable.uxsdk_background_black_rectangle)
+            setBackgroundResource(R.drawable.uxsdk_background_black_rounded)
         }
+
+        binding.apply {
+            widgetCameraConfigStorage.setOnClickListener {
+                cameraVisiblePanelListener?.onClickStorageWidget(it)
+            }
+            widgetCameraConfigAperture.setOnClickListener {
+                cameraVisiblePanelListener?.onClickApertureWidget(it)
+            }
+            widgetCameraConfigEv.setOnClickListener {
+                cameraVisiblePanelListener?.onClickExposureWidget(it)
+            }
+            widgetCameraConfigWb.setOnClickListener {
+                cameraVisiblePanelListener?.onClickWhiteBalanceWidget(it)
+            }
+        }
+
+        updateUI()
+    }
+
+    init {
+        attrs?.let { initAttributes(context, it) }
+    }
+
+    fun setCameraVisiblePanelListener(cameraVisiblePanelListener: CameraVisiblePanelListener) {
+        this.cameraVisiblePanelListener = cameraVisiblePanelListener
+    }
+
+    private fun initAttributes(context: Context, attrs: AttributeSet) {
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CameraVisiblePanelWidget)
+        try {
+            controlVisibility = typedArray.getBoolean(
+                R.styleable.CameraVisiblePanelWidget_uxsdk_show_camera_controls,
+                false
+            )
+            updateUI()
+        } finally {
+            typedArray.recycle()
+        }
+    }
+
+    private fun updateUI() {
+        binding.panelCameraControls.root.visibility = if (controlVisibility) VISIBLE else GONE
     }
 
     override fun reactToModelChanges() {
         //do nothing
+    }
+
+    interface CameraVisiblePanelListener {
+        fun onClickStorageWidget(view: View)
+        fun onClickApertureWidget(view: View)
+        fun onClickExposureWidget(view: View)
+        fun onClickWhiteBalanceWidget(view: View)
     }
 }

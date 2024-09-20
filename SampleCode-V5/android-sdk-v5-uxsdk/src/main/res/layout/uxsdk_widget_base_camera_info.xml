@@ -26,7 +26,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textview_title"
@@ -36,7 +36,7 @@
         android:layout_marginLeft="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginRight="2dp"
-        android:textColor="@color/uxsdk_white_33_percent"
+        android:textColor="@color/uxsdk_white_85_percent"
         android:textSize="@dimen/uxsdk_text_size_small"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/textview_value"

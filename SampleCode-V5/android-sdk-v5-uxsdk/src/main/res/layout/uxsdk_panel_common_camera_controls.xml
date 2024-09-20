@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/uxsdk_panel_common_camera">
+
+    <dji.v5.ux.cameracore.widget.autoexposurelock.AutoExposureLockWidget
+        android:id="@+id/exposureLockWidget"
+        android:layout_width="@dimen/uxsdk_camera_bar_height"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/uxsdk_spacing_mini"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/uxsdk_camera_bar_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TouchTargetSizeCheck" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"
+        android:background="@color/uxsdk_gray"
+        app:layout_constraintBottom_toBottomOf="@id/exposureLockWidget"
+        app:layout_constraintStart_toEndOf="@id/exposureLockWidget"
+        app:layout_constraintTop_toTopOf="@id/exposureLockWidget" />
+
+    <dji.v5.ux.cameracore.widget.focusmode.FocusModeWidget
+        android:id="@+id/focusModeWidget"
+        android:layout_width="@dimen/uxsdk_camera_bar_height"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/uxsdk_spacing_mini"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@id/exposureLockWidget"
+        app:layout_constraintTop_toTopOf="@id/exposureLockWidget"
+        app:uxsdk_widgetTitleBackground="@android:color/transparent"
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"
+        android:background="@color/uxsdk_gray"
+        app:layout_constraintBottom_toBottomOf="@id/focusModeWidget"
+        app:layout_constraintStart_toEndOf="@id/focusModeWidget"
+        app:layout_constraintTop_toTopOf="@id/focusModeWidget" />
+
+    <dji.v5.ux.cameracore.widget.focusexposureswitch.FocusExposureSwitchWidget
+        android:id="@+id/focusExposureSwitchWidget"
+        android:layout_width="@dimen/uxsdk_camera_bar_height"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:padding="@dimen/uxsdk_camera_bar_padding"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@id/focusModeWidget"
+        app:layout_constraintTop_toTopOf="@id/focusModeWidget"
+        app:uxsdk_iconBackground="@android:color/transparent"
+        tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"
+        android:background="@color/uxsdk_gray"
+        app:layout_constraintBottom_toBottomOf="@id/focusExposureSwitchWidget"
+        app:layout_constraintStart_toEndOf="@id/focusExposureSwitchWidget"
+        app:layout_constraintTop_toTopOf="@id/focusExposureSwitchWidget" />
+
+    <dji.v5.ux.visualcamera.thermal.CameraThermalPanelWidget
+        android:id="@+id/panelThermal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"
+        android:background="@color/uxsdk_gray"
+        app:layout_constraintBottom_toBottomOf="@id/panelThermal"
+        app:layout_constraintStart_toEndOf="@id/panelThermal"
+        app:layout_constraintTop_toTopOf="@id/panelThermal" />
+</androidx.constraintlayout.widget.ConstraintLayout>
