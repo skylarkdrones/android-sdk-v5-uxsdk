@@ -46,6 +46,11 @@ public class RCMenuFragment extends MenuFragment {
                 addFragment(getFragmentManager(), fragment, true);
             }
         });
+
+        view.findViewById(R.id.setting_menu_customize_rc_buttons).setOnClickListener(v -> {
+            RcButtonCustomizationFragment fragment = new RcButtonCustomizationFragment();
+            addFragment(getFragmentManager(), fragment, true);
+        });
     }
 
     private boolean isAircraftConnected() {

@@ -98,7 +98,6 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         }
     }
 
-
     protected void prepareData() {
         mCompositeDisposable.add(widgetModel.getRcModeProcessor().toFlowableOnUI().distinctUntilChanged().subscribe(rcMode -> {
             if (rcMode != RCMode.UNKNOWN && rcMode != mCurrentRcMode) {
@@ -243,7 +242,7 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
 
         mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_GIMBAL));
 
-        if (isSupportAdvRtk(false)) {
+        if (isSupportAdvRtk(RTKStartServiceHelper.INSTANCE.getRtkModuleAvailableValue())) {
             menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_rtk_active, R.drawable.uxsdk_ic_setting_rtk));
             mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_RTK));
         }

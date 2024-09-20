@@ -469,5 +469,9 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="CameraVisiblePanelWidget">
+        <attr name="uxsdk_show_camera_controls" format="boolean"/>
+    </declare-styleable>
+
 
 </resources>
