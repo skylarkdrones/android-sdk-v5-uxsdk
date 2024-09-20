@@ -26,6 +26,7 @@ import dji.v5.ux.R;
 import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.TabSelectCell;
 import dji.v5.ux.core.util.ViewUtil;
+import dji.v5.ux.core.widget.CertificationUtils;
 
 /*
  * Copyright (c) 2017, DJI All Rights Reserved.
@@ -87,6 +88,11 @@ public class FpaView extends LinearLayout implements SwitcherCell.OnCheckedChang
             updateView(Boolean.TRUE.equals(open));
         });
 
+        if (CertificationUtils.INSTANCE.isCertificationBuild()) {
+            mSwitcherCell.setChecked(false);
+            mDescView.setVisibility(GONE);
+            mSwitcherCell.setEnabled(false);
+        }
     }
 
     @Override
