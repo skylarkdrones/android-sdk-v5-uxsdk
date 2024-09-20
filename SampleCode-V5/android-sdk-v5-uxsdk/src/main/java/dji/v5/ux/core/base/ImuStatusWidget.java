@@ -167,7 +167,9 @@ public class ImuStatusWidget extends ConstraintLayout  {
 
         KeyManager.getInstance().listen(KeyTools.createKey(FlightControllerKey.KeyRedundancySensorUsedState), this, (oldValue, newValue) -> {
             mSensorUsedState = newValue;
-            updateSelectedSensor(mSensorUsedState.getGyroIndex());
+            if (mSensorUsedState != null) {
+                updateSelectedSensor(mSensorUsedState.getGyroIndex());
+            }
         });
 
 //
