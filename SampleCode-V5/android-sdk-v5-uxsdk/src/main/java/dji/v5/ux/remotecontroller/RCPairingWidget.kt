@@ -3,6 +3,7 @@ package dji.v5.ux.remotecontroller
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import dji.sdk.keyvalue.value.remotecontroller.PairingState
 import dji.v5.utils.common.StringUtils
@@ -11,7 +12,7 @@ import dji.v5.ux.core.base.DJISDKModel
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore
 import dji.v5.ux.core.util.ViewUtil
-import dji.v5.ux.databinding.UxsdkPanelNdvlBinding
+import dji.v5.ux.core.widget.CertificationUtils
 import dji.v5.ux.databinding.UxsdkWidgetRcCheckFrequencyLayoutBinding
 import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.disposables.Disposable
@@ -116,7 +117,9 @@ class RCPairingWidget @JvmOverloads constructor(
             }
         }
 
-
+        if (CertificationUtils.isCertificationBuild()) {
+            binding.root.visibility = View.GONE
+        }
     }
 
 

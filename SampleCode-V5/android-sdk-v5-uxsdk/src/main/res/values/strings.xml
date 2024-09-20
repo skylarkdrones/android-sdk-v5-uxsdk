@@ -921,7 +921,7 @@
     <string name="uxsdk_setting_menu_title_rc_check_frequency">Link to Aircraft</string>
     <string name="uxsdk_dialog_message_rc_cannot_frequency_motorup">The remote controller cannot be linked when the aircraft motors are spinning.</string>
     <string name="uxsdk_setting_ui_omni_perception_desc">Disabling the Vision Positioning System will have the following effects on the aircraft:\n1. Unable to hover in place at low altitude indoors.\n2. Unable to engage obstacle braking indoors.\n3. Unable to engage landing speed protection. Landing at high speed may damage the aircraft. Pay attention to the landing speed.</string>
-    <string name="uxsdk_battery_check_battery_detail_button_txt">Detalles</string>
+    <string name="uxsdk_battery_check_battery_detail_button_txt">Details</string>
     <string name="uxsdk_setting_ui_gimbal_auto_calibration_tip">Check that aircraft is level and nothing is obstructing the gimbal’s range of motion.
         begin auto calibration.</string>
 
@@ -930,7 +930,7 @@
     <string name="uxsdk_setting_menu_flyc_max_radius_title">Distance Limit</string>
     <string name="uxsdk_setting_menu_flyc_max_radius_title_limit">Max Flight Distance</string>
     <string name="uxsdk_setting_menu_setting_success">Saved successfully</string>
-    <string name="uxsdk_setting_menu_setting_fail">Setting failed</string>
+    <string name="uxsdk_setting_menu_setting_fail">Setting failed, outside allowed range</string>
 
     <string name="uxsdk_setting_menu_flyc_gohome_altitude_limit">Failsafe RTH altitude cannot exceed maximum flight altitude.</string>
     <string name="uxsdk_setting_menu_flyc_flight_altitude_limit">Failed to set. Input the number in the range</string>

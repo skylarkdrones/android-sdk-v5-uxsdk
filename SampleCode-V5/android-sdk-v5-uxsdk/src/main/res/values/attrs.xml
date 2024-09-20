@@ -328,6 +328,11 @@
     </declare-styleable>
 
     <declare-styleable name="FPVWidget">
+        <attr name="uxsdk_videoChannelType" format="enum">
+            <enum name="primaryStreamChannel" value="0" />
+            <enum name="secondaryStreamChannel" value="1" />
+            <enum name="extendedStreamChannel" value="2" />
+        </attr>
         <attr name="uxsdk_sourceCameraNameVisibility" format="boolean" />
         <attr name="uxsdk_sourceCameraSideVisibility" format="boolean" />
         <attr name="uxsdk_cameraNameTextAppearance" format="reference" />
@@ -680,15 +685,18 @@
         <attr name="uxsdk_excludeTopBarItem">
             <flag name="system_status" value="1" />
             <flag name="device_health" value="2" />
-            <flag name="flight_mode" value="3" />
-            <flag name="simulator_indicator" value="4" />
-            <flag name="air_sense" value="8" />
-            <flag name="gps_signal" value="16" />
-            <flag name="vision" value="32" />
-            <flag name="rc_signal" value="64" />
-            <flag name="video_signal" value="128" />
-            <flag name="battery" value="256" />
-            <flag name="connection" value="512" />
+            <flag name="flight_mode" value="4" />
+            <flag name="simulator_indicator" value="8" />
+            <flag name="air_sense" value="16" />
+            <flag name="gps_signal" value="32" />
+            <flag name="vision" value="64" />
+            <flag name="rc_signal" value="128" />
+            <flag name="video_signal" value="256" />
+            <flag name="battery" value="512" />
+            <flag name="setting" value="1024" />
+            <flag name="connection" value="2048" />
+            <flag name="back_button" value="4096" />
+            <flag name="rc_battery" value="8192" />
         </attr>
     </declare-styleable>
 
@@ -1004,6 +1012,7 @@
         <attr name="uxsdk_vibrationDuration" format="integer" />
         <attr name="uxsdk_touchFocusEnabled" format="boolean" />
         <attr name="uxsdk_spotMeteringEnabled" format="boolean" />
+        <attr name="uxsdk_spotMeteringThermalEnabled" format="boolean" />
         <attr name="uxsdk_gimbalControlEnabled" format="boolean" />
         <attr name="uxsdk_interactionEnabled" format="boolean" />
     </declare-styleable>
