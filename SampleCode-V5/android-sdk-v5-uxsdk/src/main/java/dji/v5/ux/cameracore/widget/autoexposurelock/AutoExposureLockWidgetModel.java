@@ -26,6 +26,7 @@ package dji.v5.ux.cameracore.widget.autoexposurelock;
 import androidx.annotation.NonNull;
 import dji.sdk.keyvalue.key.CameraKey;
 import dji.sdk.keyvalue.key.KeyTools;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.v5.ux.core.base.DJISDKModel;
@@ -47,12 +48,17 @@ public class AutoExposureLockWidgetModel extends WidgetModel implements ICameraI
     private final DataProcessor<Boolean> autoExposureLockBooleanProcessor;
     private ComponentIndexType cameraIndex = ComponentIndexType.LEFT_OR_MAIN;
     private CameraLensType lensType = CameraLensType.CAMERA_LENS_ZOOM;
+    private final DataProcessor<Boolean> isSupportedProcessor;
+    private final DataProcessor<CameraVideoStreamSourceType> cameraVideoStreamSourceProcessor;
+
     //endregion
 
     public AutoExposureLockWidgetModel(@NonNull DJISDKModel djiSdkModel,
                                        @NonNull ObservableInMemoryKeyedStore uxKeyManager) {
         super(djiSdkModel, uxKeyManager);
         autoExposureLockBooleanProcessor = DataProcessor.create(false);
+        isSupportedProcessor = DataProcessor.create(false);
+        cameraVideoStreamSourceProcessor = DataProcessor.create(CameraVideoStreamSourceType.UNKNOWN);
     }
 
     //region Data
@@ -103,6 +109,21 @@ public class AutoExposureLockWidgetModel extends WidgetModel implements ICameraI
     protected void inSetup() {
         KeyTools.createCameraKey(CameraKey.KeyAELockEnabled, cameraIndex, lensType);
         bindDataProcessor(KeyTools.createCameraKey(CameraKey.KeyAELockEnabled, cameraIndex, lensType), autoExposureLockBooleanProcessor);
+        bindDataProcessor(
+                KeyTools.createCameraKey(CameraKey.KeyCameraVideoStreamSource, cameraIndex, lensType),
+                cameraVideoStreamSourceProcessor, cameraVideoStreamSourceType -> {
+                    if (cameraVideoStreamSourceType == CameraVideoStreamSourceType.WIDE_CAMERA
+                            || cameraVideoStreamSourceType == CameraVideoStreamSourceType.ZOOM_CAMERA) {
+                        isSupportedProcessor.onNext(true);
+                    } else {
+                        isSupportedProcessor.onNext(false);
+                    }
+                }
+        );
+    }
+
+    public Flowable<Boolean> isSupported() {
+        return isSupportedProcessor.toFlowable();
     }
 
     @Override
