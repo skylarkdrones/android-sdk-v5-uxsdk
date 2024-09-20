@@ -336,6 +336,9 @@ object RTKStartServiceHelper {
     val rtkModuleAvailable: Flowable<Boolean>
         get() = rtkModuleAvailableProcessor.toFlowable()
 
+    val rtkModuleAvailableValue: Boolean
+        get() = rtkModuleAvailableProcessor.value
+
     /**
      * 判断一个差分数据源是否是网络RTK
      */

@@ -35,6 +35,7 @@ import dji.sdk.keyvalue.key.DJIKey;
 import dji.sdk.keyvalue.key.GimbalKey;
 import dji.sdk.keyvalue.key.KeyTools;
 import dji.sdk.keyvalue.value.camera.CameraMeteringMode;
+import dji.sdk.keyvalue.value.camera.CameraVideoStreamSourceType;
 import dji.sdk.keyvalue.value.common.CameraLensType;
 import dji.sdk.keyvalue.value.common.ComponentIndexType;
 import dji.sdk.keyvalue.value.common.DoublePoint2D;
@@ -66,6 +67,8 @@ public class FPVInteractionWidgetModel extends WidgetModel implements ICameraInd
     private final DataProcessor<Boolean> isYawAdjustSupportedProcessor;
     private final GlobalPreferencesInterface preferencesManager;
     private final ObservableInMemoryKeyedStore keyedStore;
+    private final DataProcessor<CameraVideoStreamSourceType> streamSourceCameraTypeProcessor;
+
     //region Fields
     private ComponentIndexType cameraIndex = ComponentIndexType.LEFT_OR_MAIN;
     private CameraLensType lensIndex = CameraLensType.CAMERA_LENS_WIDE;
@@ -82,6 +85,7 @@ public class FPVInteractionWidgetModel extends WidgetModel implements ICameraInd
         super(djiSdkModel, keyedStore);
         meteringModeProcessor = DataProcessor.create(CameraMeteringMode.UNKNOWN);
         controlModeProcessor = DataProcessor.create(SettingDefinitions.ControlMode.SPOT_METER);
+        streamSourceCameraTypeProcessor = DataProcessor.create(CameraVideoStreamSourceType.UNKNOWN);
         if (preferencesManager != null) {
             controlModeProcessor.onNext(preferencesManager.getControlMode());
         }
@@ -101,6 +105,15 @@ public class FPVInteractionWidgetModel extends WidgetModel implements ICameraInd
         bindDataProcessor(meteringModeKey, meteringModeProcessor, this::setMeteringMode);
         bindDataProcessor(KeyTools.createCameraKey(CameraKey.KeyAELockEnabled, cameraIndex, lensIndex), aeLockedProcessor);
         bindDataProcessor(KeyTools.createKey(GimbalKey.KeyYawAdjustSupported, cameraIndex), isYawAdjustSupportedProcessor);
+
+        bindDataProcessor(
+                KeyTools.createCameraKey(CameraKey.KeyCameraVideoStreamSource, cameraIndex, lensIndex),
+                streamSourceCameraTypeProcessor,
+                source -> {
+                    lensIndex = convertCameraType(source);
+                    streamSourceCameraTypeProcessor.onNext(source);
+                }
+        );
         controlModeKey = UXKeys.create(GlobalPreferenceKeys.CONTROL_MODE);
         bindDataProcessor(controlModeKey, controlModeProcessor);
 
@@ -108,6 +121,31 @@ public class FPVInteractionWidgetModel extends WidgetModel implements ICameraInd
             preferencesManager.setUpListener();
         }
     }
+
+        private CameraLensType convertCameraType(CameraVideoStreamSourceType sourceType) {
+            switch (sourceType) {
+                case WIDE_CAMERA:
+                    return CameraLensType.CAMERA_LENS_WIDE;
+                case ZOOM_CAMERA:
+                    return CameraLensType.CAMERA_LENS_ZOOM;
+                case INFRARED_CAMERA:
+                    return CameraLensType.CAMERA_LENS_THERMAL;
+                case NDVI_CAMERA:
+                    return CameraLensType.CAMERA_LENS_MS_NDVI;
+                case MS_G_CAMERA:
+                    return CameraLensType.CAMERA_LENS_MS_G;
+                case MS_R_CAMERA:
+                    return CameraLensType.CAMERA_LENS_MS_R;
+                case MS_RE_CAMERA:
+                    return CameraLensType.CAMERA_LENS_MS_RE;
+                case MS_NIR_CAMERA:
+                    return CameraLensType.CAMERA_LENS_MS_NIR;
+                case RGB_CAMERA:
+                    return CameraLensType.CAMERA_LENS_RGB;
+                default:
+                    return CameraLensType.CAMERA_LENS_DEFAULT;
+            }
+        }
 
     @Override
     protected void inCleanup() {
@@ -174,6 +212,16 @@ public class FPVInteractionWidgetModel extends WidgetModel implements ICameraInd
     @NonNull
     public Flowable<SettingDefinitions.ControlMode> getControlMode() {
         return controlModeProcessor.toFlowable();
+    }
+
+    /**
+     * Get the control mode.
+     *
+     * @return A Flowable that will emit the current control mode.
+     */
+    @NonNull
+    public Flowable<CameraVideoStreamSourceType> getVideoSource() {
+        return streamSourceCameraTypeProcessor.toFlowable();
     }
 
     /**

@@ -19,12 +19,21 @@
             app:uxsdk_text_cell_arrow="3"
             app:uxsdk_text_cell_title="@string/uxsdk_setting_ui_rc_calibration" />
 
+        <dji.v5.ux.core.base.TextCell
+            android:id="@+id/setting_menu_customize_rc_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setting_menu_rc_calibration"
+            app:uxsdk_text_cell_arrow="3"
+            app:uxsdk_text_cell_title="@string/uxsdk_setting_ui_customize_rc_buttons" />
+
         <dji.v5.ux.remotecontroller.RCPairingWidget
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/setting_menu_rc_calibration" />
+            app:layout_constraintTop_toBottomOf="@id/setting_menu_customize_rc_buttons" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

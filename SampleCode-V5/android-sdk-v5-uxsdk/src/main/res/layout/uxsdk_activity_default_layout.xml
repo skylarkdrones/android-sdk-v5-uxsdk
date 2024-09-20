@@ -67,7 +67,7 @@
                     tools:layout_editor_absoluteY="0dp" />
             </dji.v5.ux.core.widget.fpv.FPVWidget>
 
-            <dji.v5.ux.core.widget.fpv.FPVWidget
+            <dji.v5.ux.core.widget.fpv.FPVVisionWidget
                 android:id="@+id/widget_secondary_fpv"
                 android:layout_width="@dimen/uxsdk_mini_map_width"
                 android:layout_height="@dimen/uxsdk_mini_map_height"
