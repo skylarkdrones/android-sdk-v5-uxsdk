@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 
 android {
     namespace "dji.v5.ux"
@@ -52,18 +53,18 @@ dependencies {
     implementation deps.mikepenzIonicons
     implementation deps.material
 
-    api deps.maplibreAnotation
-    api deps.maplibreTurf
-    api deps.maplibreSdk
+    implementation deps.maplibreAnotation
+    implementation deps.maplibreTurf
+    implementation deps.maplibreSdk
 
 
-    api deps.playservicesplaces
-    api deps.playservicesmaps
-    api deps.playserviceslocation
-    api deps.playservicesbase
+    implementation deps.playservicesplaces
+    implementation deps.playservicesmaps
+    implementation deps.playserviceslocation
+    implementation deps.playservicesbase
 
     compileOnly deps.aircraftProvided
-    compileOnly deps.aircraft
+    implementation deps.aircraft
 
     // DMO Dependencies - Sync versions with DMO Project
     // Coroutines - Async
@@ -72,4 +73,18 @@ dependencies {
     // Key value Store - Unit Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = "com.skylarkdrones.dronemissionops"
+            artifactId = "uxsdk"
+            version = "5.10.0-alpha"
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
 }
