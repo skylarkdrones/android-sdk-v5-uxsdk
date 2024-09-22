@@ -46,7 +46,7 @@ class RealTimeFragment: DJIFragment() {
         }
 
         binding?.cbAgc?.setOnCheckedChangeListener { _, isChecked ->
-           megaphoneVM.enableAgc(isChecked)
+            megaphoneVM.enableAgc(isChecked)
         }
 
     }
