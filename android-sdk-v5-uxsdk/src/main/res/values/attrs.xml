@@ -1620,4 +1620,10 @@
     <attr name="uxsdk_title" format="string|reference"/>
     <attr name="uxsdk_summary" format="string|reference"/>
     <attr name="uxsdk_desc" format="string|reference"/>
+
+    <!--  Max distance customization  -->
+    <declare-styleable name="SettingPanelWidget">
+        <attr name="uxsdk_minDistance" format="integer" />
+        <attr name="uxsdk_maxDistance" format="integer" />
+    </declare-styleable>
 </resources>

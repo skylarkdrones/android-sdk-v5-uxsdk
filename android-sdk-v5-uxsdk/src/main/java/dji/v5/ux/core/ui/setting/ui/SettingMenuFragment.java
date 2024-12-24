@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import dji.v5.ux.R;
+import dji.v5.ux.core.ui.setting.fragment.FlycMenuFragment;
 
 /**
  * Description : 所有设置界面创建的入口
@@ -26,6 +27,11 @@ import dji.v5.ux.R;
 public class SettingMenuFragment extends Fragment implements FragmentManager.OnBackStackChangedListener {
     public static final String ARG_PARAM = "fragment_tag";
     private static final String NEED_LAZY_INFLATE = "need_lazy_inflate";
+    public static final String ARG_MIN_DISTANCE = "min_altitude";
+    public static final String ARG_MAX_DISTANCE = "max_altitude";
+
+    public static final int DEFAULT_MIN_DISTANCE = 15;
+    public static final int DEFAULT_MAX_DISTANCE = 8000;
 
     private TextView mTitleView;
     private ImageView mBackBtn;
@@ -37,15 +43,27 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
     private FragmentManager fragmentManager;
     private Runnable mLazyInflateTask;
 
+    private int minDistance;
+    private int maxDistance;
+
     public SettingMenuFragment() {
         // Required empty constructor
     }
 
     public static SettingMenuFragment newInstance(String tag) {
-        return newInstance(tag, true);
+        return newInstance(tag, true, DEFAULT_MIN_DISTANCE, DEFAULT_MAX_DISTANCE);
     }
 
-    public static SettingMenuFragment newInstance(String tag, boolean needLazyInitView) {
+    public static SettingMenuFragment newInstance(String tag, int minDistance, int maxDistance) {
+        return newInstance(tag, true, minDistance, maxDistance);
+    }
+
+    public static SettingMenuFragment newInstance(
+            String tag,
+            boolean needLazyInitView,
+            int minDistance,
+            int maxDistance
+    ) {
         SettingMenuFragment fragment = new SettingMenuFragment();
         Bundle args = fragment.getArguments();
         if (args == null) {
@@ -53,6 +71,9 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
         }
         args.putString(ARG_PARAM, tag);
         args.putBoolean(NEED_LAZY_INFLATE, needLazyInitView);
+        args.putInt(ARG_MIN_DISTANCE, minDistance);
+        args.putInt(ARG_MAX_DISTANCE, maxDistance);
+
         fragment.setArguments(args);
         fragment.setFragmentFlag(tag);
         return fragment;
@@ -64,6 +85,8 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
         fragmentManager = getChildFragmentManager();
         fragmentManager.addOnBackStackChangedListener(this);
         mFragmentTag = getArguments().getString(ARG_PARAM, "");
+        minDistance = getArguments().getInt(ARG_MIN_DISTANCE, DEFAULT_MIN_DISTANCE);
+        maxDistance = getArguments().getInt(ARG_MAX_DISTANCE, DEFAULT_MAX_DISTANCE);
 
         mLazyInflateTask = this::inflateFunctionFragment;
     }
@@ -113,6 +136,18 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
             return;
         }
         MenuFragment menuFragment = MenuFragmentFactory.getMenuFragment(mFragmentTag);
+
+        if (menuFragment instanceof FlycMenuFragment) {
+            Bundle args = menuFragment.getArguments();
+            if (args == null) {
+                args = new Bundle();
+            }
+            args.putInt(ARG_MIN_DISTANCE, minDistance);
+            args.putInt(ARG_MAX_DISTANCE, maxDistance);
+
+            menuFragment.setArguments(args);
+        }
+
         MenuFragment.addFragment(fragmentManager, menuFragment);
         mProgressBar.setVisibility(View.GONE);
         mFragmentTag = null;

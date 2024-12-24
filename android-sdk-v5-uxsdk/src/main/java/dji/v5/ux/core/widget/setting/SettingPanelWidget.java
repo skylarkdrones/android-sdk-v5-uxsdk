@@ -1,6 +1,7 @@
 package dji.v5.ux.core.widget.setting;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -62,6 +63,9 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
     private Disposable mRestartDispose;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
+    private int minDistance = 15;
+    private int maxDisance = 8000;
+
     private SettingPanelWidgetModel widgetModel = new SettingPanelWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
 
     public SettingPanelWidget(Context context) {
@@ -78,8 +82,32 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         showWidgets();
         prepareData();
 
+        if (attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(
+                    attrs,
+                    R.styleable.SettingPanelWidget
+            );
+            minDistance = typedArray.getInt(
+                    R.styleable.SettingPanelWidget_uxsdk_minDistance,
+                    15
+            );
+            maxDisance = typedArray.getInt(
+                    R.styleable.SettingPanelWidget_uxsdk_maxDistance,
+                    8000
+            );
+            typedArray.recycle();
+        }
     }
 
+    public void setMinDistance(int minDistance) {
+        this.minDistance = minDistance;
+        setMasterFragmentData();
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDisance = maxDistance;
+        setMasterFragmentData();
+    }
 
     protected void initializeView() {
         LayoutInflater.from(getContext()).inflate(R.layout.uxsdk_panel_layout_setting, this, true);
@@ -222,7 +250,13 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         mFragments.clear();
 
         menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_drone_active, R.drawable.uxsdk_ic_setting_drone));
-        mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_AIRCRAFT));
+        mFragments.add(
+                SettingMenuFragment.newInstance(
+                        MenuFragmentFactory.FRAGMENT_TAG_AIRCRAFT,
+                        minDistance,
+                        maxDisance
+                )
+        );
 
         menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_obstacl_avoidance_active, R.drawable.uxsdk_ic_setting_obstacl_avoidance));
         mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_PERCEPTION));
