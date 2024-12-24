@@ -15,10 +15,10 @@ import io.reactivex.rxjava3.core.Flowable;
 
 public class DistanceLimitWidgetModel extends WidgetModel {
 
-    private final DataProcessor<Integer> goHomeHeightDataProcessor = DataProcessor.create(500);
-    private final DataProcessor<Integer> heightLimitDataProcessor = DataProcessor.create(500);
-    private final DataProcessor<Integer> distanceLimitDataProcessor = DataProcessor.create(5000);
-    private final DataProcessor<Boolean> distanceLimitEnableDataProcessor = DataProcessor.create(false);
+    private final DataProcessor<Integer> goHomeHeightDataProcessor = DataProcessor.create(100);
+    private final DataProcessor<Integer> heightLimitDataProcessor = DataProcessor.create(120);
+    private final DataProcessor<Integer> distanceLimitDataProcessor = DataProcessor.create(1000);
+    private final DataProcessor<Boolean> distanceLimitEnableDataProcessor = DataProcessor.create(true);
     private final DataProcessor<GoHomePathMode> goHomePathModeProcessor = DataProcessor.create(GoHomePathMode.UNKNOWN);
 
     protected DistanceLimitWidgetModel(@NonNull DJISDKModel djiSdkModel, @NonNull ObservableInMemoryKeyedStore uxKeyManager) {

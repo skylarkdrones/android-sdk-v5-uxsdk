@@ -17,6 +17,7 @@ object DataStoreManagerDJIV5 {
         SPEED_UNIT_PREFERENCE("speed_unit_preference"),
         AREA_UNIT_PREFERENCE("area_unit_preference"),
         TEMPERATURE_UNIT_PREFERENCE("temperature_unit_preference"),
+        IS_CERTIFICATION_BUILD("is_certification_build"),
     }
 
     /**
