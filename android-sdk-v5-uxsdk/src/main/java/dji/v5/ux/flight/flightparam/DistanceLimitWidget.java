@@ -66,14 +66,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         mMaxRadiusCell = findViewById(R.id.setting_menu_aircraft_maxRadius_switch);
         mRTHTipTv = findViewById(R.id.setting_menu_aircraft_go_home_mode_desc);
 
-        mMaxRadiusCell.setOnCheckedChangedListener((cell, isChecked) -> {
-            widgetModel.setDistanceLimitEnabled(isChecked).subscribe();
-            if(isChecked) {
-                mMaxRadiusEditorCell.setVisibility(VISIBLE);
-            } else  {
-                mMaxRadiusEditorCell.setVisibility(GONE);
-            }
-        });
+        mMaxRadiusCell.setChecked(true);
+        mMaxRadiusCell.setEnabled(false);
+        mMaxRadiusEditorCell.setVisibility(VISIBLE);
 
     }
 
@@ -84,7 +79,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         addReaction(widgetModel.getGoHomeHeight().observeOn(ui()).subscribe(this::updateGoHomeHeight));
         addReaction(widgetModel.getHomeLimitHeight().observeOn(ui()).subscribe(this::updateHeightLimit));
         addReaction(widgetModel.getDistanceLimit().observeOn(ui()).subscribe(this::updateDistanceLimit));
-        addReaction(widgetModel.getDistanceLimitEnabled().observeOn(ui()).subscribe(this::updateDistanceLimitEnable));
         addReaction(widgetModel.getGoHomePathMode().observeOn(ui()).subscribe(this::updateGoHomeMode));
     }
 
@@ -94,15 +88,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
             mRTHTipTv.setText(R.string.uxsdk_setting_menu_flyc_smart_rth_set_altitude);
         } else {
             mRTHTipTv.setText(R.string.uxsdk_setting_menu_flyc_smart_rth_smart_altitude);
-        }
-    }
-
-    private void updateDistanceLimitEnable(Boolean isChecked) {
-        mMaxRadiusCell.setChecked(isChecked);
-        if(isChecked) {
-            mMaxRadiusEditorCell.setVisibility(VISIBLE);
-        } else  {
-            mMaxRadiusEditorCell.setVisibility(GONE);
         }
     }
 

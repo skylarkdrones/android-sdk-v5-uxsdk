@@ -76,12 +76,6 @@ public class FlycMenuFragment extends MenuFragment {
             EditorCell maxDistanceCell = distanceLimitWidget.findViewById(
                     R.id.setting_menu_aircraft_maxRadius
             );
-            SwitcherCell maxDistanceSwitch = distanceLimitWidget.findViewById(
-                    R.id.setting_menu_aircraft_maxRadius_switch
-            );
-
-            maxDistanceSwitch.setChecked(true);
-            maxDistanceSwitch.setEnabled(false);
 
             maxDistanceCell.setMinValue(minDistance);
             maxDistanceCell.setMaxValue(maxDistance);
