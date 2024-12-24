@@ -7,27 +7,22 @@ import static dji.v5.ux.core.base.SchedulerProvider.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import dji.sdk.keyvalue.value.flightcontroller.FailsafeAction;
 import dji.sdk.keyvalue.value.flightcontroller.GoHomePathMode;
 import dji.v5.ux.R;
-import dji.v5.ux.accessory.DescSpinnerCell;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.EditorCell;
-import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.ViewUtil;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
 
 public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implements EditorCell.OnValueChangedListener {
 
@@ -39,19 +34,58 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private EditorCell mMaxRadiusEditorCell;
     private SwitcherCell mMaxRadiusCell;
     private TextView mRTHTipTv;
-    private int maxHeight = 500;
+    private int currMaxHeight = 500;
     private static final int ALARM_HEIGHT = 120;
     private static final int CONFIRM_ALARM_HEIGHT = 500;
+
+    private static final int MIN_ALTITUDE = 20;
+    private static final int MAX_ALTITUDE = 120;
+    private static final int MIN_DISTANCE = 20;
+    private static final int MAX_DISTANCE = 1000;
+
+    private boolean isCertificationBuild = false;
+
+    private static final float LIMIT_BUFFER = 0.01F;
+
+    // Temporary variable for setting Max Altitude with 1% of buffer.
+    private static final float bufferAltitudeLimitMeters =
+            MAX_ALTITUDE + (MAX_ALTITUDE * LIMIT_BUFFER);
+
+    // Temporary variable for setting Max Distance with 1% of buffer.
+    private static final float bufferDistanceLimitMeters =
+            MAX_DISTANCE + (MAX_DISTANCE * LIMIT_BUFFER);
+
     public DistanceLimitWidget(@NonNull Context context) {
         super(context);
+        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setupLimits();
+    }
+
+    private void setupLimits() {
+        if (isCertificationBuild) {
+            restrictDistanceLimitCell();
+            setupDistanceLimit();
+            setupAltitudeLimit();
+            setupRTHLimit();
+        }
+    }
+
+    /**
+     * The distance switch cell should be checked but disabled, in order to prevent users disabling
+     * distance limit.
+     */
+    private void restrictDistanceLimitCell() {
+        mMaxRadiusCell.setChecked(true);
+        mMaxRadiusCell.setEnabled(false);
     }
 
     @Override
@@ -74,10 +108,31 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
                 mMaxRadiusEditorCell.setVisibility(GONE);
             }
         });
-
     }
 
+    private void setupAltitudeLimit() {
+        setMaxHeight((int)bufferAltitudeLimitMeters);
 
+        mMaxHeightEditCell.setMinValue(MIN_ALTITUDE);
+        mMaxHeightEditCell.setMaxValue((int)bufferAltitudeLimitMeters);
+        mMaxHeightEditCell.setTips(MIN_ALTITUDE + "~" + (int)bufferAltitudeLimitMeters + "m");
+    }
+
+    private void setupRTHLimit() {
+        mGoHomeEditCell.setMinValue(MIN_ALTITUDE);
+        mGoHomeEditCell.setMaxValue((int)bufferAltitudeLimitMeters);
+        mGoHomeEditCell.setTips(MIN_ALTITUDE + "~" + (int)bufferAltitudeLimitMeters + "m");
+    }
+
+    private void setupDistanceLimit() {
+        mMaxRadiusEditorCell.setMinValue(MIN_DISTANCE);
+        mMaxRadiusEditorCell.setMaxValue((int)bufferDistanceLimitMeters);
+        mMaxRadiusEditorCell.setTips(MIN_DISTANCE + "~" + (int)bufferDistanceLimitMeters + "m");
+    }
+
+    public void setMaxHeight(int maxHeight) {
+        this.currMaxHeight = maxHeight;
+    }
 
     @Override
     protected void reactToModelChanges() {
@@ -107,16 +162,36 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     }
 
     private void updateDistanceLimit(Integer integer) {
-        mMaxRadiusEditorCell.setValue(integer);
+        if (isCertificationBuild) {
+            mMaxRadiusEditorCell.setValue(Math.min((int)bufferDistanceLimitMeters, integer));
+        } else {
+            mMaxRadiusEditorCell.setValue(integer);
+        }
+        // This check ensures the initial value set on drone is caught and reset accordingly
+        if (isCertificationBuild && integer > bufferDistanceLimitMeters) {
+            widgetModel.setDistanceLimit((int)bufferDistanceLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        }
     }
 
     private void updateHeightLimit(Integer integer) {
-        maxHeight = integer;
-        mMaxHeightEditCell.setValue(integer);
+        if (isCertificationBuild) {
+            currMaxHeight = Math.min((int)bufferAltitudeLimitMeters, integer);
+        } else {
+            currMaxHeight = integer;
+        }
+        mMaxHeightEditCell.setValue(currMaxHeight);
+        // This check ensures the initial value set on drone is caught and reset accordingly
+        if (isCertificationBuild && integer > bufferAltitudeLimitMeters) {
+            widgetModel.setHeightLimit((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        }
     }
 
     private void updateGoHomeHeight(Integer integer) {
         mGoHomeEditCell.setValue(integer);
+        // This check ensures the initial value set on drone is caught and reset accordingly
+        if (isCertificationBuild && integer > (int)bufferAltitudeLimitMeters) {
+            widgetModel.setGoHomeHeight((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        }
     }
 
 
@@ -144,7 +219,7 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
            return;
         }
         if (cell.getId() == R.id.setting_menu_aircraft_goHomeAttitude) {
-            if (inputValue > maxHeight) {
+            if (inputValue > currMaxHeight) {
                 ViewUtil.showToast(getContext() , R.string.uxsdk_setting_menu_flyc_gohome_altitude_limit , Toast.LENGTH_SHORT);
                 return;
             }

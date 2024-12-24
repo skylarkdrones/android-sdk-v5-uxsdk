@@ -930,7 +930,7 @@
     <string name="uxsdk_setting_menu_flyc_max_radius_title">Distance Limit</string>
     <string name="uxsdk_setting_menu_flyc_max_radius_title_limit">Max Flight Distance</string>
     <string name="uxsdk_setting_menu_setting_success">Saved successfully</string>
-    <string name="uxsdk_setting_menu_setting_fail">Setting failed</string>
+    <string name="uxsdk_setting_menu_setting_fail">Setting failed, outside allowed range</string>
 
     <string name="uxsdk_setting_menu_flyc_gohome_altitude_limit">Failsafe RTH altitude cannot exceed maximum flight altitude.</string>
     <string name="uxsdk_setting_menu_flyc_flight_altitude_limit">Failed to set. Input the number in the range</string>
