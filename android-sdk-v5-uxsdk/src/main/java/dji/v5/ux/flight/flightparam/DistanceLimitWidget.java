@@ -42,6 +42,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private int maxHeight = 500;
     private static final int ALARM_HEIGHT = 120;
     private static final int CONFIRM_ALARM_HEIGHT = 500;
+
+    private int maxRadius;
+
     public DistanceLimitWidget(@NonNull Context context) {
         super(context);
     }
@@ -91,8 +94,12 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         }
     }
 
+    public void setMaxRadius(int maxRadius) {
+        this.maxRadius = maxRadius;
+    }
+
     private void updateDistanceLimit(Integer integer) {
-        mMaxRadiusEditorCell.setValue(integer);
+        mMaxRadiusEditorCell.setValue(Math.min(maxRadius, integer));
     }
 
     private void updateHeightLimit(Integer integer) {
