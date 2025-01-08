@@ -51,16 +51,11 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
     }
 
     public static SettingMenuFragment newInstance(String tag) {
-        return newInstance(tag, true, DEFAULT_MIN_DISTANCE, DEFAULT_MAX_DISTANCE);
-    }
-
-    public static SettingMenuFragment newInstance(String tag, int minDistance, int maxDistance) {
-        return newInstance(tag, true, minDistance, maxDistance);
+        return newInstance(tag, DEFAULT_MIN_DISTANCE, DEFAULT_MAX_DISTANCE);
     }
 
     public static SettingMenuFragment newInstance(
             String tag,
-            boolean needLazyInitView,
             int minDistance,
             int maxDistance
     ) {
@@ -70,7 +65,7 @@ public class SettingMenuFragment extends Fragment implements FragmentManager.OnB
             args = new Bundle();
         }
         args.putString(ARG_PARAM, tag);
-        args.putBoolean(NEED_LAZY_INFLATE, needLazyInitView);
+        args.putBoolean(NEED_LAZY_INFLATE, true);
         args.putInt(ARG_MIN_DISTANCE, minDistance);
         args.putInt(ARG_MAX_DISTANCE, maxDistance);
 
