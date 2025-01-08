@@ -15,7 +15,6 @@ import dji.v5.utils.common.ContextUtil;
 import dji.v5.utils.common.StringUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.core.base.EditorCell;
-import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.TextCell;
 import dji.v5.ux.core.ui.setting.ui.MenuFragment;
 import dji.v5.ux.flight.flightparam.DistanceLimitWidget;
