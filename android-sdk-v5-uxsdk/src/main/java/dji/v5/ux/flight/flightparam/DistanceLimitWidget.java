@@ -7,27 +7,22 @@ import static dji.v5.ux.core.base.SchedulerProvider.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import dji.sdk.keyvalue.value.flightcontroller.FailsafeAction;
 import dji.sdk.keyvalue.value.flightcontroller.GoHomePathMode;
 import dji.v5.ux.R;
-import dji.v5.ux.accessory.DescSpinnerCell;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.EditorCell;
-import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.ViewUtil;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
 
 public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implements EditorCell.OnValueChangedListener {
 
