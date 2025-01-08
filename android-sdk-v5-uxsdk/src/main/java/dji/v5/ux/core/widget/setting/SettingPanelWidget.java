@@ -63,8 +63,11 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
     private Disposable mRestartDispose;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    private int minDistance = 15;
-    private int maxDisance = 8000;
+    private static final int DEFAULT_MIN_DISTANCE = 15;
+    private static final int DEFAULT_MAX_DISTANCE = 8000;
+
+    private int minDistance = DEFAULT_MIN_DISTANCE;
+    private int maxDistance = DEFAULT_MAX_DISTANCE;
 
     private SettingPanelWidgetModel widgetModel = new SettingPanelWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
 
@@ -89,11 +92,11 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
             );
             minDistance = typedArray.getInt(
                     R.styleable.SettingPanelWidget_uxsdk_minDistance,
-                    15
+                    DEFAULT_MIN_DISTANCE
             );
-            maxDisance = typedArray.getInt(
+            maxDistance = typedArray.getInt(
                     R.styleable.SettingPanelWidget_uxsdk_maxDistance,
-                    8000
+                    DEFAULT_MAX_DISTANCE
             );
             typedArray.recycle();
         }
@@ -105,7 +108,7 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
     }
 
     public void setMaxDistance(int maxDistance) {
-        this.maxDisance = maxDistance;
+        this.maxDistance = maxDistance;
         setMasterFragmentData();
     }
 
@@ -254,7 +257,7 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
                 SettingMenuFragment.newInstance(
                         MenuFragmentFactory.FRAGMENT_TAG_AIRCRAFT,
                         minDistance,
-                        maxDisance
+                        maxDistance
                 )
         );
 
