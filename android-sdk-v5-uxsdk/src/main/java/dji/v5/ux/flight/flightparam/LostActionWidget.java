@@ -8,30 +8,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import dji.sdk.keyvalue.value.flightcontroller.FailsafeAction;
-import dji.v5.utils.common.LogUtils;
 import dji.v5.ux.R;
 import dji.v5.ux.accessory.DescSpinnerCell;
-import dji.v5.ux.cameracore.widget.cameracapture.CameraCaptureWidgetModel;
 import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
-import io.reactivex.rxjava3.functions.Consumer;
 
 public class LostActionWidget extends ConstraintLayoutWidget<Object> {
 
     LostActionWidgetModel widgetModel = new LostActionWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
     DescSpinnerCell spinnerCell;
+
+    private boolean isCertificationBuild = false;
+
     public LostActionWidget(@NonNull Context context) {
         super(context);
+        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setupLostSignalAction();
     }
 
     @Override
@@ -42,6 +45,13 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
             FailsafeAction value = FailsafeAction.find(position);
             widgetModel.setLostAction(value).subscribe();
         });
+    }
+
+    private void setupLostSignalAction() {
+        if (isCertificationBuild) {
+            widgetModel.setLostAction(FailsafeAction.GOHOME).subscribe();
+            spinnerCell.setEnabled(false);
+        }
     }
 
     @Override
