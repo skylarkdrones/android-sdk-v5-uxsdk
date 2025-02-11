@@ -64,6 +64,8 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
 
     private SettingPanelWidgetModel widgetModel = new SettingPanelWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
 
+    private SettingPanelState settingPanelState = SettingPanelState.INSTANCE;
+
     public SettingPanelWidget(Context context) {
         this(context, null);
     }
@@ -98,6 +100,9 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         }
     }
 
+    public void setCertificationBuild(boolean isCertificationBuild) {
+        settingPanelState.setCertificationBuild(isCertificationBuild);
+    }
 
     protected void prepareData() {
         mCompositeDisposable.add(widgetModel.getRcModeProcessor().toFlowableOnUI().distinctUntilChanged().subscribe(rcMode -> {

@@ -14,13 +14,12 @@ import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
+import dji.v5.ux.core.widget.setting.SettingPanelState;
 
 public class LostActionWidget extends ConstraintLayoutWidget<Object> {
 
     LostActionWidgetModel widgetModel = new LostActionWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
     DescSpinnerCell spinnerCell;
-
-    private boolean isCertificationBuild = false;
 
     public LostActionWidget(@NonNull Context context) {
         super(context);
@@ -48,7 +47,7 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
     }
 
     private void setupLostSignalAction() {
-        if (isCertificationBuild) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild()) {
             widgetModel.setLostAction(FailsafeAction.GOHOME).subscribe();
             spinnerCell.setEnabled(false);
         }
