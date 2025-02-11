@@ -41,12 +41,10 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
     protected void initView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         inflate(context, R.layout.uxsdk_widget_flight_lost_action, this);
         spinnerCell = findViewById(R.id.setting_menu_aircraft_failSafe);
-        if (!isCertificationBuild) {
-            spinnerCell.addOnItemSelectedListener(position -> {
-                FailsafeAction value = FailsafeAction.find(position);
-                widgetModel.setLostAction(value).subscribe();
-            });
-        }
+        spinnerCell.addOnItemSelectedListener(position -> {
+            FailsafeAction value = FailsafeAction.find(position);
+            widgetModel.setLostAction(value).subscribe();
+        });
     }
 
     private void setupLostSignalAction() {
@@ -62,9 +60,6 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
     }
 
     private void updateSelection(FailsafeAction failsafeAction) {
-        if (isCertificationBuild && failsafeAction != FailsafeAction.GOHOME) {
-            widgetModel.setLostAction(FailsafeAction.GOHOME).subscribe();
-        }
         spinnerCell.select(failsafeAction.value());
     }
 
