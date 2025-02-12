@@ -202,10 +202,6 @@ class AvoidanceShortcutWidget @JvmOverloads constructor(
     }
 
     private fun updateSelectTab(type: ObstacleAvoidanceType) {
-        // This check ensures the initial value set on drone is caught and reset accordingly
-        if (WidgetState.isCertificationBuild && type == ObstacleAvoidanceType.CLOSE) {
-            setObstacleAction(ObstacleAvoidanceType.BRAKE)
-        }
         for (i in 0 until apasTab.tabCount) {
             val tab = apasTab.getTabAt(i)
             if (tab?.tag == type) {
