@@ -64,7 +64,7 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
 
     private SettingPanelWidgetModel widgetModel = new SettingPanelWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
 
-    private SettingPanelState settingPanelState = SettingPanelState.INSTANCE;
+    private WidgetState settingPanelState = WidgetState.INSTANCE;
 
     public SettingPanelWidget(Context context) {
         this(context, null);
