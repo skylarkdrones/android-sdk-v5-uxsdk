@@ -21,6 +21,7 @@ import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.ViewUtil;
+import dji.v5.ux.core.widget.setting.SettingPanelState;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -42,8 +43,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private static final int MAX_ALTITUDE = 120;
     private static final int MIN_DISTANCE = 20;
     private static final int MAX_DISTANCE = 1000;
-
-    private boolean isCertificationBuild = false;
 
     private static final float LIMIT_BUFFER = 0.01F;
 
@@ -71,7 +70,7 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     }
 
     private void setupLimits() {
-        if (isCertificationBuild) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild()) {
             restrictDistanceLimitCell();
             setupDistanceLimit();
             setupAltitudeLimit();
@@ -162,26 +161,26 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     }
 
     private void updateDistanceLimit(Integer integer) {
-        if (isCertificationBuild) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild()) {
             mMaxRadiusEditorCell.setValue(Math.min((int)bufferDistanceLimitMeters, integer));
         } else {
             mMaxRadiusEditorCell.setValue(integer);
         }
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (isCertificationBuild && integer > bufferDistanceLimitMeters) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild() && integer > bufferDistanceLimitMeters) {
             widgetModel.setDistanceLimit((int)bufferDistanceLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
 
     private void updateHeightLimit(Integer integer) {
-        if (isCertificationBuild) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild()) {
             currMaxHeight = Math.min((int)bufferAltitudeLimitMeters, integer);
         } else {
             currMaxHeight = integer;
         }
         mMaxHeightEditCell.setValue(currMaxHeight);
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (isCertificationBuild && integer > bufferAltitudeLimitMeters) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild() && integer > bufferAltitudeLimitMeters) {
             widgetModel.setHeightLimit((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
@@ -189,7 +188,7 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private void updateGoHomeHeight(Integer integer) {
         mGoHomeEditCell.setValue(integer);
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (isCertificationBuild && integer > (int)bufferAltitudeLimitMeters) {
+        if (SettingPanelState.INSTANCE.isCertificationBuild() && integer > (int)bufferAltitudeLimitMeters) {
             widgetModel.setGoHomeHeight((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
