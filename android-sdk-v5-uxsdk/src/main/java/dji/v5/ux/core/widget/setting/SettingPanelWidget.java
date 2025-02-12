@@ -64,8 +64,6 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
 
     private SettingPanelWidgetModel widgetModel = new SettingPanelWidgetModel(DJISDKModel.getInstance(), ObservableInMemoryKeyedStore.getInstance());
 
-    private WidgetState settingPanelState = WidgetState.INSTANCE;
-
     public SettingPanelWidget(Context context) {
         this(context, null);
     }
@@ -101,7 +99,7 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
     }
 
     public void setCertificationBuild(boolean isCertificationBuild) {
-        settingPanelState.setCertificationBuild(isCertificationBuild);
+        WidgetState.INSTANCE.setCertificationBuild(isCertificationBuild);
     }
 
     protected void prepareData() {
