@@ -33,7 +33,7 @@ class AvoidanceShortcutWidgetModel(
 
      val productTypeProcessor: DataProcessor<ProductType> = DataProcessor.create(ProductType.UNKNOWN)
      val flightModeProcessor: DataProcessor<FCFlightMode> = DataProcessor.create(FCFlightMode.UNKNOWN)
-     val obstacleAvoidanceTypeProcessor: DataProcessor<ObstacleAvoidanceType> = DataProcessor.create(ObstacleAvoidanceType.CLOSE)
+     val obstacleAvoidanceTypeProcessor: DataProcessor<ObstacleAvoidanceType> = DataProcessor.create(ObstacleAvoidanceType.BRAKE)
 
     private val perceptionManager = PerceptionManager.getInstance()
     private val perceptionInformationListener = PerceptionInformationListener{
