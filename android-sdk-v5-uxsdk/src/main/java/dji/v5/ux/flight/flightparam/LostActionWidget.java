@@ -14,7 +14,7 @@ import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
-import dji.v5.ux.core.widget.setting.WidgetState;
+import dji.v5.ux.core.widget.WidgetState;
 
 public class LostActionWidget extends ConstraintLayoutWidget<Object> {
 

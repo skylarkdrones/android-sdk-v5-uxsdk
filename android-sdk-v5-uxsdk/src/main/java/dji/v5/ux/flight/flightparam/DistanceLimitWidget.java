@@ -21,7 +21,7 @@ import dji.v5.ux.core.base.SwitcherCell;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
 import dji.v5.ux.core.util.ViewUtil;
-import dji.v5.ux.core.widget.setting.WidgetState;
+import dji.v5.ux.core.widget.WidgetState;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 
