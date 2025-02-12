@@ -98,10 +98,6 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
         }
     }
 
-    public void setCertificationBuild(boolean isCertificationBuild) {
-        WidgetState.INSTANCE.setCertificationBuild(isCertificationBuild);
-    }
-
     protected void prepareData() {
         mCompositeDisposable.add(widgetModel.getRcModeProcessor().toFlowableOnUI().distinctUntilChanged().subscribe(rcMode -> {
             if (rcMode != RCMode.UNKNOWN && rcMode != mCurrentRcMode) {
