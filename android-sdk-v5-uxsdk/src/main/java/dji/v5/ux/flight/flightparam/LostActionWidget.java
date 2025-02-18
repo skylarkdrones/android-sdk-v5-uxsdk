@@ -23,17 +23,14 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
 
     public LostActionWidget(@NonNull Context context) {
         super(context);
-        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setupLostSignalAction();
     }
 
     @Override
@@ -44,6 +41,7 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
             FailsafeAction value = FailsafeAction.find(position);
             widgetModel.setLostAction(value).subscribe();
         });
+        setupLostSignalAction();
     }
 
     private void setupLostSignalAction() {

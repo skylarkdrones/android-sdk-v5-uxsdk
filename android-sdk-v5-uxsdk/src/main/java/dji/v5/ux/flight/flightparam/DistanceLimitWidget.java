@@ -56,17 +56,14 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
 
     public DistanceLimitWidget(@NonNull Context context) {
         super(context);
-        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setupLimits();
     }
 
     private void setupLimits() {
@@ -107,6 +104,8 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
                 mMaxRadiusEditorCell.setVisibility(GONE);
             }
         });
+
+        setupLimits();
     }
 
     private void setupAltitudeLimit() {
