@@ -16,6 +16,6 @@ object CertificationUtils {
         return Gson().fromJson(
             flag,
             object : TypeToken<Boolean>() {}.type
-        )
+        ) ?: false
     }
 }

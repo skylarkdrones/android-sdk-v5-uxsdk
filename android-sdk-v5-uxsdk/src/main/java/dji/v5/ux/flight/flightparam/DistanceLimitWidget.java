@@ -7,6 +7,7 @@ import static dji.v5.ux.core.base.SchedulerProvider.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,7 +106,13 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
             }
         });
 
-        setupLimits();
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setupLimits();
+            }
+        });
     }
 
     private void setupAltitudeLimit() {
