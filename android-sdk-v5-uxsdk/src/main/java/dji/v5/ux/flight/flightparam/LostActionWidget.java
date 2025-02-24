@@ -3,7 +3,6 @@ package dji.v5.ux.flight.flightparam;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,14 +41,6 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
             FailsafeAction value = FailsafeAction.find(position);
             widgetModel.setLostAction(value).subscribe();
         });
-
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setupLostSignalAction();
-            }
-        });
     }
 
     private void setupLostSignalAction() {
@@ -62,6 +53,7 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
     @Override
     protected void reactToModelChanges() {
         addReaction(widgetModel.getLostActionFlowable().observeOn(SchedulerProvider.ui()).subscribe(this::updateSelection));
+        setupLostSignalAction();
     }
 
     private void updateSelection(FailsafeAction failsafeAction) {

@@ -48,9 +48,6 @@ class RCPairingWidget @JvmOverloads constructor(
 
     override fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         binding = UxsdkWidgetRcCheckFrequencyLayoutBinding.inflate(LayoutInflater.from(context),this,true)
-        if (CertificationUtils.isCertificationBuild()) {
-            binding.root.visibility = View.GONE
-        }
     }
 
     override fun reactToModelChanges() {
@@ -120,7 +117,9 @@ class RCPairingWidget @JvmOverloads constructor(
             }
         }
 
-
+        if (CertificationUtils.isCertificationBuild()) {
+            binding.root.visibility = View.GONE
+        }
     }
 
 

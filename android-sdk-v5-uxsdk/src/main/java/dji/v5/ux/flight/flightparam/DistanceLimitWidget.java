@@ -7,7 +7,6 @@ import static dji.v5.ux.core.base.SchedulerProvider.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,14 +104,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
                 mMaxRadiusEditorCell.setVisibility(GONE);
             }
         });
-
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setupLimits();
-            }
-        });
     }
 
     private void setupAltitudeLimit() {
@@ -146,6 +137,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         addReaction(widgetModel.getDistanceLimit().observeOn(ui()).subscribe(this::updateDistanceLimit));
         addReaction(widgetModel.getDistanceLimitEnabled().observeOn(ui()).subscribe(this::updateDistanceLimitEnable));
         addReaction(widgetModel.getGoHomePathMode().observeOn(ui()).subscribe(this::updateGoHomeMode));
+
+        // Setup certification build limits
+        setupLimits();
     }
 
     private void updateGoHomeMode(GoHomePathMode goHomePathMode) {
