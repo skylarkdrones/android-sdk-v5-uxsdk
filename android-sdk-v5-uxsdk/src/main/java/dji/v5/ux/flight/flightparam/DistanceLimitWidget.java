@@ -56,17 +56,14 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
 
     public DistanceLimitWidget(@NonNull Context context) {
         super(context);
-        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setupLimits();
     }
 
     public DistanceLimitWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setupLimits();
     }
 
     private void setupLimits() {
@@ -140,6 +137,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         addReaction(widgetModel.getDistanceLimit().observeOn(ui()).subscribe(this::updateDistanceLimit));
         addReaction(widgetModel.getDistanceLimitEnabled().observeOn(ui()).subscribe(this::updateDistanceLimitEnable));
         addReaction(widgetModel.getGoHomePathMode().observeOn(ui()).subscribe(this::updateGoHomeMode));
+
+        // Setup certification build limits
+        setupLimits();
     }
 
     private void updateGoHomeMode(GoHomePathMode goHomePathMode) {

@@ -23,17 +23,14 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
 
     public LostActionWidget(@NonNull Context context) {
         super(context);
-        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setupLostSignalAction();
     }
 
     public LostActionWidget(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setupLostSignalAction();
     }
 
     @Override
@@ -56,6 +53,7 @@ public class LostActionWidget extends ConstraintLayoutWidget<Object> {
     @Override
     protected void reactToModelChanges() {
         addReaction(widgetModel.getLostActionFlowable().observeOn(SchedulerProvider.ui()).subscribe(this::updateSelection));
+        setupLostSignalAction();
     }
 
     private void updateSelection(FailsafeAction failsafeAction) {
