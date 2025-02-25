@@ -14,7 +14,6 @@ import dji.v5.ux.core.base.DJISDKModel;
 import dji.v5.ux.core.base.SchedulerProvider;
 import dji.v5.ux.core.base.widget.ConstraintLayoutWidget;
 import dji.v5.ux.core.communication.ObservableInMemoryKeyedStore;
-import dji.v5.ux.core.widget.CertificationUtils;
 
 public class FlightModeWidget extends ConstraintLayoutWidget<Object> {
 
@@ -32,9 +31,7 @@ public class FlightModeWidget extends ConstraintLayoutWidget<Object> {
 
     @Override
     protected void initView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        if (!CertificationUtils.INSTANCE.isCertificationBuild()) {
-            inflate(context, R.layout.uxsdk_widget_flight_fpa, this);
-        }
+        inflate(context, R.layout.uxsdk_widget_flight_fpa, this);
 
     }
 
