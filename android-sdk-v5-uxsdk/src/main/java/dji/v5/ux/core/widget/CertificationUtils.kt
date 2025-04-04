@@ -18,9 +18,6 @@ object CertificationUtils {
     private const val DEFAULT_MAX_DISTANCE_LIMIT = 1000.0
     private const val DEFAULT_MAX_ALTITUDE_LIMIT = 120.0
 
-    private const val DEFAULT_MIN_DISTANCE_LIMIT = 20.0
-    private const val DEFAULT_MIN_ALTITUDE_LIMIT = 20.0
-
     fun isCertificationBuild(): Boolean {
         val flag = DataStoreManagerDJIV5.get(
             DataStoreManagerDJIV5.EndPoints.IS_CERTIFICATION_BUILD.endPoint
@@ -33,24 +30,6 @@ object CertificationUtils {
         } catch (e: Exception) {
             Log.d(TAG, "isCertificationBuild: fetch failed, reason: ${e.message}")
             return false
-        }
-    }
-
-    fun getMinDistanceLimit(): Int {
-        return try {
-            (getDataParams()?.distance?.min ?: DEFAULT_MAX_DISTANCE_LIMIT).toInt()
-        } catch (e: Exception) {
-            Log.d(TAG, "CertificationDataPrams distance: fetch failed, reason: ${e.message}")
-            DEFAULT_MIN_DISTANCE_LIMIT.toInt()
-        }
-    }
-
-    fun getMinAltitudeLimit(): Int {
-        return try {
-            (getDataParams()?.altitude?.min ?: DEFAULT_MAX_ALTITUDE_LIMIT).toInt()
-        } catch (e: Exception) {
-            Log.d(TAG, "CertificationDataPrams altitude: fetch failed, reason: ${e.message}")
-            DEFAULT_MIN_ALTITUDE_LIMIT.toInt()
         }
     }
 

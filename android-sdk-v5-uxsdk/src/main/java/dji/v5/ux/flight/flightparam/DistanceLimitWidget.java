@@ -39,9 +39,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private static final int ALARM_HEIGHT = 120;
     private static final int CONFIRM_ALARM_HEIGHT = 500;
 
-    private static final int MIN_ALTITUDE = CertificationUtils.INSTANCE.getMinAltitudeLimit();
+    private static final int MIN_ALTITUDE = 20;
     private static final int MAX_ALTITUDE = CertificationUtils.INSTANCE.getMaxAltitudeLimit();
-    private static final int MIN_DISTANCE = CertificationUtils.INSTANCE.getMinDistanceLimit();
+    private static final int MIN_DISTANCE = 20;
     private static final int MAX_DISTANCE = CertificationUtils.INSTANCE.getMaxDistanceLimit();
 
     private static final float LIMIT_BUFFER = 0.01F;
