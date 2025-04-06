@@ -3,7 +3,7 @@ package dji.v5.ux.core.widget
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dji.v5.ux.core.model.DataParams
+import dji.v5.ux.core.model.FirmwareDataConfig
 import dji.v5.ux.core.util.units.DataStoreManagerDJIV5
 
 /**
@@ -51,13 +51,13 @@ object CertificationUtils {
         }
     }
 
-    private fun getDataParams(): DataParams? {
+    private fun getDataParams(): FirmwareDataConfig? {
         val data = DataStoreManagerDJIV5.get(
             DataStoreManagerDJIV5.EndPoints.CERTIFICATION_DATA_PARAMS.endPoint
         )
-        return Gson().fromJson<DataParams>(
+        return Gson().fromJson<FirmwareDataConfig>(
             data,
-            object : TypeToken<DataParams>() {}.type
+            object : TypeToken<FirmwareDataConfig>() {}.type
         )
     }
 }

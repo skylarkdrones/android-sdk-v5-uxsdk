@@ -2,15 +2,15 @@ package dji.v5.ux.core.model
 
 import com.google.gson.annotations.SerializedName
 
-data class DataParams(
+data class FirmwareDataConfig(
     @SerializedName("altitude")
-    val altitude: Data,
+    val altitude: FirmwareDataParam,
 
     @SerializedName("distance")
-    val distance: Data,
+    val distance: FirmwareDataParam,
 )
 
-data class Data(
+data class FirmwareDataParam(
     @SerializedName("min")
     val min: Double,
 
