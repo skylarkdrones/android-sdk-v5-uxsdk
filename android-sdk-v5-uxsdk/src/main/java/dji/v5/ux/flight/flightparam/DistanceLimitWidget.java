@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 
 import dji.sdk.keyvalue.value.flightcontroller.GoHomePathMode;
 import dji.v5.ux.R;
@@ -40,18 +41,18 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private static final int CONFIRM_ALARM_HEIGHT = 500;
 
     private static final int MIN_ALTITUDE = 20;
-    private static final int MAX_ALTITUDE = CertificationUtils.INSTANCE.getMaxAltitudeLimit();
+    private int MAX_ALTITUDE = 120;
     private static final int MIN_DISTANCE = 20;
-    private static final int MAX_DISTANCE = CertificationUtils.INSTANCE.getMaxDistanceLimit();
+    private int MAX_DISTANCE = 1000;
 
     private static final float LIMIT_BUFFER = 0.01F;
 
     // Temporary variable for setting Max Altitude with 1% of buffer.
-    private static final float bufferAltitudeLimitMeters =
+    private float bufferAltitudeLimitMeters =
             MAX_ALTITUDE + (MAX_ALTITUDE * LIMIT_BUFFER);
 
     // Temporary variable for setting Max Distance with 1% of buffer.
-    private static final float bufferDistanceLimitMeters =
+    private float bufferDistanceLimitMeters =
             MAX_DISTANCE + (MAX_DISTANCE * LIMIT_BUFFER);
 
     public DistanceLimitWidget(@NonNull Context context) {
@@ -66,13 +67,49 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         super(context, attrs, defStyleAttr);
     }
 
-    private void setupLimits() {
+    private void setupLimits(int maxDistance, int maxAltitude) {
+        setupLimitAndBuffer(maxDistance, maxAltitude);
+        restrictDistanceLimitCell();
+        setupDistanceLimit();
+        setupAltitudeLimit();
+        setupRTHLimit();
+    }
+
+    private void observeLimits() {
         if (CertificationUtils.INSTANCE.isCertificationBuild()) {
-            restrictDistanceLimitCell();
-            setupDistanceLimit();
-            setupAltitudeLimit();
-            setupRTHLimit();
+            CertificationUtils.INSTANCE.observeDataParams().observe(
+                    (LifecycleOwner) getContext(),
+                    firmwareDataConfig -> {
+                        int maxDistance = MAX_DISTANCE;
+                        int maxAltitude = MAX_ALTITUDE;
+                        if (firmwareDataConfig != null) {
+                            maxDistance = (int)(firmwareDataConfig.getDistance().getMax());
+                            maxAltitude = (int)(firmwareDataConfig.getAltitude().getMax());
+                        }
+
+                        setupLimits(
+                                maxDistance,
+                                maxAltitude
+                        );
+
+                        // Update the cell values with existing to trigger checks & be within new
+                        // limit.
+                        updateHeightLimit(mMaxHeightEditCell.getValue());
+                        updateDistanceLimit(mMaxRadiusEditorCell.getValue());
+                        updateGoHomeHeight(mGoHomeEditCell.getValue());
+                    });
         }
+    }
+
+    private void setupLimitAndBuffer(int maxDistance, int maxAltitude) {
+        MAX_ALTITUDE = maxAltitude;
+        MAX_DISTANCE = maxDistance;
+
+        bufferAltitudeLimitMeters =
+                MAX_ALTITUDE + (MAX_ALTITUDE * LIMIT_BUFFER);
+
+        bufferDistanceLimitMeters =
+                MAX_DISTANCE + (MAX_DISTANCE * LIMIT_BUFFER);
     }
 
     /**
@@ -139,7 +176,7 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
         addReaction(widgetModel.getGoHomePathMode().observeOn(ui()).subscribe(this::updateGoHomeMode));
 
         // Setup certification build limits
-        setupLimits();
+        observeLimits();
     }
 
     private void updateGoHomeMode(GoHomePathMode goHomePathMode) {

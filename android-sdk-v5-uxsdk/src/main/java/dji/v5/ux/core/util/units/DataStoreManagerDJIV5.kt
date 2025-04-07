@@ -3,6 +3,7 @@ package dji.v5.ux.core.util.units
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -35,6 +36,16 @@ object DataStoreManagerDJIV5 {
                 prefsDataStore.data.map {
                     it[stringPreferencesKey(key)]
                 }.firstOrNull()
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun observe(key: String): Flow<String?>? {
+        return try {
+            prefsDataStore.data.map {
+                it[stringPreferencesKey(key)]
             }
         } catch (e: Exception) {
             null

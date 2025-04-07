@@ -1,10 +1,14 @@
 package dji.v5.ux.core.widget
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dji.v5.ux.core.model.FirmwareDataConfig
 import dji.v5.ux.core.util.units.DataStoreManagerDJIV5
+import kotlinx.coroutines.flow.map
 
 /**
  * This class acts as a state holder for any flags or variables that maybe constant or set
@@ -33,31 +37,18 @@ object CertificationUtils {
         }
     }
 
-    fun getMaxDistanceLimit(): Int {
+    fun observeDataParams(): LiveData<FirmwareDataConfig?> {
         return try {
-            (getDataParams()?.distance?.max ?: DEFAULT_MAX_DISTANCE_LIMIT).toInt()
+            DataStoreManagerDJIV5.observe(
+                DataStoreManagerDJIV5.EndPoints.CERTIFICATION_DATA_PARAMS.endPoint
+            )?.map { data ->
+                Gson().fromJson<FirmwareDataConfig>(
+                    data,
+                    object : TypeToken<FirmwareDataConfig>() {}.type
+                )
+            }?.asLiveData() ?: liveData { emit(null) }
         } catch (e: Exception) {
-            Log.d(TAG, "CertificationDataPrams distance: fetch failed, reason: ${e.message}")
-            DEFAULT_MAX_DISTANCE_LIMIT.toInt()
+            liveData { emit(null) }
         }
-    }
-
-    fun getMaxAltitudeLimit(): Int {
-        return try {
-            (getDataParams()?.altitude?.max ?: DEFAULT_MAX_ALTITUDE_LIMIT).toInt()
-        } catch (e: Exception) {
-            Log.d(TAG, "CertificationDataPrams altitude: fetch failed, reason: ${e.message}")
-            DEFAULT_MAX_ALTITUDE_LIMIT.toInt()
-        }
-    }
-
-    private fun getDataParams(): FirmwareDataConfig? {
-        val data = DataStoreManagerDJIV5.get(
-            DataStoreManagerDJIV5.EndPoints.CERTIFICATION_DATA_PARAMS.endPoint
-        )
-        return Gson().fromJson<FirmwareDataConfig>(
-            data,
-            object : TypeToken<FirmwareDataConfig>() {}.type
-        )
     }
 }
