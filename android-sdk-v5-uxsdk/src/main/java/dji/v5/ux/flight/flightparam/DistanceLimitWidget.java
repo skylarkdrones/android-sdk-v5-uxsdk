@@ -77,16 +77,9 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
 
     private void observeLimits() {
         if (CertificationUtils.INSTANCE.isCertificationBuild()) {
-            CertificationUtils.INSTANCE.observeDataParams().observe(
+            CertificationUtils.INSTANCE.observeDataParams(
                     (LifecycleOwner) getContext(),
-                    firmwareDataConfig -> {
-                        int maxDistance = MAX_DISTANCE;
-                        int maxAltitude = MAX_ALTITUDE;
-                        if (firmwareDataConfig != null) {
-                            maxDistance = (int)(firmwareDataConfig.getDistance().getMax());
-                            maxAltitude = (int)(firmwareDataConfig.getAltitude().getMax());
-                        }
-
+                    (maxDistance, maxAltitude) -> {
                         setupLimits(
                                 maxDistance,
                                 maxAltitude
@@ -97,6 +90,8 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
                         updateHeightLimit(mMaxHeightEditCell.getValue());
                         updateDistanceLimit(mMaxRadiusEditorCell.getValue());
                         updateGoHomeHeight(mGoHomeEditCell.getValue());
+
+                        return null;
                     });
         }
     }

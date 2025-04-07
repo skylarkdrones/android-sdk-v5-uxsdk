@@ -1,14 +1,15 @@
 package dji.v5.ux.core.widget
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dji.v5.ux.core.model.FirmwareDataConfig
 import dji.v5.ux.core.util.units.DataStoreManagerDJIV5
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * This class acts as a state holder for any flags or variables that maybe constant or set
@@ -37,18 +38,25 @@ object CertificationUtils {
         }
     }
 
-    fun observeDataParams(): LiveData<FirmwareDataConfig?> {
-        return try {
-            DataStoreManagerDJIV5.observe(
-                DataStoreManagerDJIV5.EndPoints.CERTIFICATION_DATA_PARAMS.endPoint
-            )?.map { data ->
-                Gson().fromJson<FirmwareDataConfig>(
-                    data,
-                    object : TypeToken<FirmwareDataConfig>() {}.type
-                )
-            }?.asLiveData() ?: liveData { emit(null) }
+    fun observeDataParams(owner: LifecycleOwner, onValueChanged: (Int, Int) -> Unit) {
+        try {
+            owner.lifecycleScope.launch {
+                DataStoreManagerDJIV5.observe(
+                    DataStoreManagerDJIV5.EndPoints.CERTIFICATION_DATA_PARAMS.endPoint
+                )?.map { data ->
+                    Gson().fromJson<FirmwareDataConfig>(
+                        data,
+                        object : TypeToken<FirmwareDataConfig>() {}.type
+                    )
+                }?.collectLatest { firmwareDataConfig ->
+                    onValueChanged(
+                        (firmwareDataConfig?.distance?.max ?: DEFAULT_MAX_DISTANCE_LIMIT).toInt(),
+                        (firmwareDataConfig?.altitude?.max ?: DEFAULT_MAX_ALTITUDE_LIMIT).toInt(),
+                    )
+                }
+            }
         } catch (e: Exception) {
-            liveData { emit(null) }
+            onValueChanged(DEFAULT_MAX_DISTANCE_LIMIT.toInt(), DEFAULT_MAX_ALTITUDE_LIMIT.toInt())
         }
     }
 }
