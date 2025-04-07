@@ -3,6 +3,7 @@ package dji.v5.ux.core.util.units
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -18,6 +19,7 @@ object DataStoreManagerDJIV5 {
         AREA_UNIT_PREFERENCE("area_unit_preference"),
         TEMPERATURE_UNIT_PREFERENCE("temperature_unit_preference"),
         IS_CERTIFICATION_BUILD("is_certification_build"),
+        CERTIFICATION_DATA_PARAMS("certification_data_params"),
     }
 
     /**
@@ -34,6 +36,16 @@ object DataStoreManagerDJIV5 {
                 prefsDataStore.data.map {
                     it[stringPreferencesKey(key)]
                 }.firstOrNull()
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun observe(key: String): Flow<String?>? {
+        return try {
+            prefsDataStore.data.map {
+                it[stringPreferencesKey(key)]
             }
         } catch (e: Exception) {
             null
