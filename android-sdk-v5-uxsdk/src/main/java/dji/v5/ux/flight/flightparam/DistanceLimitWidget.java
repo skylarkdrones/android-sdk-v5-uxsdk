@@ -45,16 +45,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private static final int MIN_DISTANCE = 20;
     private int MAX_DISTANCE = 1000;
 
-    private static final float LIMIT_BUFFER = 0.01F;
-
-    // Temporary variable for setting Max Altitude with 1% of buffer.
-    private float bufferAltitudeLimitMeters =
-            MAX_ALTITUDE + (MAX_ALTITUDE * LIMIT_BUFFER);
-
-    // Temporary variable for setting Max Distance with 1% of buffer.
-    private float bufferDistanceLimitMeters =
-            MAX_DISTANCE + (MAX_DISTANCE * LIMIT_BUFFER);
-
     public DistanceLimitWidget(@NonNull Context context) {
         super(context);
     }
@@ -99,12 +89,6 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     private void setupLimitAndBuffer(int maxDistance, int maxAltitude) {
         MAX_ALTITUDE = maxAltitude;
         MAX_DISTANCE = maxDistance;
-
-        bufferAltitudeLimitMeters =
-                MAX_ALTITUDE + (MAX_ALTITUDE * LIMIT_BUFFER);
-
-        bufferDistanceLimitMeters =
-                MAX_DISTANCE + (MAX_DISTANCE * LIMIT_BUFFER);
     }
 
     /**
@@ -139,23 +123,23 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
     }
 
     private void setupAltitudeLimit() {
-        setMaxHeight((int)bufferAltitudeLimitMeters);
+        setMaxHeight(MAX_ALTITUDE);
 
         mMaxHeightEditCell.setMinValue(MIN_ALTITUDE);
-        mMaxHeightEditCell.setMaxValue((int)bufferAltitudeLimitMeters);
-        mMaxHeightEditCell.setTips(MIN_ALTITUDE + "~" + (int)bufferAltitudeLimitMeters + "m");
+        mMaxHeightEditCell.setMaxValue(MAX_ALTITUDE);
+        mMaxHeightEditCell.setTips(MIN_ALTITUDE + "~" + MAX_ALTITUDE + "m");
     }
 
     private void setupRTHLimit() {
         mGoHomeEditCell.setMinValue(MIN_ALTITUDE);
-        mGoHomeEditCell.setMaxValue((int)bufferAltitudeLimitMeters);
-        mGoHomeEditCell.setTips(MIN_ALTITUDE + "~" + (int)bufferAltitudeLimitMeters + "m");
+        mGoHomeEditCell.setMaxValue(MAX_ALTITUDE);
+        mGoHomeEditCell.setTips(MIN_ALTITUDE + "~" + MAX_ALTITUDE + "m");
     }
 
     private void setupDistanceLimit() {
         mMaxRadiusEditorCell.setMinValue(MIN_DISTANCE);
-        mMaxRadiusEditorCell.setMaxValue((int)bufferDistanceLimitMeters);
-        mMaxRadiusEditorCell.setTips(MIN_DISTANCE + "~" + (int)bufferDistanceLimitMeters + "m");
+        mMaxRadiusEditorCell.setMaxValue(MAX_DISTANCE);
+        mMaxRadiusEditorCell.setTips(MIN_DISTANCE + "~" + MAX_DISTANCE + "m");
     }
 
     public void setMaxHeight(int maxHeight) {
@@ -194,34 +178,34 @@ public class DistanceLimitWidget extends ConstraintLayoutWidget<Object> implemen
 
     private void updateDistanceLimit(Integer integer) {
         if (CertificationUtils.INSTANCE.isCertificationBuild()) {
-            mMaxRadiusEditorCell.setValue(Math.min((int)bufferDistanceLimitMeters, integer));
+            mMaxRadiusEditorCell.setValue(Math.min(MAX_DISTANCE, integer));
         } else {
             mMaxRadiusEditorCell.setValue(integer);
         }
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > bufferDistanceLimitMeters) {
-            widgetModel.setDistanceLimit((int)bufferDistanceLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > MAX_DISTANCE) {
+            widgetModel.setDistanceLimit(MAX_DISTANCE).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
 
     private void updateHeightLimit(Integer integer) {
         if (CertificationUtils.INSTANCE.isCertificationBuild()) {
-            currMaxHeight = Math.min((int)bufferAltitudeLimitMeters, integer);
+            currMaxHeight = Math.min(MAX_ALTITUDE, integer);
         } else {
             currMaxHeight = integer;
         }
         mMaxHeightEditCell.setValue(currMaxHeight);
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > bufferAltitudeLimitMeters) {
-            widgetModel.setHeightLimit((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > MAX_ALTITUDE) {
+            widgetModel.setHeightLimit(MAX_ALTITUDE).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
 
     private void updateGoHomeHeight(Integer integer) {
         mGoHomeEditCell.setValue(integer);
         // This check ensures the initial value set on drone is caught and reset accordingly
-        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > (int)bufferAltitudeLimitMeters) {
-            widgetModel.setGoHomeHeight((int)bufferAltitudeLimitMeters).observeOn(ui()).subscribe(getFinishObserve());
+        if (CertificationUtils.INSTANCE.isCertificationBuild() && integer > MAX_ALTITUDE) {
+            widgetModel.setGoHomeHeight(MAX_ALTITUDE).observeOn(ui()).subscribe(getFinishObserve());
         }
     }
 
