@@ -82,7 +82,7 @@ publishing {
         release(MavenPublication) {
             groupId = "com.skylarkdrones.dronemissionops"
             artifactId = "uxsdk"
-            version = "5.12.0-alpha"
+            version = "5.14.0-alpha"
 
             afterEvaluate {
                 from components.release
