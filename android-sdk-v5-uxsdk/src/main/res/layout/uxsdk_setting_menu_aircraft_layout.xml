@@ -29,8 +29,9 @@
        android:background="@color/uxsdk_dic_color_c20_divider" />
 
   <dji.v5.ux.flight.flightparam.FlightModeWidget
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:id="@+id/widgetFlightMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
   <dji.v5.ux.flight.flightparam.ReturnHomeModeWidget
       android:layout_width="match_parent"

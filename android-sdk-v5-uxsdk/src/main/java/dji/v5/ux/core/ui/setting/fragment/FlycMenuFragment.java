@@ -42,12 +42,19 @@ public class FlycMenuFragment extends MenuFragment {
         });
 
         hideHomePointWidget(view);
+        hideFlightModeWidget(view);
     }
 
     private void hideHomePointWidget(View view) {
         if (CertificationUtils.INSTANCE.isCertificationBuild()) {
             view.findViewById(R.id.homePointWidget).setVisibility(View.GONE);
             view.findViewById(R.id.dividerHomePointWidget).setVisibility(View.GONE);
+        }
+    }
+
+    private void hideFlightModeWidget(View view) {
+        if (CertificationUtils.INSTANCE.isCertificationBuild()) {
+            view.findViewById(R.id.widgetFlightMode).setVisibility(View.GONE);
         }
     }
 }
