@@ -17,10 +17,12 @@
         android:descendantFocusability="afterDescendants">
 
    <dji.v5.ux.flight.flightparam.HomePointWidget
+       android:id="@+id/homePointWidget"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"/>
 
    <View
+       android:id="@+id/dividerHomePointWidget"
        android:layout_width="match_parent"
        android:layout_height="@dimen/uxsdk_divider_size_medium"
        android:layout_marginTop="@dimen/uxsdk_vertical_margin_minimal"
