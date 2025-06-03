@@ -14,6 +14,7 @@
         android:tag="setting:multi_rc:default"
         app:uxsdk_summary="@string/uxsdk_setting_menu_flyc_failSafe_title"
         app:uxsdk_entries="@array/uxsdk_fail_safe"
+        android:paddingBottom="@dimen/uxsdk_100_dp"
         />
 
 </merge>
