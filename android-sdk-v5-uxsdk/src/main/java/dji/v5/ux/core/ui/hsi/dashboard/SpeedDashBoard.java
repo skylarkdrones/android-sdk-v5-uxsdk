@@ -119,22 +119,22 @@ public class SpeedDashBoard extends ScrollableAttributeDashBoard {
         if (tmp < 0) {
             tmp = 0;
         }
+        float speedInMetersPerSecond = (float) Math.sqrt(tmp);
 
-        if (speedUnit == null) {
-            speedUnit = UnitsDJIV5.METRE_PER_SECOND.name();
+        UnitsDJIV5 unit;
+        try {
+            unit = speedUnit == null ? UnitsDJIV5.METRE_PER_SECOND : UnitsDJIV5.valueOf(speedUnit);
+        } catch (IllegalArgumentException e) {
+            unit = UnitsDJIV5.METRE_PER_SECOND;
         }
 
-        if (speedUnit.equals(UnitsDJIV5.MILES_PER_HOUR.name())) {
-            return (float) Math.sqrt(tmp);
-        }
-
-        // convert miles per hour to meters per second
-        float speedInMetersPerSecond =
-                UnitConversionUtil.convertMilesPerHrToMetersPerSec((float) Math.sqrt(tmp));
-        if (speedUnit.equals(UnitsDJIV5.KILOMETRE_PER_HOUR.name())) {
-            return UnitConversionUtil.convertMetersPerSecToKmPerHr(speedInMetersPerSecond);
-        } else {
-            return speedInMetersPerSecond;
+        switch (unit) {
+            case MILES_PER_HOUR:
+                return UnitConversionUtil.convertMetersPerSecToMilesPerHr(speedInMetersPerSecond);
+            case KILOMETRE_PER_HOUR:
+                return UnitConversionUtil.convertMetersPerSecToKmPerHr(speedInMetersPerSecond);
+            default:
+                return speedInMetersPerSecond;
         }
     }
 
