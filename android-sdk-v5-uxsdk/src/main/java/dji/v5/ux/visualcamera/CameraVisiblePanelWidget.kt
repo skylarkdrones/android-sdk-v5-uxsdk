@@ -3,6 +3,7 @@ package dji.v5.ux.visualcamera
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import dji.sdk.keyvalue.value.common.CameraLensType
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.v5.ux.R
@@ -21,6 +22,8 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     private var mCameraIndex = ComponentIndexType.LEFT_OR_MAIN
     private var mLensType = CameraLensType.CAMERA_LENS_ZOOM
     private var controlVisibility = false
+
+    private var photoTypeListener: PhotoTypeListener? = null
 
     override fun getCameraIndex(): ComponentIndexType {
         return mCameraIndex
@@ -54,11 +57,21 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
             setBackgroundResource(R.drawable.uxsdk_background_black_rounded)
         }
 
+        binding.widgetCameraConfigStorage.apply {
+            setOnClickListener {
+                photoTypeListener?.onClick(it)
+            }
+        }
+
         updateUI()
     }
 
     init {
         attrs?.let { initAttributes(context, it) }
+    }
+
+    fun setPhotoTypeListener(photoTypeListener: PhotoTypeListener) {
+        this.photoTypeListener = photoTypeListener
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
@@ -80,5 +93,9 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
 
     override fun reactToModelChanges() {
         //do nothing
+    }
+
+    interface PhotoTypeListener {
+        fun onClick(view: View)
     }
 }
