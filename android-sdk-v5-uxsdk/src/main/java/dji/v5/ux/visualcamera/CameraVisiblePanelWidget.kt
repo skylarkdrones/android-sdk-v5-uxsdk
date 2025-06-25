@@ -23,7 +23,7 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
     private var mLensType = CameraLensType.CAMERA_LENS_ZOOM
     private var controlVisibility = false
 
-    private var photoTypeListener: PhotoTypeListener? = null
+    private var cameraVisiblePanelListener: CameraVisiblePanelListener? = null
 
     override fun getCameraIndex(): ComponentIndexType {
         return mCameraIndex
@@ -59,7 +59,7 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
 
         binding.widgetCameraConfigStorage.apply {
             setOnClickListener {
-                photoTypeListener?.onClick(it)
+                cameraVisiblePanelListener?.onClickStorageWidget(it)
             }
         }
 
@@ -70,8 +70,8 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
         attrs?.let { initAttributes(context, it) }
     }
 
-    fun setPhotoTypeListener(photoTypeListener: PhotoTypeListener) {
-        this.photoTypeListener = photoTypeListener
+    fun setCameraVisiblePanelListener(cameraVisiblePanelListener: CameraVisiblePanelListener) {
+        this.cameraVisiblePanelListener = cameraVisiblePanelListener
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
@@ -95,7 +95,7 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
         //do nothing
     }
 
-    interface PhotoTypeListener {
-        fun onClick(view: View)
+    interface CameraVisiblePanelListener {
+        fun onClickStorageWidget(view: View)
     }
 }
