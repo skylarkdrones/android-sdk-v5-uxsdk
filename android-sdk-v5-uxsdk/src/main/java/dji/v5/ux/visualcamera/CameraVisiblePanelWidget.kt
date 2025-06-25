@@ -57,9 +57,18 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
             setBackgroundResource(R.drawable.uxsdk_background_black_rounded)
         }
 
-        binding.widgetCameraConfigStorage.apply {
-            setOnClickListener {
+        binding.apply {
+            widgetCameraConfigStorage.setOnClickListener {
                 cameraVisiblePanelListener?.onClickStorageWidget(it)
+            }
+            widgetCameraConfigAperture.setOnClickListener {
+                cameraVisiblePanelListener?.onClickApertureWidget(it)
+            }
+            widgetCameraConfigEv.setOnClickListener {
+                cameraVisiblePanelListener?.onClickExposureWidget(it)
+            }
+            widgetCameraConfigWb.setOnClickListener {
+                cameraVisiblePanelListener?.onClickWhiteBalanceWidget(it)
             }
         }
 
@@ -97,5 +106,8 @@ open class CameraVisiblePanelWidget @JvmOverloads constructor(
 
     interface CameraVisiblePanelListener {
         fun onClickStorageWidget(view: View)
+        fun onClickApertureWidget(view: View)
+        fun onClickExposureWidget(view: View)
+        fun onClickWhiteBalanceWidget(view: View)
     }
 }
