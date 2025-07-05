@@ -372,6 +372,11 @@
         <attr name="uxsdk_onStateChange" />
     </declare-styleable>
 
+    <declare-styleable name="FPVVisionWidget">
+        <attr name="uxsdk_arrowSelectedColor" format="color" />
+        <attr name="uxsdk_arrowUnSelectedColor" format="color" />
+    </declare-styleable>
+
     <declare-styleable name="RadarWidget">
         <attr name="uxsdk_forwardImages" format="reference" />
         <attr name="uxsdk_backwardImages" format="reference" />
