@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rc_profile_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="@color/uxsdk_black">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/uxsdk_16_dp"
+        android:text="@string/uxsdk_setting_ui_cutomize_button_title"
+        android:textColor="@color/uxsdk_white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+        android:id="@+id/buttonC1Selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/uxsdk_20_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+        android:id="@+id/buttonC2Selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/uxsdk_10_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonC1Selection" />
+
+    <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+        android:id="@+id/buttonC3Selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/uxsdk_10_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonC2Selection" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
