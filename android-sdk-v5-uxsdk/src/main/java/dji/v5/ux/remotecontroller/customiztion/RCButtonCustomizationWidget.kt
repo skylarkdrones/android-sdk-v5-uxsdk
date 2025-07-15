@@ -77,7 +77,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             val data = DataStoreManagerDJIV5.get(
                 DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint
             )
-            val innerJson = Gson().fromJson(data, String::class.java)
+            val innerJson = gson.fromJson(data, String::class.java)
             Log.d(TAG, "Data from DataStore: $innerJson")
             return gson.fromJson(innerJson, mapType)
         } catch (e: Exception) {
