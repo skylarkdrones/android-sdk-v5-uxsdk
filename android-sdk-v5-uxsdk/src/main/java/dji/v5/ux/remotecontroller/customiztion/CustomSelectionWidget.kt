@@ -2,6 +2,7 @@ package dji.v5.ux.remotecontroller.customiztion
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,6 +56,7 @@ class CustomSelectionWidget @JvmOverloads constructor(
     }
 
     fun select(position: Int) {
+        Log.d(TAG, "select: $position")
         if (position >= 0 && position < (mAdapter?.count ?: -1)) {
             binding.spinnerAction.setSelection(position, true)
             mSelectedPosition = position
@@ -85,12 +87,14 @@ class CustomSelectionWidget @JvmOverloads constructor(
 
                     }
                     if (mSelectedPosition == position) {
-                        view.setTextColor(ContextCompat.getColor(context, R.color.uxsdk_white))
+                        view.setTextColor(
+                            ContextCompat.getColor(context, R.color.uxsdk_edit_cell_text_color)
+                        )
                     } else {
                         view.setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.uxsdk_white_75_percent
+                                R.color.uxsdk_white,
                             )
                         )
                     }

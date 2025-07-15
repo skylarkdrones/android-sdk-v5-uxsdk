@@ -44,10 +44,11 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     private fun setSelectedAction(key: ButtonKey, action: ButtonAction) {
         runBlocking {
-            buttonSettings.toMutableMap()["${ButtonProfile.PROFILE_1}_$key"] = action
+            val mutableSettingsMap = buttonSettings.toMutableMap()
+            mutableSettingsMap["${ButtonProfile.PROFILE_1}_$key"] = action
             val result = DataStoreManagerDJIV5.set(
                 DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint,
-                gson.toJson(buttonSettings),
+                gson.toJson(mutableSettingsMap),
             )
             if (result) {
                 Toast.makeText(
@@ -66,18 +67,19 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun getSelectedAction(key: ButtonKey): ButtonAction {
+        Log.d(TAG, "Settings Map: $buttonSettings")
         return buttonSettings["${ButtonProfile.PROFILE_1}_$key"] ?: ButtonAction.UNDEFINED
     }
 
     private fun getButtonSettingsMap(): Map<String, ButtonAction> {
         try {
-            val mapType = object : TypeToken<Map<String, String>>() {}.type
-            return gson.fromJson(
-                DataStoreManagerDJIV5.get(
-                    DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint
-                ),
-                mapType,
+            val mapType = object : TypeToken<Map<String, ButtonAction>>() {}.type
+            val data = DataStoreManagerDJIV5.get(
+                DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint
             )
+            val innerJson = Gson().fromJson(data, String::class.java)
+            Log.d(TAG, "Data from DataStore: $innerJson")
+            return gson.fromJson(innerJson, mapType)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get button settings data, error: $e")
             return mapOf()
