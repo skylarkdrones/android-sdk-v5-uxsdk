@@ -9,7 +9,7 @@
     tools:background="@color/uxsdk_black">
 
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/textViewLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -18,17 +18,13 @@
         android:textColor="@color/uxsdk_white"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/selectedText"
+    <Spinner
+        android:id="@+id/spinnerAction"
         android:layout_width="0dp"
         android:layout_height="@dimen/uxsdk_40_dp"
-        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:layout_weight="1"
-        android:textAlignment="center"
         android:background="@drawable/uxsdk_spinner_blue_border"
-        android:paddingHorizontal="@dimen/uxsdk_16_dp"
-        android:textColor="@color/uxsdk_edit_cell_text_color"
-        app:drawableEndCompat="@drawable/uxsdk_arrow_down"
-        app:drawableTint="@color/uxsdk_light_gray" />
+        android:popupBackground="@drawable/uxsdk_spinner_blue_border"
+        android:spinnerMode="dropdown" />
 </LinearLayout>

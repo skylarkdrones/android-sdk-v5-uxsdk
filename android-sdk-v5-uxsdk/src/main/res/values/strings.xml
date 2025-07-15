@@ -1203,4 +1203,6 @@
     <string name="uxsdk_setting_ui_label_button_c1">C1</string>
     <string name="uxsdk_setting_ui_label_button_c2">C2</string>
     <string name="uxsdk_setting_ui_label_button_c3">C3</string>
+    <string name="uxsdk_setting_button_action_set_success">Action set successfully</string>
+    <string name="uxsdk_setting_button_action_set_failure">Failed to set action</string>
 </resources>
