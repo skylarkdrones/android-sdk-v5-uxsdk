@@ -21,8 +21,8 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     private lateinit var binding: UxsdkWidgetSettingRcButtonCustomizeBinding
 
-    private var actions: List<ButtonAction> = listOf()
-    private lateinit var buttonSettings: Map<String, ButtonAction>
+    private var actions: List<CustomButtonAction> = listOf()
+    private lateinit var buttonSettings: Map<String, CustomButtonAction>
 
     private val gson by lazy {
         Gson()
@@ -42,11 +42,11 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         initButtonCustomizationView()
     }
 
-    private fun setSelectedAction(key: ButtonKey, action: ButtonAction) {
+    private fun setSelectedAction(key: CustomButtonKey, action: CustomButtonAction) {
         runBlocking {
             buttonSettings = getButtonSettingsMap()
             val mutableSettingsMap = buttonSettings.toMutableMap()
-            mutableSettingsMap["${ButtonProfile.PROFILE_1}_$key"] = action
+            mutableSettingsMap["${CustomButtonProfile.PROFILE_1}_$key"] = action
             val result = DataStoreManagerDJIV5.set(
                 DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint,
                 gson.toJson(mutableSettingsMap),
@@ -67,14 +67,14 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         }
     }
 
-    private fun getSelectedAction(key: ButtonKey): ButtonAction {
+    private fun getSelectedAction(key: CustomButtonKey): CustomButtonAction {
         Log.d(TAG, "Settings Map: $buttonSettings")
-        return buttonSettings["${ButtonProfile.PROFILE_1}_$key"] ?: ButtonAction.UNDEFINED
+        return buttonSettings["${CustomButtonProfile.PROFILE_1}_$key"] ?: CustomButtonAction.UNDEFINED
     }
 
-    private fun getButtonSettingsMap(): Map<String, ButtonAction> {
+    private fun getButtonSettingsMap(): Map<String, CustomButtonAction> {
         try {
-            val mapType = object : TypeToken<Map<String, ButtonAction>>() {}.type
+            val mapType = object : TypeToken<Map<String, CustomButtonAction>>() {}.type
             val data = DataStoreManagerDJIV5.get(
                 DataStoreManagerDJIV5.EndPoints.CUSTOM_BUTTON_SETTINGS.endPoint
             )
@@ -93,11 +93,11 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             context.getString(R.string.uxsdk_setting_ui_label_button_c1)
         )
         binding.buttonC1Selection.setEntries(actions.map { it.desc })
-        binding.buttonC1Selection.select(actions.indexOf(getSelectedAction(ButtonKey.KEY_1)))
+        binding.buttonC1Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C1)))
         binding.buttonC1Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
                 override fun onItemSelected(position: Int) {
-                    setSelectedAction(ButtonKey.KEY_1, actions[position])
+                    setSelectedAction(CustomButtonKey.KEY_C1, actions[position])
                 }
             }
         )
@@ -107,11 +107,11 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             context.getString(R.string.uxsdk_setting_ui_label_button_c2)
         )
         binding.buttonC2Selection.setEntries(actions.map { it.desc })
-        binding.buttonC2Selection.select(actions.indexOf(getSelectedAction(ButtonKey.KEY_2)))
+        binding.buttonC2Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C2)))
         binding.buttonC2Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
                 override fun onItemSelected(position: Int) {
-                    setSelectedAction(ButtonKey.KEY_2, actions[position])
+                    setSelectedAction(CustomButtonKey.KEY_C2, actions[position])
                 }
             }
         )
@@ -121,18 +121,18 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             context.getString(R.string.uxsdk_setting_ui_label_button_c3)
         )
         binding.buttonC3Selection.setEntries(actions.map { it.desc })
-        binding.buttonC3Selection.select(actions.indexOf(getSelectedAction(ButtonKey.KEY_3)))
+        binding.buttonC3Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C3)))
         binding.buttonC3Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
                 override fun onItemSelected(position: Int) {
-                    setSelectedAction(ButtonKey.KEY_3, actions[position])
+                    setSelectedAction(CustomButtonKey.KEY_C3, actions[position])
                 }
             }
         )
     }
 
     private fun initButtonActions() {
-        actions = ButtonAction.values().toList()
+        actions = CustomButtonAction.values().toList()
     }
 
     sealed class ModelState
