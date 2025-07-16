@@ -22,6 +22,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     private lateinit var binding: UxsdkWidgetSettingRcButtonCustomizeBinding
 
     private var actions: List<CustomButtonAction> = listOf()
+    private var actionValues: List<String> = listOf()
     private lateinit var buttonSettings: Map<String, CustomButtonAction>
 
     private val gson by lazy {
@@ -69,7 +70,8 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     private fun getSelectedAction(key: CustomButtonKey): CustomButtonAction {
         Log.d(TAG, "Settings Map: $buttonSettings")
-        return buttonSettings["${CustomButtonProfile.PROFILE_1}_$key"] ?: CustomButtonAction.UNDEFINED
+        return buttonSettings["${CustomButtonProfile.PROFILE_1}_$key"]
+            ?: CustomButtonAction.UNDEFINED
     }
 
     private fun getButtonSettingsMap(): Map<String, CustomButtonAction> {
@@ -92,7 +94,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         binding.buttonC1Selection.setLabel(
             context.getString(R.string.uxsdk_setting_ui_label_button_c1)
         )
-        binding.buttonC1Selection.setEntries(actions.map { it.desc })
+        binding.buttonC1Selection.setEntries(actionValues)
         binding.buttonC1Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C1)))
         binding.buttonC1Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
@@ -106,7 +108,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         binding.buttonC2Selection.setLabel(
             context.getString(R.string.uxsdk_setting_ui_label_button_c2)
         )
-        binding.buttonC2Selection.setEntries(actions.map { it.desc })
+        binding.buttonC2Selection.setEntries(actionValues)
         binding.buttonC2Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C2)))
         binding.buttonC2Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
@@ -120,7 +122,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         binding.buttonC3Selection.setLabel(
             context.getString(R.string.uxsdk_setting_ui_label_button_c3)
         )
-        binding.buttonC3Selection.setEntries(actions.map { it.desc })
+        binding.buttonC3Selection.setEntries(actionValues)
         binding.buttonC3Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C3)))
         binding.buttonC3Selection.addOnItemSelectedListener(
             object: CustomSelectionWidget.OnItemSelectedListener{
@@ -133,6 +135,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     private fun initButtonActions() {
         actions = CustomButtonAction.values().toList()
+        actionValues = actions.map { it.desc }
     }
 
     sealed class ModelState
