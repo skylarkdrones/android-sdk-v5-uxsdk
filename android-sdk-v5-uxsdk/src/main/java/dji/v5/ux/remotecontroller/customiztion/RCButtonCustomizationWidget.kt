@@ -44,6 +44,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     private fun setSelectedAction(key: ButtonKey, action: ButtonAction) {
         runBlocking {
+            buttonSettings = getButtonSettingsMap()
             val mutableSettingsMap = buttonSettings.toMutableMap()
             mutableSettingsMap["${ButtonProfile.PROFILE_1}_$key"] = action
             val result = DataStoreManagerDJIV5.set(
