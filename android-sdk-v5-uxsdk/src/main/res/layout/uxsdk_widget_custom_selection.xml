@@ -22,9 +22,9 @@
         android:id="@+id/spinnerAction"
         android:layout_width="0dp"
         android:layout_height="@dimen/uxsdk_40_dp"
-        android:gravity="center_vertical"
         android:layout_weight="1"
         android:background="@drawable/uxsdk_spinner_blue_border"
+        android:gravity="center_vertical"
         android:popupBackground="@drawable/uxsdk_spinner_blue_border"
         android:spinnerMode="dialog" />
 </LinearLayout>

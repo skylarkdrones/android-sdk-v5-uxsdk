@@ -97,11 +97,6 @@ class CustomSelectionWidget @JvmOverloads constructor(
                 }
                 return rootView
             }
-
-
-            private fun checkRightCompoundDrawable(view: TextView?): Boolean {
-                return view?.compoundDrawables != null && view.compoundDrawables.size == 4 && view.compoundDrawables[2] != null
-            }
         }
 
         mAdapter?.setDropDownViewResource(R.layout.uxsdk_spinner_item_drop)
@@ -115,7 +110,7 @@ class CustomSelectionWidget @JvmOverloads constructor(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 LogUtils.i(
                     TAG,
@@ -127,14 +122,11 @@ class CustomSelectionWidget @JvmOverloads constructor(
                     mSelectedListener?.onItemSelected(position)
                     mSelectedPosition = position
                 }
-
             }
-
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 LogUtils.e(TAG, "onNothingSelected")
             }
-
         }
     }
 

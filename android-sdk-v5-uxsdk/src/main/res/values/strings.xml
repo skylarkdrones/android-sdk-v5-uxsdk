@@ -1197,6 +1197,7 @@
 
     <string name="uxsdk_assistant_video_empty_text">View after take off</string>
 
+    <!--  Custom Button Actions  -->
     <string name="uxsdk_setting_ui_customize_rc_buttons">Customize RC Buttons</string>
     <string name="uxsdk_setting_ui_select_profile">Select User</string>
     <string name="uxsdk_setting_ui_cutomize_button_title">C1/C2/C3 Button</string>
