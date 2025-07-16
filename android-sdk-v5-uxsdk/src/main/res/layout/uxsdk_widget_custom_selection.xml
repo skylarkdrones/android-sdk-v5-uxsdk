@@ -26,5 +26,5 @@
         android:layout_weight="1"
         android:background="@drawable/uxsdk_spinner_blue_border"
         android:popupBackground="@drawable/uxsdk_spinner_blue_border"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dialog" />
 </LinearLayout>

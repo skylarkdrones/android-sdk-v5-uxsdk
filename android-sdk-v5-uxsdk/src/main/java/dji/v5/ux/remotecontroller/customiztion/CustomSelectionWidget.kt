@@ -77,15 +77,11 @@ class CustomSelectionWidget @JvmOverloads constructor(
                 convertView: View?,
                 parent: ViewGroup
             ): View? {
+                parent.setBackgroundColor(context.getColor(R.color.uxsdk_dropdown_bg))
                 val rootView = super.getDropDownView(position, convertView, parent)
                 rootView?.let {
                     val view = rootView as TextView
-                    if (position != 0 && checkRightCompoundDrawable(view)) {
-                        val rightDrawable = view.compoundDrawables[2].mutate()
-                        rightDrawable.alpha = 0
-                        view.setCompoundDrawables(null, null, rightDrawable, null)
-
-                    }
+                    view.setCompoundDrawables(null, null, null, null)
                     if (mSelectedPosition == position) {
                         view.setTextColor(
                             ContextCompat.getColor(context, R.color.uxsdk_edit_cell_text_color)
