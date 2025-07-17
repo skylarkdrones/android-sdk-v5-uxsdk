@@ -9,5 +9,6 @@ enum class CustomButtonAction(val desc: String) {
     GIMBAL_RECENTER_DOWN("Gimbal Recenter/Down"),
     ZOOM_IN("Zoom In"),
     ZOOM_OUT("Zoom Out"),
+    SWITCH_LENS("Switch Lens"),
     UNDEFINED("Undefined"),
 }
