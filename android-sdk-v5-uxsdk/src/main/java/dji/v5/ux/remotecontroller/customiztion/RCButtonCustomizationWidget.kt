@@ -90,6 +90,11 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun initButtonCustomizationView() {
+        initCButtonView()
+        init5DButtonView()
+    }
+
+    private fun initCButtonView() {
         // Button C1
         binding.buttonC1Selection.setLabel(
             context.getString(R.string.uxsdk_setting_ui_label_button_c1)
@@ -128,6 +133,72 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             object: CustomSelectionWidget.OnItemSelectedListener{
                 override fun onItemSelected(position: Int) {
                     setSelectedAction(CustomButtonKey.KEY_C3, actions[position])
+                }
+            }
+        )
+    }
+
+    private fun init5DButtonView() {
+        // Button Up
+        binding.button5DUPSelection.setLabel(
+            context.getString(R.string.uxsdk_setting_ui_label_button_up)
+        )
+        binding.button5DUPSelection.setEntries(actionValues)
+        binding.button5DUPSelection.select(
+            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_UP))
+        )
+        binding.button5DUPSelection.addOnItemSelectedListener(
+            object: CustomSelectionWidget.OnItemSelectedListener{
+                override fun onItemSelected(position: Int) {
+                    setSelectedAction(CustomButtonKey.KEY_5D_UP, actions[position])
+                }
+            }
+        )
+
+        // Button Down
+        binding.button5DDownSelection.setLabel(
+            context.getString(R.string.uxsdk_setting_ui_label_button_down)
+        )
+        binding.button5DDownSelection.setEntries(actionValues)
+        binding.button5DDownSelection.select(
+            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_DOWN))
+        )
+        binding.button5DDownSelection.addOnItemSelectedListener(
+            object: CustomSelectionWidget.OnItemSelectedListener{
+                override fun onItemSelected(position: Int) {
+                    setSelectedAction(CustomButtonKey.KEY_5D_DOWN, actions[position])
+                }
+            }
+        )
+
+        // Button Left
+        binding.button5DLeftSelection.setLabel(
+            context.getString(R.string.uxsdk_setting_ui_label_button_left)
+        )
+        binding.button5DLeftSelection.setEntries(actionValues)
+        binding.button5DLeftSelection.select(
+            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_LEFT))
+        )
+        binding.button5DLeftSelection.addOnItemSelectedListener(
+            object: CustomSelectionWidget.OnItemSelectedListener{
+                override fun onItemSelected(position: Int) {
+                    setSelectedAction(CustomButtonKey.KEY_5D_LEFT, actions[position])
+                }
+            }
+        )
+
+        // Button Right
+        binding.button5DRightSelection.setLabel(
+            context.getString(R.string.uxsdk_setting_ui_label_button_right)
+        )
+        binding.button5DRightSelection.setEntries(actionValues)
+        binding.button5DRightSelection.select(
+            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_RIGHT))
+        )
+        binding.button5DRightSelection.addOnItemSelectedListener(
+            object: CustomSelectionWidget.OnItemSelectedListener{
+                override fun onItemSelected(position: Int) {
+                    setSelectedAction(CustomButtonKey.KEY_5D_RIGHT, actions[position])
                 }
             }
         )

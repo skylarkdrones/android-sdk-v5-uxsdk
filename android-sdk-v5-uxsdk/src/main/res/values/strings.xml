@@ -1201,9 +1201,14 @@
     <string name="uxsdk_setting_ui_customize_rc_buttons">Customize RC Buttons</string>
     <string name="uxsdk_setting_ui_select_profile">Select User</string>
     <string name="uxsdk_setting_ui_cutomize_button_title">C1/C2/C3 Button</string>
+    <string name="uxsdk_setting_ui_cutomize_button_5d_title">5D Button</string>
     <string name="uxsdk_setting_ui_label_button_c1">C1</string>
     <string name="uxsdk_setting_ui_label_button_c2">C2</string>
     <string name="uxsdk_setting_ui_label_button_c3">C3</string>
+    <string name="uxsdk_setting_ui_label_button_up">UP</string>
+    <string name="uxsdk_setting_ui_label_button_down">DN</string>
+    <string name="uxsdk_setting_ui_label_button_left">L</string>
+    <string name="uxsdk_setting_ui_label_button_right">R</string>
     <string name="uxsdk_setting_button_action_set_success">Action set successfully</string>
     <string name="uxsdk_setting_button_action_set_failure">Failed to set action</string>
 </resources>

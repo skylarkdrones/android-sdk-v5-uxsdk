@@ -8,4 +8,8 @@ enum class CustomButtonKey {
     KEY_C1,
     KEY_C2,
     KEY_C3,
+    KEY_5D_UP,
+    KEY_5D_DOWN,
+    KEY_5D_LEFT,
+    KEY_5D_RIGHT,
 }
