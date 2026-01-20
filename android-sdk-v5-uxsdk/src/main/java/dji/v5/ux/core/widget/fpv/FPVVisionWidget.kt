@@ -21,10 +21,17 @@ class FPVVisionWidget @JvmOverloads constructor(
     context: Context, val attrs: AttributeSet? = null, val defStyleAttr: Int = 0
 ) : FPVWidget(context, attrs, defStyleAttr) {
 
-    private val availableCameraUpdatedListener =
-        AvailableCameraUpdatedListener { availableCameraList: List<ComponentIndexType?>? ->
+    private val availableCameraUpdatedListener = object : AvailableCameraUpdatedListener {
+        override fun onAvailableCameraUpdated(availableCameraList: List<ComponentIndexType>) {
             updateFPVWidgetSource(availableCameraList)
         }
+
+        override fun onCameraStreamEnableUpdate(
+            cameraStreamEnableMap: Map<ComponentIndexType, Boolean>
+        ) {
+            // No-op
+        }
+    }
 
     private val cameraStreamManager by lazy {
         MediaDataCenter.getInstance().cameraStreamManager

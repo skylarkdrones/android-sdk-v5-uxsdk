@@ -528,7 +528,7 @@ public class FocalZoomWidgetView extends ViewWidget implements ICameraIndex {
     }
 
     private void setCurrentValue(float curValue) {
-        if (mFocalLengthGears.length < 1) {
+        if (mFocalLengthGears == null || mFocalLengthGears.length < 1) {
             return;
         }
         curValue = curValue < mFocalLengthGears[0] ? mFocalLengthGears[0] : curValue;
@@ -800,6 +800,9 @@ public class FocalZoomWidgetView extends ViewWidget implements ICameraIndex {
     }
 
     public void pushFocalLengthRange(int[] gears) {
+        if (gears == null || gears.length < 1) {
+            return;
+        }
         mFocalLengthGears = gears;
         if (myHandler != null) {
             myHandler.removeMessages(FOCAL_CHECK_MESSAGE_TYPE);
