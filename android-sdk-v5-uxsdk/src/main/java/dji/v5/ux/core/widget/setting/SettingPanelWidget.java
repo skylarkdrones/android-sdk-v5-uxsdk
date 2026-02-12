@@ -242,10 +242,8 @@ public class SettingPanelWidget extends ConstraintLayoutWidget<Boolean> {
 
         mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_GIMBAL));
 
-        if (isSupportAdvRtk(RTKStartServiceHelper.INSTANCE.getRtkModuleAvailable().blockingFirst())) {
-            menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_rtk_active, R.drawable.uxsdk_ic_setting_rtk));
-            mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_RTK));
-        }
+        menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_rtk_active, R.drawable.uxsdk_ic_setting_rtk));
+        mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_RTK));
 
         menus.add(new MenuBean(R.drawable.uxsdk_ic_setting_more_active, R.drawable.uxsdk_ic_setting_more));
         mFragments.add(SettingMenuFragment.newInstance(MenuFragmentFactory.FRAGMENT_TAG_COMMON));
