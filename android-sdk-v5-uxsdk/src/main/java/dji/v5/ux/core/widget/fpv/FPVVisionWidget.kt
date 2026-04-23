@@ -16,6 +16,7 @@ import dji.v5.manager.datacenter.MediaDataCenter
 import dji.v5.manager.interfaces.ICameraStreamManager.AvailableCameraUpdatedListener
 import dji.v5.manager.interfaces.ICameraStreamManager.VisionAssistStatusListener
 import dji.v5.ux.R
+import androidx.core.view.isVisible
 
 class FPVVisionWidget @JvmOverloads constructor(
     context: Context, val attrs: AttributeSet? = null, val defStyleAttr: Int = 0
@@ -63,6 +64,81 @@ class FPVVisionWidget @JvmOverloads constructor(
             View.generateViewId(),
             R.drawable.uxsdk_arrow_right,
         )
+    }
+
+    private val arrowDownward by lazy {
+        createArrow(
+            View.generateViewId(),
+            R.drawable.uxsdk_ic_arrow_down,
+        ).apply {
+            visibility = GONE
+        }
+    }
+
+    private val visionAssistStatusListener = object : VisionAssistStatusListener {
+        override fun onVisionAssistEnabled(isEnable: Boolean) {
+            /* no-op */
+        }
+
+        override fun onVisionAssistViewDirectionRangeUpdated(modes: MutableList<VisionAssistDirection>) {
+            post {
+                updateDownwardArrowVisibility(modes.contains(VisionAssistDirection.DOWN))
+            }
+        }
+
+        override fun onVisionAssistViewDirectionUpdated(mode: VisionAssistDirection) {
+            post {
+                resetArrowColors()
+                when (mode) {
+                    VisionAssistDirection.FRONT -> {
+                        setArrowSelected(
+                            arrowFront,
+                            selected = true,
+                        )
+                    }
+
+                    VisionAssistDirection.BACK -> {
+                        setArrowSelected(
+                            arrowBack,
+                            selected = true,
+                        )
+                    }
+
+                    VisionAssistDirection.LEFT -> {
+                        setArrowSelected(
+                            arrowLeft,
+                            selected = true,
+                        )
+                    }
+
+                    VisionAssistDirection.RIGHT -> {
+                        setArrowSelected(
+                            arrowRight,
+                            selected = true,
+                        )
+                    }
+
+                    VisionAssistDirection.DOWN -> {
+                        if (arrowDownward.isVisible) {
+                            setArrowSelected(
+                                arrowDownward,
+                                selected = true,
+                            )
+                        }
+                    }
+
+                    VisionAssistDirection.AUTO -> {
+                        setFPVDirection(VisionAssistDirection.FRONT)
+                    }
+
+                    VisionAssistDirection.UP,
+                    VisionAssistDirection.OFF,
+                    VisionAssistDirection.UNKNOWN -> {
+                        /* no-op */
+                    }
+                }
+            }
+        }
     }
 
     private val topGuide by lazy {
@@ -193,6 +269,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         this.addView(arrowBack)
         this.addView(arrowLeft)
         this.addView(arrowRight)
+        this.addView(arrowDownward)
     }
 
     private fun arrangeArrowsByGuidelines() {
@@ -229,6 +306,11 @@ class FPVVisionWidget @JvmOverloads constructor(
         set.connect(arrowRight.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
         set.connect(arrowRight.id, ConstraintSet.BOTTOM, bottomGuideId, ConstraintSet.BOTTOM)
 
+        set.connect(arrowDownward.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
+        set.connect(arrowDownward.id, ConstraintSet.BOTTOM, bottomGuideId, ConstraintSet.BOTTOM)
+        set.connect(arrowDownward.id, ConstraintSet.START, startGuideId, ConstraintSet.START)
+        set.connect(arrowDownward.id, ConstraintSet.END, endGuideId, ConstraintSet.END)
+
         set.applyTo(this)
     }
 
@@ -245,63 +327,13 @@ class FPVVisionWidget @JvmOverloads constructor(
         arrowRight.setOnClickListener {
             setFPVDirection(VisionAssistDirection.RIGHT)
         }
+        arrowDownward.setOnClickListener {
+            setFPVDirection(VisionAssistDirection.DOWN)
+        }
     }
 
     private fun setupVisionAssistListener() {
-        cameraStreamManager.addVisionAssistStatusListener(object: VisionAssistStatusListener {
-            override fun onVisionAssistEnabled(isEnable: Boolean) {
-                /* no-op */
-            }
-
-            override fun onVisionAssistViewDirectionRangeUpdated(modes: MutableList<VisionAssistDirection>) {
-                /* no-op */
-            }
-
-            override fun onVisionAssistViewDirectionUpdated(mode: VisionAssistDirection) {
-                resetArrowColors()
-                when (mode) {
-                    VisionAssistDirection.FRONT -> {
-                        setArrowSelected(
-                            arrowFront,
-                            selected = true,
-                        )
-                    }
-
-                    VisionAssistDirection.BACK -> {
-                        setArrowSelected(
-                            arrowBack,
-                            selected = true,
-                        )
-                    }
-
-                    VisionAssistDirection.LEFT -> {
-                        setArrowSelected(
-                            arrowLeft,
-                            selected = true,
-                        )
-                    }
-
-                    VisionAssistDirection.RIGHT -> {
-                        setArrowSelected(
-                            arrowRight,
-                            selected = true,
-                        )
-                    }
-
-                    VisionAssistDirection.AUTO -> {
-                        setFPVDirection(VisionAssistDirection.FRONT)
-                    }
-
-                    VisionAssistDirection.UP,
-                    VisionAssistDirection.DOWN,
-                    VisionAssistDirection.OFF,
-                    VisionAssistDirection.UNKNOWN -> {
-                        /* no-op */
-                    }
-                }
-            }
-
-        })
+        cameraStreamManager.addVisionAssistStatusListener(visionAssistStatusListener)
     }
 
     private fun removeArrows() {
@@ -309,6 +341,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         this.removeView(arrowBack)
         this.removeView(arrowLeft)
         this.removeView(arrowRight)
+        this.removeView(arrowDownward)
     }
 
     private fun resetArrowColors() {
@@ -316,6 +349,14 @@ class FPVVisionWidget @JvmOverloads constructor(
         setArrowSelected(arrowBack)
         setArrowSelected(arrowLeft)
         setArrowSelected(arrowRight)
+        setArrowSelected(arrowDownward)
+    }
+
+    private fun updateDownwardArrowVisibility(isVisible: Boolean) {
+        arrowDownward.visibility = if (isVisible) VISIBLE else GONE
+        if (!isVisible) {
+            setArrowSelected(arrowDownward)
+        }
     }
 
     private fun setArrowSelected(view: ImageView, selected: Boolean = false) {
@@ -374,6 +415,7 @@ class FPVVisionWidget @JvmOverloads constructor(
     }
 
     override fun onDetachedFromWindow() {
+        cameraStreamManager.removeVisionAssistStatusListener(visionAssistStatusListener)
         cameraStreamManager.removeAvailableCameraUpdatedListener(
             availableCameraUpdatedListener
         )
