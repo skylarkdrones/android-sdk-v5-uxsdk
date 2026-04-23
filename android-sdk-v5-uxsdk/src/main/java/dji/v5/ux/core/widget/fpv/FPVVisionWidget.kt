@@ -126,20 +126,29 @@ class FPVVisionWidget @JvmOverloads constructor(
     }
 
     private fun updateFPVWidgetSource(availableCameraList: List<ComponentIndexType?>?) {
-        if (availableCameraList == null) {
+        if (availableCameraList.isNullOrEmpty()) {
+            visibility = GONE
             return
         }
 
         val cameraList = ArrayList(availableCameraList)
 
-        if (cameraList.size <= 1) {
+        if (cameraList.isEmpty()) {
             setVisibility(GONE)
             return
         }
 
-        updateVideoSource(ComponentIndexType.FPV)
+        if (availableCameraList.contains(ComponentIndexType.FPV)) {
+            updateVideoSource(ComponentIndexType.FPV)
+            visibility = VISIBLE
+            return
+        }
 
-        setVisibility(VISIBLE)
+        if (availableCameraList.contains(ComponentIndexType.VISION_ASSIST)) {
+            updateVideoSource(ComponentIndexType.VISION_ASSIST)
+            visibility = VISIBLE
+            return
+        }
     }
 
     private fun createArrow(id: Int, drawableRes: Int): ImageView {
