@@ -67,7 +67,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         )
     }
 
-    private val arrowDownward by lazy {
+    private val arrowDown by lazy {
         createArrow(
             View.generateViewId(),
             R.drawable.uxsdk_double_down_chevron,
@@ -120,9 +120,9 @@ class FPVVisionWidget @JvmOverloads constructor(
                     }
 
                     VisionAssistDirection.DOWN -> {
-                        if (arrowDownward.isVisible) {
+                        if (arrowDown.isVisible) {
                             setArrowSelected(
-                                arrowDownward,
+                                arrowDown,
                                 selected = true,
                             )
                         }
@@ -265,7 +265,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         this.addView(arrowBack)
         this.addView(arrowLeft)
         this.addView(arrowRight)
-        this.addView(arrowDownward)
+        this.addView(arrowDown)
     }
 
     private fun arrangeArrowsByGuidelines() {
@@ -302,14 +302,14 @@ class FPVVisionWidget @JvmOverloads constructor(
         set.connect(arrowRight.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
         set.connect(arrowRight.id, ConstraintSet.BOTTOM, bottomGuideId, ConstraintSet.BOTTOM)
 
-        set.clear(arrowDownward.id, ConstraintSet.BOTTOM)
-        set.clear(arrowDownward.id, ConstraintSet.START)
-        set.connect(arrowDownward.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
-        set.connect(arrowDownward.id, ConstraintSet.END, endGuideId, ConstraintSet.END)
+        set.clear(arrowDown.id, ConstraintSet.BOTTOM)
+        set.clear(arrowDown.id, ConstraintSet.START)
+        set.connect(arrowDown.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
+        set.connect(arrowDown.id, ConstraintSet.END, endGuideId, ConstraintSet.END)
         val topMarginPx = (DOWNWARD_ARROW_MARGIN_TOP_DP * resources.displayMetrics.density).roundToInt()
         val endMarginPx = (DOWNWARD_ARROW_MARGIN_END_DP * resources.displayMetrics.density).roundToInt()
-        set.setMargin(arrowDownward.id, ConstraintSet.TOP, topMarginPx)
-        set.setMargin(arrowDownward.id, ConstraintSet.END, endMarginPx)
+        set.setMargin(arrowDown.id, ConstraintSet.TOP, topMarginPx)
+        set.setMargin(arrowDown.id, ConstraintSet.END, endMarginPx)
 
         set.applyTo(this)
     }
@@ -327,7 +327,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         arrowRight.setOnClickListener {
             setFPVDirection(VisionAssistDirection.RIGHT)
         }
-        arrowDownward.setOnClickListener {
+        arrowDown.setOnClickListener {
             setFPVDirection(VisionAssistDirection.DOWN)
         }
     }
@@ -341,7 +341,7 @@ class FPVVisionWidget @JvmOverloads constructor(
         this.removeView(arrowBack)
         this.removeView(arrowLeft)
         this.removeView(arrowRight)
-        this.removeView(arrowDownward)
+        this.removeView(arrowDown)
     }
 
     private fun resetArrowColors() {
@@ -349,13 +349,13 @@ class FPVVisionWidget @JvmOverloads constructor(
         setArrowSelected(arrowBack)
         setArrowSelected(arrowLeft)
         setArrowSelected(arrowRight)
-        setArrowSelected(arrowDownward)
+        setArrowSelected(arrowDown)
     }
 
     private fun updateDownwardArrowVisibility(isVisible: Boolean) {
-        arrowDownward.visibility = if (isVisible) VISIBLE else GONE
+        arrowDown.visibility = if (isVisible) VISIBLE else GONE
         if (!isVisible) {
-            setArrowSelected(arrowDownward)
+            setArrowSelected(arrowDown)
         }
     }
 
