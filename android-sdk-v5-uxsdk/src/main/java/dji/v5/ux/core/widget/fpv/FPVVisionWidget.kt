@@ -17,6 +17,7 @@ import dji.v5.manager.interfaces.ICameraStreamManager.AvailableCameraUpdatedList
 import dji.v5.manager.interfaces.ICameraStreamManager.VisionAssistStatusListener
 import dji.v5.ux.R
 import androidx.core.view.isVisible
+import kotlin.math.roundToInt
 
 class FPVVisionWidget @JvmOverloads constructor(
     context: Context, val attrs: AttributeSet? = null, val defStyleAttr: Int = 0
@@ -306,10 +307,14 @@ class FPVVisionWidget @JvmOverloads constructor(
         set.connect(arrowRight.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
         set.connect(arrowRight.id, ConstraintSet.BOTTOM, bottomGuideId, ConstraintSet.BOTTOM)
 
+        set.clear(arrowDownward.id, ConstraintSet.BOTTOM)
+        set.clear(arrowDownward.id, ConstraintSet.START)
         set.connect(arrowDownward.id, ConstraintSet.TOP, topGuideId, ConstraintSet.TOP)
-        set.connect(arrowDownward.id, ConstraintSet.BOTTOM, bottomGuideId, ConstraintSet.BOTTOM)
-        set.connect(arrowDownward.id, ConstraintSet.START, startGuideId, ConstraintSet.START)
         set.connect(arrowDownward.id, ConstraintSet.END, endGuideId, ConstraintSet.END)
+        val topMarginPx = (DOWNWARD_ARROW_MARGIN_TOP_DP * resources.displayMetrics.density).roundToInt()
+        val endMarginPx = (DOWNWARD_ARROW_MARGIN_END_DP * resources.displayMetrics.density).roundToInt()
+        set.setMargin(arrowDownward.id, ConstraintSet.TOP, topMarginPx)
+        set.setMargin(arrowDownward.id, ConstraintSet.END, endMarginPx)
 
         set.applyTo(this)
     }
@@ -427,6 +432,8 @@ class FPVVisionWidget @JvmOverloads constructor(
     companion object {
         private const val TAG = "FPVVisionWidget"
         private const val ARROW_SIZE = 60
+        private const val DOWNWARD_ARROW_MARGIN_TOP_DP = 8
+        private const val DOWNWARD_ARROW_MARGIN_END_DP = 20
         private const val DEFAULT_ARROW_COLOR = Color.WHITE
         private const val DEFAULT_SELECTED_ARROW_COLOR = Color.YELLOW
         private const val TOP_GUIDE_PERCENTAGE = .2f
