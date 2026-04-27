@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.Guideline
+import androidx.core.view.isVisible
 import dji.sdk.keyvalue.value.common.ComponentIndexType
 import dji.sdk.keyvalue.value.flightassistant.VisionAssistDirection
 import dji.v5.common.callback.CommonCallbacks
@@ -16,7 +17,6 @@ import dji.v5.manager.datacenter.MediaDataCenter
 import dji.v5.manager.interfaces.ICameraStreamManager.AvailableCameraUpdatedListener
 import dji.v5.manager.interfaces.ICameraStreamManager.VisionAssistStatusListener
 import dji.v5.ux.R
-import androidx.core.view.isVisible
 import kotlin.math.roundToInt
 
 class FPVVisionWidget @JvmOverloads constructor(
@@ -70,7 +70,7 @@ class FPVVisionWidget @JvmOverloads constructor(
     private val arrowDownward by lazy {
         createArrow(
             View.generateViewId(),
-            R.drawable.ic_double_down_chevron,
+            R.drawable.uxsdk_double_down_chevron,
         ).apply {
             visibility = GONE
         }
@@ -208,13 +208,6 @@ class FPVVisionWidget @JvmOverloads constructor(
             return
         }
 
-        val cameraList = ArrayList(availableCameraList)
-
-        if (cameraList.isEmpty()) {
-            setVisibility(GONE)
-            return
-        }
-
         if (availableCameraList.contains(ComponentIndexType.FPV)) {
             updateVideoSource(ComponentIndexType.FPV)
             visibility = VISIBLE
@@ -226,6 +219,8 @@ class FPVVisionWidget @JvmOverloads constructor(
             visibility = VISIBLE
             return
         }
+
+        visibility = GONE
     }
 
     private fun createArrow(id: Int, drawableRes: Int): ImageView {
