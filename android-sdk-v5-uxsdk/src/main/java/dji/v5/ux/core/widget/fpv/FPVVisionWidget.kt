@@ -70,7 +70,7 @@ class FPVVisionWidget @JvmOverloads constructor(
     private val arrowDownward by lazy {
         createArrow(
             View.generateViewId(),
-            R.drawable.uxsdk_ic_arrow_down,
+            R.drawable.ic_double_down_chevron,
         ).apply {
             visibility = GONE
         }
