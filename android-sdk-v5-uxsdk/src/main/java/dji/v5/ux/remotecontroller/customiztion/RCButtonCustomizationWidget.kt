@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dji.v5.ux.R
@@ -97,6 +98,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
         setCButtonVisibility(shouldShowCButtons)
         setLRButtonVisibility(shouldShowLRButtons)
+        updateDividerAnchor(shouldShowCButtons, shouldShowLRButtons)
 
         if (shouldShowCButtons) {
             initCButtonView()
@@ -105,6 +107,28 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
             initLRButtonView()
         }
         init5DButtonView()
+    }
+
+    private fun updateDividerAnchor(shouldShowCButtons: Boolean, shouldShowLRButtons: Boolean) {
+        val anchorId = when {
+            shouldShowLRButtons -> R.id.buttonR3Selection
+            shouldShowCButtons -> R.id.buttonC3Selection
+            else -> LayoutParams.PARENT_ID
+        }
+        val layoutParams = binding.divider.layoutParams as LayoutParams
+        layoutParams.topToBottom = if (anchorId == LayoutParams.PARENT_ID) {
+            LayoutParams.UNSET
+        } else {
+            anchorId
+        }
+        layoutParams.topToTop = if (anchorId == LayoutParams.PARENT_ID) {
+            anchorId
+        } else {
+            LayoutParams.UNSET
+        }
+        binding.divider.layoutParams = layoutParams
+        binding.divider.requestLayout()
+        binding.divider.invalidate()
     }
 
     private fun initCButtonView() {
