@@ -199,20 +199,13 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun setCButtonVisibility(isVisible: Boolean) {
-        val visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.buttonC1Selection.visibility = visibility
-        binding.buttonC2Selection.visibility = visibility
-        binding.buttonC3Selection.visibility = visibility
+        binding.cButtonGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     private fun setLRButtonVisibility(isVisible: Boolean) {
         val visibility = if (isVisible) View.VISIBLE else View.GONE
-        binding.buttonL1Selection.visibility = visibility
-        binding.buttonL2Selection.visibility = visibility
-        binding.buttonL3Selection.visibility = visibility
-        binding.buttonR1Selection.visibility = visibility
-        binding.buttonR2Selection.visibility = visibility
-        binding.buttonR3Selection.visibility = visibility
+        binding.leftButtonGroup.visibility = visibility
+        binding.rightButtonGroup.visibility = visibility
     }
 
     private fun isDjiRcPro(): Boolean {

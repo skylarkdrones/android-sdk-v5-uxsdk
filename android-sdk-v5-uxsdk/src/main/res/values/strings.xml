@@ -1211,6 +1211,8 @@
     <string name="uxsdk_setting_ui_label_button_r1">R1</string>
     <string name="uxsdk_setting_ui_label_button_r2">R2</string>
     <string name="uxsdk_setting_ui_label_button_r3">R3</string>
+    <string name="uxsdk_setting_ui_customize_button_left_title">Left Buttons</string>
+    <string name="uxsdk_setting_ui_customize_button_right_title">Right Buttons</string>
     <string name="uxsdk_setting_ui_label_button_up">UP</string>
     <string name="uxsdk_setting_ui_label_button_down">DN</string>
     <string name="uxsdk_setting_ui_label_button_left">L</string>
