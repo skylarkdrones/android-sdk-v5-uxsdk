@@ -162,7 +162,7 @@
             android:id="@+id/cButtonGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="buttonC1Selection,buttonC2Selection,buttonC3Selection" />
+            app:constraint_referenced_ids="title,buttonC1Selection,buttonC2Selection,buttonC3Selection" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/leftButtonGroup"
