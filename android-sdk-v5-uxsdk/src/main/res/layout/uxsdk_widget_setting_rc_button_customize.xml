@@ -42,13 +42,55 @@
             android:layout_marginVertical="@dimen/uxsdk_10_dp"
             app:layout_constraintTop_toBottomOf="@id/buttonC2Selection" />
 
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonL1Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonC3Selection" />
+
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonL2Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonL1Selection" />
+
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonL3Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonL2Selection" />
+
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonR1Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonL3Selection" />
+
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonR2Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonR1Selection" />
+
+        <dji.v5.ux.remotecontroller.customiztion.CustomSelectionWidget
+            android:id="@+id/buttonR3Selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/uxsdk_10_dp"
+            app:layout_constraintTop_toBottomOf="@id/buttonR2Selection" />
+
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="@dimen/uxsdk_1_dp"
             android:layout_marginTop="@dimen/uxsdk_16_dp"
             android:background="@color/uxsdk_gray"
-            app:layout_constraintTop_toBottomOf="@id/buttonC3Selection" />
+            app:layout_constraintTop_toBottomOf="@id/buttonR3Selection" />
 
         <TextView
             android:id="@+id/titleButton5D"

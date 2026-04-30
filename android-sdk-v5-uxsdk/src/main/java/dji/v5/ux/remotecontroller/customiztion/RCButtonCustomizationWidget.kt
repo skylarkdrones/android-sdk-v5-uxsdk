@@ -1,9 +1,11 @@
 package dji.v5.ux.remotecontroller.customiztion
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -90,118 +92,135 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun initButtonCustomizationView() {
-        initCButtonView()
+        val shouldShowCButtons = isDjiRcPro()
+        val shouldShowLRButtons = isDjiRcPlus2()
+
+        setCButtonVisibility(shouldShowCButtons)
+        setLRButtonVisibility(shouldShowLRButtons)
+
+        if (shouldShowCButtons) {
+            initCButtonView()
+        }
+        if (shouldShowLRButtons) {
+            initLRButtonView()
+        }
         init5DButtonView()
     }
 
     private fun initCButtonView() {
-        // Button C1
-        binding.buttonC1Selection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_c1)
+        initSelection(
+            binding.buttonC1Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_c1),
+            CustomButtonKey.KEY_C1,
         )
-        binding.buttonC1Selection.setEntries(actionValues)
-        binding.buttonC1Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C1)))
-        binding.buttonC1Selection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_C1, actions[position])
-                }
-            }
+        initSelection(
+            binding.buttonC2Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_c2),
+            CustomButtonKey.KEY_C2,
         )
+        initSelection(
+            binding.buttonC3Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_c3),
+            CustomButtonKey.KEY_C3,
+        )
+    }
 
-        // Button C2
-        binding.buttonC2Selection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_c2)
+    private fun initLRButtonView() {
+        initSelection(
+            binding.buttonL1Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_l1),
+            CustomButtonKey.KEY_L1,
         )
-        binding.buttonC2Selection.setEntries(actionValues)
-        binding.buttonC2Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C2)))
-        binding.buttonC2Selection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_C2, actions[position])
-                }
-            }
+        initSelection(
+            binding.buttonL2Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_l2),
+            CustomButtonKey.KEY_L2,
         )
-
-        // Button C3
-        binding.buttonC3Selection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_c3)
+        initSelection(
+            binding.buttonL3Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_l3),
+            CustomButtonKey.KEY_L3,
         )
-        binding.buttonC3Selection.setEntries(actionValues)
-        binding.buttonC3Selection.select(actions.indexOf(getSelectedAction(CustomButtonKey.KEY_C3)))
-        binding.buttonC3Selection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_C3, actions[position])
-                }
-            }
+        initSelection(
+            binding.buttonR1Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_r1),
+            CustomButtonKey.KEY_R1,
+        )
+        initSelection(
+            binding.buttonR2Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_r2),
+            CustomButtonKey.KEY_R2,
+        )
+        initSelection(
+            binding.buttonR3Selection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_r3),
+            CustomButtonKey.KEY_R3,
         )
     }
 
     private fun init5DButtonView() {
-        // Button Up
-        binding.button5DUPSelection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_up)
+        initSelection(
+            binding.button5DUPSelection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_up),
+            CustomButtonKey.KEY_5D_UP,
         )
-        binding.button5DUPSelection.setEntries(actionValues)
-        binding.button5DUPSelection.select(
-            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_UP))
+        initSelection(
+            binding.button5DDownSelection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_down),
+            CustomButtonKey.KEY_5D_DOWN,
         )
-        binding.button5DUPSelection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_5D_UP, actions[position])
-                }
-            }
+        initSelection(
+            binding.button5DLeftSelection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_left),
+            CustomButtonKey.KEY_5D_LEFT,
         )
+        initSelection(
+            binding.button5DRightSelection,
+            context.getString(R.string.uxsdk_setting_ui_label_button_right),
+            CustomButtonKey.KEY_5D_RIGHT,
+        )
+    }
 
-        // Button Down
-        binding.button5DDownSelection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_down)
-        )
-        binding.button5DDownSelection.setEntries(actionValues)
-        binding.button5DDownSelection.select(
-            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_DOWN))
-        )
-        binding.button5DDownSelection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
+    private fun initSelection(
+        selectionWidget: CustomSelectionWidget,
+        label: String,
+        key: CustomButtonKey,
+    ) {
+        selectionWidget.setLabel(label)
+        selectionWidget.setEntries(actionValues)
+        selectionWidget.select(actions.indexOf(getSelectedAction(key)))
+        selectionWidget.addOnItemSelectedListener(
+            object : CustomSelectionWidget.OnItemSelectedListener {
                 override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_5D_DOWN, actions[position])
+                    setSelectedAction(key, actions[position])
                 }
-            }
+            },
         )
+    }
 
-        // Button Left
-        binding.button5DLeftSelection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_left)
-        )
-        binding.button5DLeftSelection.setEntries(actionValues)
-        binding.button5DLeftSelection.select(
-            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_LEFT))
-        )
-        binding.button5DLeftSelection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_5D_LEFT, actions[position])
-                }
-            }
-        )
+    private fun setCButtonVisibility(isVisible: Boolean) {
+        val visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.buttonC1Selection.visibility = visibility
+        binding.buttonC2Selection.visibility = visibility
+        binding.buttonC3Selection.visibility = visibility
+    }
 
-        // Button Right
-        binding.button5DRightSelection.setLabel(
-            context.getString(R.string.uxsdk_setting_ui_label_button_right)
-        )
-        binding.button5DRightSelection.setEntries(actionValues)
-        binding.button5DRightSelection.select(
-            actions.indexOf(getSelectedAction(CustomButtonKey.KEY_5D_RIGHT))
-        )
-        binding.button5DRightSelection.addOnItemSelectedListener(
-            object: CustomSelectionWidget.OnItemSelectedListener{
-                override fun onItemSelected(position: Int) {
-                    setSelectedAction(CustomButtonKey.KEY_5D_RIGHT, actions[position])
-                }
-            }
-        )
+    private fun setLRButtonVisibility(isVisible: Boolean) {
+        val visibility = if (isVisible) View.VISIBLE else View.GONE
+        binding.buttonL1Selection.visibility = visibility
+        binding.buttonL2Selection.visibility = visibility
+        binding.buttonL3Selection.visibility = visibility
+        binding.buttonR1Selection.visibility = visibility
+        binding.buttonR2Selection.visibility = visibility
+        binding.buttonR3Selection.visibility = visibility
+    }
+
+    private fun isDjiRcPro(): Boolean {
+        return Build.MODEL.equals(DJI_RC_PRO_MODEL, ignoreCase = true)
+    }
+
+    private fun isDjiRcPlus2(): Boolean {
+        return Build.MODEL.equals(DJI_RC_PLUS_2_MODEL, ignoreCase = true)
     }
 
     private fun initButtonActions() {
@@ -213,5 +232,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "RCButtonCustomizationWidget"
+        private const val DJI_RC_PRO_MODEL = "DJI RC Pro"
+        private const val DJI_RC_PLUS_2_MODEL = "DJI RC Plus 2"
     }
 }

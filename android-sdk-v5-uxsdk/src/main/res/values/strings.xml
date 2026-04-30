@@ -1205,6 +1205,12 @@
     <string name="uxsdk_setting_ui_label_button_c1">C1</string>
     <string name="uxsdk_setting_ui_label_button_c2">C2</string>
     <string name="uxsdk_setting_ui_label_button_c3">C3</string>
+    <string name="uxsdk_setting_ui_label_button_l1">L1</string>
+    <string name="uxsdk_setting_ui_label_button_l2">L2</string>
+    <string name="uxsdk_setting_ui_label_button_l3">L3</string>
+    <string name="uxsdk_setting_ui_label_button_r1">R1</string>
+    <string name="uxsdk_setting_ui_label_button_r2">R2</string>
+    <string name="uxsdk_setting_ui_label_button_r3">R3</string>
     <string name="uxsdk_setting_ui_label_button_up">UP</string>
     <string name="uxsdk_setting_ui_label_button_down">DN</string>
     <string name="uxsdk_setting_ui_label_button_left">L</string>
