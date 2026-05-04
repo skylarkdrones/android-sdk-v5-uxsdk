@@ -93,7 +93,7 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun initButtonCustomizationView() {
-        val shouldShowCButtons = isDjiRcPro()
+        val shouldShowCButtons = isDjiRcPro() || isDjiRcPlus2()
         val shouldShowLRButtons = isDjiRcPlus2()
 
         setCButtonVisibility(shouldShowCButtons)
@@ -113,18 +113,18 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         val anchorId = when {
             shouldShowLRButtons -> R.id.buttonR3Selection
             shouldShowCButtons -> R.id.buttonC3Selection
-            else -> LayoutParams.PARENT_ID
+            else -> ConstraintLayout.LayoutParams.PARENT_ID
         }
-        val layoutParams = binding.divider.layoutParams as LayoutParams
-        layoutParams.topToBottom = if (anchorId == LayoutParams.PARENT_ID) {
-            LayoutParams.UNSET
+        val layoutParams = binding.divider.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.topToBottom = if (anchorId == ConstraintLayout.LayoutParams.PARENT_ID) {
+            ConstraintLayout.LayoutParams.UNSET
         } else {
             anchorId
         }
-        layoutParams.topToTop = if (anchorId == LayoutParams.PARENT_ID) {
+        layoutParams.topToTop = if (anchorId == ConstraintLayout.LayoutParams.PARENT_ID) {
             anchorId
         } else {
-            LayoutParams.UNSET
+            ConstraintLayout.LayoutParams.UNSET
         }
         binding.divider.layoutParams = layoutParams
         binding.divider.requestLayout()
