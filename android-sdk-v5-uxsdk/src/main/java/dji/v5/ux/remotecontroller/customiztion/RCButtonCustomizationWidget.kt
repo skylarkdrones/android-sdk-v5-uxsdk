@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dji.v5.ux.R
@@ -93,42 +92,15 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
     }
 
     private fun initButtonCustomizationView() {
-        val shouldShowCButtons = isDjiRcPro() || isDjiRcPlus2()
         val shouldShowLRButtons = isDjiRcPlus2()
 
-        setCButtonVisibility(shouldShowCButtons)
         setLRButtonVisibility(shouldShowLRButtons)
-        updateDividerAnchor(shouldShowCButtons, shouldShowLRButtons)
 
-        if (shouldShowCButtons) {
-            initCButtonView()
-        }
+        initCButtonView()
         if (shouldShowLRButtons) {
             initLRButtonView()
         }
         init5DButtonView()
-    }
-
-    private fun updateDividerAnchor(shouldShowCButtons: Boolean, shouldShowLRButtons: Boolean) {
-        val anchorId = when {
-            shouldShowLRButtons -> R.id.buttonR3Selection
-            shouldShowCButtons -> R.id.buttonC3Selection
-            else -> ConstraintLayout.LayoutParams.PARENT_ID
-        }
-        val layoutParams = binding.divider.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.topToBottom = if (anchorId == ConstraintLayout.LayoutParams.PARENT_ID) {
-            ConstraintLayout.LayoutParams.UNSET
-        } else {
-            anchorId
-        }
-        layoutParams.topToTop = if (anchorId == ConstraintLayout.LayoutParams.PARENT_ID) {
-            anchorId
-        } else {
-            ConstraintLayout.LayoutParams.UNSET
-        }
-        binding.divider.layoutParams = layoutParams
-        binding.divider.requestLayout()
-        binding.divider.invalidate()
     }
 
     private fun initCButtonView() {
@@ -222,18 +194,10 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
         )
     }
 
-    private fun setCButtonVisibility(isVisible: Boolean) {
-        binding.cButtonGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-
     private fun setLRButtonVisibility(isVisible: Boolean) {
         val visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.leftButtonGroup.visibility = visibility
         binding.rightButtonGroup.visibility = visibility
-    }
-
-    private fun isDjiRcPro(): Boolean {
-        return Build.MODEL.equals(DJI_RC_PRO_MODEL, ignoreCase = true)
     }
 
     private fun isDjiRcPlus2(): Boolean {
@@ -249,7 +213,6 @@ class RCButtonCustomizationWidget @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "RCButtonCustomizationWidget"
-        private const val DJI_RC_PRO_MODEL = "DJI RC Pro"
         private const val DJI_RC_PLUS_2_MODEL = "DJI RC Plus 2"
     }
 }
